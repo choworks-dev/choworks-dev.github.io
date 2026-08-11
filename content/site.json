@@ -1,9 +1,9 @@
 {
   "brand": "kadecho.dev",
   "brandKo": "코드체인",
-  "url": "https://kadecho.dev",
+  "url": "https://choworks.dev",
   "githubUrl": "https://codechains.github.io",
-  "email": "hello@kadecho.dev",
+  "email": "hello@choworks.dev",
   "authorKo": "케이드 조",
   "authorEn": "Kade C.",
   "taglineKo": "작은 회사 10년, IT는 늘 뒷전이었습니다. 이제 클로드와 커서로 직접 처리합니다.",
@@ -18,5 +18,5 @@
   "authorBioEn": "10 years of running a small IT company, now documenting the shift to working with AI in the open. What actually got built, where it broke, and how it got resolved.",
   "adsenseClient": "",
   "ogImage": "/assets/og.png",
-  "customDomain": "kadecho.dev"
+  "customDomain": "choworks.dev"
 }

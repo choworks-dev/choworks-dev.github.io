@@ -25,4 +25,4 @@ On a similar path? Come link up. I'd love to hear about yours.
 
 I'm also **open to conversations about new opportunities.** A project, a collaboration, or something I haven't thought of yet. Feel free to reach out.
 
-Reach me: [hello@kadecho.dev](mailto:hello@kadecho.dev)
+Reach me: [hello@choworks.dev](mailto:hello@choworks.dev)
