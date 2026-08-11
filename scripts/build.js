@@ -664,14 +664,18 @@ if (ADMIN) {
   fs.rmSync(ADMIN_DIR, { recursive: true, force: true });
 }
 
-/* 한 언어로만 나간 글은 조용히 지나가면 안 됩니다.
-   번역이 빠진 것인지 의도한 것인지는 사람만 알기 때문에 이름을 찍어 둡니다.
-   (짝이 없는 동안 그 글은 hreflang 없이 나갑니다) */
+/* 글은 한국어판과 영문판을 한 쌍으로 냅니다. 한쪽만 있는 것은 작업이 덜 끝난 상태입니다.
+   예전에는 [알림]으로 흘려보냈다가 영문판 누락을 몇 달 못 보고 지나친 적이 있어
+   [경고]로 올렸습니다. 다른 SEO 경고와 같은 줄에 서야 눈에 들어옵니다.
+   (짝이 없는 동안 그 글은 hreflang 없이 나가고, 배포 자체는 계속 됩니다) */
 const solo = [
   ...koPosts.filter((p) => !enSlugs.has(p.slug)).map((p) => `ko/${p.slug}`),
   ...enPosts.filter((p) => !koSlugs.has(p.slug)).map((p) => `en/${p.slug}`),
 ];
-if (solo.length) console.warn(`  [알림] 짝 언어판이 없어 hreflang 없이 나가는 글: ${solo.join(", ")}\n`);
+if (solo.length) {
+  console.warn(`  [경고] 짝 언어판이 없습니다. 아래 글은 hreflang 없이 나갑니다: ${solo.join(", ")}`);
+  console.warn(`         한국어판은 content/posts-kr/, 영문판은 content/posts-en/ 에 같은 슬러그로 둡니다.\n`);
+}
 
 const draftCount = (koAll.length - koPosts.length) + (enAll.length - enPosts.length);
 console.log(

@@ -17,7 +17,7 @@ So I decided to stop watching from the outside and **step in.**
 
 I could learn quietly on my own. Instead, I chose to document it publicly. Three reasons.
 
-First, **writing preserves the learning.** An experiment that only happens in your head disappears; one written down becomes an asset. The me of next month can learn from the me of today.
+First, **writing preserves the learning.** An experiment that only happens in your head disappears; one written down becomes an asset. [The me of next month can learn from the me of today](/en/posts/ai-transformation-starts-with-me/).
 
 Second, **the open makes me honest.** Knowing someone might read it is what keeps me from hand-waving and pushes me to actually understand.
 
