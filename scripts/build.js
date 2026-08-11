@@ -257,14 +257,13 @@ ${published ? `<meta property="article:published_time" content="${published}">
 <meta property="article:author" content="${esc(authorName(lang))}">
 ` : ""}${ogImage}<meta name="twitter:card" content="${ogImage ? "summary_large_image" : "summary"}">
 ${altLinks}<link rel="alternate" type="application/rss+xml" title="${site.brand}" href="/feed.xml">
-<link rel="icon" href="/assets/favicon.svg">
 <link rel="stylesheet" href="/assets/style.css">
 ${jsonLdTag(jsonLd)}${autoLang ? LANG_REDIRECT : ""}
 ${THEME_SCRIPT}
 </head>
 <body>
 <header class="site-header"><div class="wrap">
-  <a class="brand" href="${homeHref}"><span class="wordmark">kadecho.dev</span></a>
+  <a class="brand" href="${homeHref}"><span class="wordmark">${esc(site.brand)}</span></a>
   <nav class="nav">
     <a href="${homeHref}">${t.home}</a>
     <a href="${aboutHref}">${t.nav_about}</a>
@@ -324,8 +323,9 @@ function newsletter(lang) {
    글 끝에 "누가 썼는가"를 사람이 볼 수 있게 남깁니다.
    구글 E-E-A-T(경험·전문성·권위·신뢰) 신호이자, 일반적인 글의 형식이기도 합니다.
    같은 정보를 JSON-LD 의 author 로도 내보내 크롤러가 사람과 글을 연결할 수 있게 합니다. */
-/* 이름도 언어별로 다릅니다. 한국어 화면에는 "케이드 조", 영문에는 "Kade".
-   한국어 독자에게 로마자 이름은 남의 이름처럼 읽혀서 사람과 글이 잘 연결되지 않습니다. */
+/* 이름도 언어별로 다릅니다. 한국어 화면에는 "조웍", 영문에는 "Cho Works".
+   한국어 독자에게 로마자 이름은 남의 이름처럼 읽혀서 사람과 글이 잘 연결되지 않습니다.
+   값은 site.json 의 authorKo / authorEn 에서 관리합니다. */
 const authorName = (lang) => (lang === "en" ? site.authorEn : site.authorKo) || site.author || "";
 const authorBio = (lang) => (lang === "en" ? site.authorBioEn : site.authorBioKo) || "";
 
@@ -362,11 +362,13 @@ function authorCard(lang) {
 }
 
 /* ---------- 구조화 데이터 (schema.org) ---------- */
+/* logo 를 넣지 않습니다. 파비콘을 걷어내면서 로고로 내세울 그림 파일이 없어졌습니다.
+   schema.org 에서 선택 항목이고, 없는 파일을 가리키는 것보다 비우는 편이 맞습니다.
+   로고 그림이 다시 생기면 logo: { "@type": "ImageObject", url: ... } 를 되살리면 됩니다. */
 const PUBLISHER = {
   "@type": "Organization",
   name: site.brand,
   url: site.url,
-  logo: { "@type": "ImageObject", url: `${site.url}/assets/favicon.svg` },
 };
 const authorOf = (lang) => ({ "@type": "Person", name: authorName(lang), url: site.url });
 const authorNode = (lang) => ({
@@ -563,7 +565,6 @@ ${entries
     .join("\n")}
 </urlset>`;
 }
-const FAVICON = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect width="32" height="32" rx="7" fill="#0e1116"/><path d="M12.5 19.5l7-7" stroke="#6ee7b7" stroke-width="2.4" stroke-linecap="round"/><path d="M14.8 9.2l1.7-1.7a4.6 4.6 0 016.5 6.5l-1.7 1.7" stroke="#7aa2ff" stroke-width="2.4" stroke-linecap="round"/><path d="M17.2 22.8l-1.7 1.7a4.6 4.6 0 01-6.5-6.5l1.7-1.7" stroke="#6ee7b7" stroke-width="2.4" stroke-linecap="round"/></svg>`;
 
 /* ---------- run ---------- */
 const assetCount = copyAssets();
@@ -595,8 +596,9 @@ enPosts.forEach((p) => { write(`en/posts/${p.slug}/index.html`, buildPost("en", 
 
 write("feed.xml", buildFeed(koPosts));
 write("sitemap.xml", buildSitemap(urls));
-// assets/favicon.svg 를 직접 두면 그걸 쓰고, 없으면 기본 파비콘을 생성.
-if (!fs.existsSync(path.join(ASSETS, "favicon.svg"))) write("assets/favicon.svg", FAVICON);
+/* 파비콘은 만들지 않습니다. <head> 에 rel="icon" 도 넣지 않으므로 브라우저 기본 아이콘이 뜹니다.
+   예전에는 assets/favicon.svg 가 없으면 기본 파비콘을 여기서 만들어 넣었는데,
+   그 자동 생성이 남아 있으면 파일만 지워도 파비콘이 되살아납니다. 함께 걷어냈습니다. */
 /* 쓰레드 앱의 리다이렉트 주소.
    Meta 는 실제로 열리지 않는 주소를 앱 설정에 등록하지 못하게 막습니다. 그래서 빈 페이지라도 있어야 합니다.
    겸사겸사 주소창에 붙는 code 를 화면에 크게 띄워 줍니다. 손으로 주소창에서 잘라내는 것보다 덜 틀립니다.

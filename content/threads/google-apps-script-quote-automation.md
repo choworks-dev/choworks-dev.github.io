@@ -76,5 +76,5 @@ kind: work
 
 워크스페이스 쓰고 계시면 앱스 스크립트는 이미 요금에 포함돼 있습니다. 한번 열어보세요. 뭘 자동화할지 모르겠으면 물어보셔도 되고요. 과정은 전부 적어놨습니다.
 
-https://kadecho.dev/posts/google-apps-script-quote-automation/
+https://choworks.dev/posts/google-apps-script-quote-automation/
 

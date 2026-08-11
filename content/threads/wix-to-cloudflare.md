@@ -91,5 +91,5 @@ Wix로 만든 사이트는 옮길 파일이 없다. 편집기에서 끌어다 �
 
 사장님들, 한번 직접 해보세요. 생각보다 됩니다. 하다가 막히면 저한테 물어보셔도 되고요. 저도 몇 년 헤맨 사람이라 어디서 막히는지는 압니다. 과정은 전부 적어놨습니다.
 
-https://kadecho.dev/posts/wix-to-cloudflare/
+https://choworks.dev/posts/wix-to-cloudflare/
 

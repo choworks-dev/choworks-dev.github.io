@@ -38,5 +38,5 @@ kind: work
 
 비슷한 자리에 서 계시면 반갑습니다. 뭐 하고 계신지 댓글로 알려주세요.
 
-https://kadecho.dev/posts/why-ai-transform/
+https://choworks.dev/posts/why-ai-transform/
 

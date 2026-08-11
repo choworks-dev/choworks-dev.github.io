@@ -63,19 +63,9 @@ function findChrome() {
   return candidates.find((p) => fs.existsSync(p)) || null;
 }
 
-/* 카드 위쪽에 들어가는 워드마크.
-   헤더가 쓰는 것과 같은 파일을 그대로 읽어 옵니다. 로고를 다시 만들면(npm run wordmark)
-   카드도 같이 따라오도록, 여기에 모양을 베껴 두지 않습니다.
-   카드 배경이 어두우므로 어두운 테마용을 씁니다.
-
-   크기는 CSS 로 정하므로 루트 svg 의 width/height 만 뗍니다.
-   파일 전체에서 떼면 안 됩니다. 안쪽 마스크의 rect 크기까지 사라져서
-   마스크가 통째로 검게 되고 로고가 아예 안 보입니다. 실제로 한 번 그렇게 나갔습니다. */
-const WORDMARK = fs
-  .readFileSync(path.join(ROOT, "assets/logo/wordmark-nowing-dark.svg"), "utf8")
-  .replace(/^<\?xml[^>]*\?>\s*/, "")
-  .replace(/<svg\b[^>]*>/, (tag) => tag.replace(/\s+(width|height)="[^"]*"/g, ""));
-
+/* 카드 위쪽 브랜드는 site.brand 를 글자로 그립니다(cardHtml 참고).
+   예전에는 여기서 워드마크 SVG 를 읽어 넣었지만, 정작 카드에서는
+   쓰지 않는 죽은 코드로 남아 있었습니다. 헤더가 글자로 바뀌면서 같이 정리했습니다. */
 
 /* 제목 길이는 글마다 다릅니다. 넘치면 카드 밖으로 잘려 나가므로,
    캡처 직전에 제목이 자리에 들어갈 때까지 글자 크기를 줄입니다.

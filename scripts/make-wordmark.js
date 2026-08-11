@@ -2,7 +2,7 @@
    워드마크 만들기
    실행:  npm run wordmark
 
-   만들어지는 것 (assets/logo/)
+   만들어지는 것 (design/logo/wordmark/ · 커밋되지만 배포되지 않음)
      wordmark-nowing-dark.svg         어두운 테마 · 브랜드 그라데이션
      wordmark-nowing-light.svg        밝은 테마 · 브랜드 그라데이션
      wordmark-nowing-dark-solid.svg   어두운 테마 · 본문 글자색 단색
@@ -28,7 +28,7 @@
    ---------- 색 ----------
    assets/style.css 의 테마 토큰에서 가져옵니다. 거기를 고쳤으면 아래 THEMES 도 고치고 다시 실행하세요.
 
-   날개가 있던 예전 판은 assets/logo/wordmark-{dark,light}[-solid].svg 로 남겨 두었습니다.
+   날개가 있던 예전 판은 design/logo/wordmark/wordmark-{dark,light}[-solid].svg 로 남겨 두었습니다.
    원본은 design/logo/kadechodev-withdot-logo.svg 입니다. 이 스크립트는 그쪽을 다시 만들지 않습니다.
    ============================================================ */
 const fs = require("fs");
@@ -36,7 +36,17 @@ const path = require("path");
 
 const ROOT = path.join(__dirname, "..");
 const SRC = path.join(ROOT, "design", "logo", "kadechodev-no-wing-logo.svg");
-const OUT = path.join(ROOT, "assets", "logo");
+/* 결과물은 design/ 아래에 둡니다. 헤더 로고가 글자로 바뀌면서 사이트는 이 파일들을
+   더 이상 쓰지 않는데, assets/ 는 통째로 배포되는 폴더라 거기 두면 안 쓰는 그림이
+   공개 주소로 계속 열립니다. design/ 은 커밋은 되고 배포에는 안 실립니다. */
+const OUT = path.join(ROOT, "design", "logo", "wordmark");
+
+/* 워드마크는 "글자를 그림으로 그린 것"입니다. 화면 낭독기에 읽어 줄 말은 사이트 이름이 아니라
+   그림에 실제로 그려진 글자여야 합니다. 원본(SRC)이 kadecho.dev 를 그리고 있으므로 이 값도
+   kadecho.dev 입니다. 여기를 site.brand 에 묶으면 도메인만 바꿨을 때 그림은 옛 글자를 그린 채
+   라벨만 새 도메인이라고 말하게 됩니다.
+   로고 글자를 바꾸려면 design/logo 의 원본을 다시 그려야 하고, 그때 이 값도 같이 고칩니다. */
+const ARTWORK = "kadecho.dev";
 
 /* style.css 와 맞춰야 하는 값
      accent / accent2  --accent, --accent-2  (브랜드 그라데이션. .grad 가 쓰는 것과 같은 값)
@@ -66,8 +76,8 @@ function build({ fill, gradient }) {
 </linearGradient>
 `
     : "";
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${VIEW.x} ${VIEW.y} ${VIEW.w} ${VIEW.h}" width="${VIEW.w}" height="${VIEW.h}" role="img" aria-label="kadecho.dev">
-<title>kadecho.dev</title>
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="${VIEW.x} ${VIEW.y} ${VIEW.w} ${VIEW.h}" width="${VIEW.w}" height="${VIEW.h}" role="img" aria-label="${ARTWORK}">
+<title>${ARTWORK}</title>
 <defs>
 ${grad}<mask id="cut" maskUnits="userSpaceOnUse" x="${VIEW.x}" y="${VIEW.y}" width="${VIEW.w}" height="${VIEW.h}">
 <rect x="${VIEW.x}" y="${VIEW.y}" width="${VIEW.w}" height="${VIEW.h}" fill="#fff"/>
@@ -99,54 +109,11 @@ Object.entries(THEMES).forEach(([name, t]) => {
   });
 });
 
-/* ---------- 파비콘 ----------
-   워드마크의 첫 글자 k 하나만 씁니다. 32px 짜리 정사각형에 워드마크 전체를 넣으면
-   글자가 뭉개져서 아무것도 안 보입니다.
+/* 파비콘은 만들지 않습니다.
+   예전에는 워드마크의 첫 글자 k 를 잘라 32px 파비콘을 만들어 assets/favicon.svg 로 썼습니다.
+   사이트에서 파비콘을 걷어내면서 함께 없앴습니다(build.js 는 rel="icon" 을 내보내지 않습니다).
+   되살리려면 이 자리에 다시 넣고 build.js 의 <head> 에 링크를 추가하면 됩니다. */
 
-   어두운 둥근 사각형을 깔고 그 위에 글자를 올립니다. 파비콘은 브라우저 탭이나
-   즐겨찾기 목록처럼 밝기가 제각각인 자리에 놓이므로, 배경을 깔아야 어디서든 같게 보입니다.
-   그래서 여기서는 마스크로 뚫지 않고 배경 위에 그립니다.
-
-   k 는 원본에서 x 190~338 에 있지만 왼쪽 일부는 가리개에 덮입니다.
-   덮이는 부분까지 넣고 자리를 잡으면 글자가 한쪽으로 쏠리므로, 마스크를 적용한 뒤의
-   실제 폭을 기준으로 가운데를 맞춥니다. */
-const FAV = { size: 32, pad: 2.5, radius: 7, bg: "#0e1116" };
-const K = { x0: 232, x1: 338, y0: 265, y1: 511 }; // 가리개 적용 후 k 가 차지하는 자리(viewBox 좌표)
-
-function favicon() {
-  const t = THEMES.dark;
-  const inner = FAV.size - FAV.pad * 2;
-  const w = K.x1 - K.x0;
-  const h = K.y1 - K.y0;
-  const s = Math.min(inner / w, inner / h);
-  const tx = (FAV.size - w * s) / 2 - K.x0 * s;
-  const ty = (FAV.size - h * s) / 2 - K.y0 * s;
-  const r4 = (n) => Math.round(n * 10000) / 10000;
-
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${FAV.size} ${FAV.size}" width="${FAV.size}" height="${FAV.size}" role="img" aria-label="kadecho.dev">
-<title>kadecho.dev</title>
-<defs>
-<linearGradient id="w" x1="${K.x0}" y1="0" x2="${K.x1}" y2="0" gradientUnits="userSpaceOnUse">
-<stop offset="0" stop-color="${t.accent}"/><stop offset="1" stop-color="${t.accent2}"/>
-</linearGradient>
-<mask id="cut" maskUnits="userSpaceOnUse" x="${K.x0}" y="${K.y0}" width="${w}" height="${h}">
-<rect x="${K.x0}" y="${K.y0}" width="${w}" height="${h}" fill="#fff"/>
-<g transform="${FLIP}"><path d="${covers[0]}" fill="#000"/></g>
-</mask>
-</defs>
-<rect width="${FAV.size}" height="${FAV.size}" rx="${FAV.radius}" fill="${FAV.bg}"/>
-<g transform="translate(${r4(tx)},${r4(ty)}) scale(${r4(s)})">
-<g mask="url(#cut)">
-<g transform="${FLIP}" fill="url(#w)" fill-rule="evenodd"><path d="${letters[0]}"/></g>
-</g>
-</g>
-</svg>
-`;
-}
-
-fs.writeFileSync(path.join(ROOT, "assets", "favicon.svg"), favicon());
-made += 1;
-console.log(`${"favicon.svg".padEnd(32)} k 한 글자 ${THEMES.dark.accent}→${THEMES.dark.accent2}, 배경 ${FAV.bg}`);
-
-console.log(`\n${made}개 만들었습니다. 워드마크는 배경이 비치고(마스크로 뚫음), 파비콘만 배경을 깝니다.`);
-console.log("헤더가 어느 것을 쓸지는 assets/style.css 의 .brand .wordmark 에서 정합니다.");
+console.log(`\n${made}개 만들었습니다. 배경이 비치는(마스크로 뚫은) 투명 SVG 입니다.`);
+console.log("헤더 로고는 글자입니다(site.json 의 brand). 이 그림들은 사이트에서 쓰지 않고");
+console.log("design/logo/wordmark/ 에 보관만 합니다.");
