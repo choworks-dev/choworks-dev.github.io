@@ -361,10 +361,12 @@ function postNav(lang, nav) {
   const isNext = nav.dir === "next";
   const base = lang === "en" ? "/en/posts/" : "/posts/";
   /* rel="next"/"prev" 는 크롤러가 글의 순서를 이해하는 데 씁니다.
-     화살표는 방향을 눈으로 알려주는 장식이라 스크린리더에서는 읽지 않게 감춥니다. */
+     라벨 끝의 콜론이 "이 다음에 오는 것이 제목이다"를 말해 줍니다.
+     화살표를 같이 쓰면 콜론과 역할이 겹치고 "다음 글: →" 처럼 읽히므로 두지 않습니다.
+     방향은 다음/이전 이라는 낱말이 이미 말하고 있습니다. */
   return `<nav class="post-nav">
-  <a class="post-nav-link${isNext ? "" : " is-prev"}" href="${base}${nav.post.slug}/" rel="${isNext ? "next" : "prev"}">
-    <span class="post-nav-label">${isNext ? `${t.next_post} <span aria-hidden="true">→</span>` : `<span aria-hidden="true">← </span>${t.prev_post}`}</span>
+  <a class="post-nav-link" href="${base}${nav.post.slug}/" rel="${isNext ? "next" : "prev"}">
+    <span class="post-nav-label">${isNext ? t.next_post : t.prev_post}:</span>
     <span class="post-nav-title">${esc(nav.post.title)}</span>
   </a>
 </nav>`;

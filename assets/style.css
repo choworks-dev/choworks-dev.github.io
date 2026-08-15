@@ -440,40 +440,39 @@ main.wrap {
 
 /* ---------- 다음 글 / 이전 글 (본문 바로 아래) ----------
    본문이 끝난 자리에서 한 편 더 읽게 하는 줄입니다. 상자에 담지 않습니다.
-   글 끝의 연락 한 줄과 같은 이유로, 테두리를 두르면 본문이 아니라 붙여 놓은 것처럼 읽힙니다. */
+   글 끝의 연락 한 줄과 같은 이유로, 테두리를 두르면 본문이 아니라 붙여 놓은 것처럼 읽힙니다.
+
+   대신 위쪽을 한 줄 더 띄웁니다. 테두리가 없으니 여백만이 "본문은 여기서 끝났다"를 말합니다.
+   .prose 의 마지막 요소는 아래 여백이 0이라(.prose > *:last-child) 이 값이 간격의 전부입니다.
+   좁으면 마지막 문단이 이어지는 것처럼 읽혀서, 링크인 줄 모르고 지나갑니다. */
 .post-nav {
-  margin-top: 40px;
+  margin-top: 64px;
 }
 
+/* 제목에 꾸밈을 주지 않습니다. 본문 링크와 똑같이 파란 글자에 밑줄만 둡니다.
+   크고 굵게 만들면 카드나 배너처럼 보여서, 정작 "누르면 그 글로 간다"가 전달되지 않습니다.
+   읽는 사람이 평생 봐 온 링크 모양이 제일 확실합니다.
+   호버에서 색이나 밑줄이 변하는 것도 넣지 않습니다. 링크는 처음부터 링크로 보여야 합니다. */
 .post-nav-link {
   display: block;
   color: var(--text);
+  text-decoration: none;
 }
+/* a:hover 가 앵커 전체에 밑줄을 넣습니다(a:hover 쪽 선택자가 더 셉니다).
+   그대로 두면 라벨까지 밑줄이 그어져서 라벨도 링크처럼 보입니다. */
 .post-nav-link:hover { text-decoration: none; }
-.post-nav-link:hover .post-nav-title { color: var(--accent-2); }
 
+/* 라벨은 링크가 아니라 안내말입니다. 본문과 같은 색으로 두어야 파란 제목만 링크로 보입니다. */
 .post-nav-label {
   display: block;
-  font-size: .82rem;
-  font-weight: 600;
-  color: var(--accent-2);
+  color: var(--text);
 }
 
 .post-nav-title {
   display: block;
-  margin-top: .3rem;
-  font-size: 1.05rem;
-  line-height: 1.45;
-  font-weight: 700;
-  letter-spacing: -.01em;
-  transition: color .15s ease;
-}
-
-/* 가장 최근 글에만 나오는 "이전 글" 은 되돌아가는 방향이라 라벨을 한 톤 낮춰 둡니다. */
-.post-nav-link.is-prev .post-nav-label { color: var(--muted); }
-
-@media (max-width: 560px) {
-  .post-nav-title { font-size: 1rem; }
+  color: var(--accent-2);
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 /* ---------- 저자 카드 (글 하단) ---------- */
