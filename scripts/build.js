@@ -285,8 +285,40 @@ ${body}
 ${THEME_TOGGLE_JS}
 ${LANG_REMEMBER_JS}
 ${NEWSLETTER_ENABLED ? SUBSCRIBE_JS : ""}
+${webAnalytics()}
 </body>
 </html>`;
+}
+
+/* 배포 빌드인가. 로컬에서 돌린 빌드와 갈라야 하는 것들이 여기에 걸립니다.
+   (관리 페이지 생성 여부, 방문 측정 스크립트 삽입 여부)
+   선언이 여기 있는 이유는 layout() 이 이 값을 읽는데, layout() 은 파일 아래쪽
+   run 구간에서 불리기 때문입니다. 선언이 run 구간에 있으면 그 시점에 아직 초기화 전이라
+   ReferenceError 가 납니다. */
+const DEPLOY = process.env.CC_DEPLOY === "1" || process.env.CI === "true";
+
+/* ---------- 방문 측정 (Cloudflare Web Analytics) ----------
+   choworks.dev 는 회색 구름(프록시 끔)으로 GitHub Pages 를 가리킵니다. 트래픽이 Cloudflare 를
+   거치지 않으므로 Cloudflare 대시보드의 애널리틱스에는 이 사이트가 영원히 나오지 않습니다.
+   프록시를 켜면 되는 문제가 아닙니다. 켜는 순간 GitHub 의 인증서 발급이 깨집니다.
+   그래서 서버가 아니라 페이지에서 재는 방식(자바스크립트 비컨)을 씁니다.
+
+   토큰은 비밀값이 아닙니다. 모든 페이지의 HTML 에 그대로 실려 나가는 값이라 숨길 수가 없고,
+   숨길 이유도 없습니다. 그래서 .env 가 아니라 content/site.json 에 둡니다.
+
+   배포 빌드에만 넣습니다. 로컬에서 고치고 새로고침한 것까지 방문으로 세면 숫자를 못 믿게 됩니다.
+   글을 쓰는 동안 하루에 수십 번 새로고침하므로 이 구분이 없으면 통계가 통째로 망가집니다.
+
+   type="module" 은 Cloudflare 가 주는 스니펫 그대로입니다. defer 로 바꾸지 마세요.
+   beacon.min.js 가 ES 모듈이라 일반 스크립트로 부르면 문법 오류로 죽습니다.
+   모듈 스크립트는 원래 defer 처럼 동작하므로 로딩을 막지도 않습니다.
+   토큰도 관리 화면의 스니펫에서 그대로 가져와야 합니다. 대시보드 주소에 보이는 32자리 값은
+   site tag 이지 토큰이 아닙니다. 형식이 똑같이 생겨서 헷갈리는데, 넣으면 조용히 실패합니다.
+   스크립트는 멀쩡히 로드되고 데이터만 어디에도 안 쌓입니다. */
+function webAnalytics() {
+  const token = String(site.cfAnalyticsToken || "").trim();
+  if (!DEPLOY || !token) return "";
+  return `<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='${JSON.stringify({ token })}'></script>`;
 }
 
 /* 뉴스레터 구독 노출 스위치.
@@ -679,8 +711,8 @@ write("robots.txt", `User-agent: *\nAllow: /\nSitemap: ${site.url}/sitemap.xml\n
    관리 페이지를 지워버려서, 새로고침해도 안 보이는 일이 계속 생깁니다.
    배포 경로는 GitHub Actions 하나뿐이고 그쪽은 아래 두 조건에 모두 걸리므로,
    기본값을 로컬 쪽에 맞추는 편이 안전하면서 덜 헷갈립니다.
-   sitemap·feed 에는 어느 경우에도 넣지 않습니다. */
-const DEPLOY = process.env.CC_DEPLOY === "1" || process.env.CI === "true";
+   sitemap·feed 에는 어느 경우에도 넣지 않습니다.
+   (DEPLOY 자체는 layout() 이 먼저 읽어야 해서 파일 위쪽 스위치 구간에 선언돼 있습니다) */
 const ADMIN = !DEPLOY;
 const ADMIN_DIR = path.join(OUT, "admin");
 if (ADMIN) {
@@ -710,6 +742,13 @@ const solo = [
 if (solo.length) {
   console.warn(`  [경고] 짝 언어판이 없습니다. 아래 글은 hreflang 없이 나갑니다: ${solo.join(", ")}`);
   console.warn(`         한국어판은 content/posts-kr/, 영문판은 content/posts-en/ 에 같은 슬러그로 둡니다.\n`);
+}
+
+/* 측정 없이 배포되는 것을 막습니다. 조용히 빠지면 몇 주 뒤에 "그동안 아무 기록이 없다"를 알게 됩니다.
+   그때는 이미 지나간 유입이라 되돌릴 방법이 없습니다. */
+if (DEPLOY && !String(site.cfAnalyticsToken || "").trim()) {
+  console.warn("  [경고] content/site.json 의 cfAnalyticsToken 이 비어 있어 방문 측정 스크립트를 넣지 않았습니다.");
+  console.warn("         Cloudflare → Analytics → Web Analytics 에서 choworks.dev 를 추가하고 받은 토큰을 채우세요.\n");
 }
 
 const draftCount = (koAll.length - koPosts.length) + (enAll.length - enPosts.length);
