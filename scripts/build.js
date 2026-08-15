@@ -155,8 +155,8 @@ const LANG_REDIRECT = `<script>(function(){try{if(localStorage.getItem('cc-lang'
 const LANG_REMEMBER_JS = `<script>(function(){[].slice.call(document.querySelectorAll('[data-lang]')).forEach(function(a){a.addEventListener('click',function(){try{localStorage.setItem('cc-lang',a.getAttribute('data-lang'));}catch(e){}});});})();</script>`;
 
 const T = {
-  ko: { nav_about: "소개", home: "홈", posts: "글", langAlt: "EN", author_label: "글쓴이", author_more: "소개 보기", contact: "비슷한 상황이라면 편하게 물어보세요.", nl_h: "새 글을 이메일로 받아보기", nl_p: "AI 트랜스폼 여정의 새 글을 가장 먼저 받아보세요. 스팸은 없습니다.", nl_btn: "구독", nl_ph: "이메일 주소", nl_note: `구독 기능은 곧 연결됩니다. 우선 ${site.email} 로 연락 주셔도 좋아요!`, ad: "광고 영역 (애드센스 승인 후 표시됩니다)", latest: "최근 글", back: "← 목록으로", readmore: "읽기" },
-  en: { nav_about: "About", home: "Home", posts: "Posts", langAlt: "한국어", author_label: "Written by", author_more: "About me", contact: "In a similar spot? Feel free to ask.", nl_h: "Get new posts by email", nl_p: "Be first to read new posts from the AI transformation journey. No spam.", nl_btn: "Subscribe", nl_ph: "your email", nl_note: `Subscriptions are being wired up. For now, reach me at ${site.email}!`, ad: "Ad slot (shown after AdSense approval)", latest: "Latest posts", back: "← All posts", readmore: "Read" },
+  ko: { nav_about: "소개", home: "홈", posts: "글", langAlt: "EN", author_label: "글쓴이", author_more: "소개 보기", contact: "비슷한 상황이라면 편하게 물어보세요.", nl_h: "새 글을 이메일로 받아보기", nl_p: "AI 트랜스폼 여정의 새 글을 가장 먼저 받아보세요. 스팸은 없습니다.", nl_btn: "구독", nl_ph: "이메일 주소", nl_note: `구독 기능은 곧 연결됩니다. 우선 ${site.email} 로 연락 주셔도 좋아요!`, ad: "광고 영역 (애드센스 승인 후 표시됩니다)", latest: "최근 글", back: "← 목록으로", readmore: "읽기", next_post: "다음 글", prev_post: "이전 글" },
+  en: { nav_about: "About", home: "Home", posts: "Posts", langAlt: "한국어", author_label: "Written by", author_more: "About me", contact: "In a similar spot? Feel free to ask.", nl_h: "Get new posts by email", nl_p: "Be first to read new posts from the AI transformation journey. No spam.", nl_btn: "Subscribe", nl_ph: "your email", nl_note: `Subscriptions are being wired up. For now, reach me at ${site.email}!`, ad: "Ad slot (shown after AdSense approval)", latest: "Latest posts", back: "← All posts", readmore: "Read", next_post: "Next post", prev_post: "Previous post" },
 };
 
 /* 공유 카드 이미지의 실제 크기. og:image:width/height 를 같이 보내면
@@ -340,6 +340,36 @@ function langNotice(lang) {
 </p>`;
 }
 
+/* ---------- 글 사이 이동 ----------
+   글을 끝까지 읽은 사람이 갈 곳을 한 자리 만들어 둡니다. 목록으로 돌아가 제목을 다시 고르게 하면
+   대부분 그냥 닫습니다. 다음 글 제목이 눈앞에 보이면 한 편 더 읽습니다.
+
+   보여주는 것은 한 편뿐입니다. 기본은 "다음 글"(더 최근에 쓴 글)이고,
+   가장 최근 글에는 다음이 없으므로 "이전 글"(바로 앞에 쓴 글)을 대신 보여줍니다.
+   목록은 최신순이라 배열에서 하나 앞(i-1)이 더 최근, 하나 뒤(i+1)가 더 예전입니다. */
+function neighborOf(posts, i) {
+  const newer = posts[i - 1];
+  if (newer) return { dir: "next", post: newer };
+  const older = posts[i + 1];
+  if (older) return { dir: "prev", post: older };
+  return null; // 글이 한 편뿐이면 이동할 곳이 없습니다
+}
+
+function postNav(lang, nav) {
+  if (!nav) return "";
+  const t = T[lang];
+  const isNext = nav.dir === "next";
+  const base = lang === "en" ? "/en/posts/" : "/posts/";
+  /* rel="next"/"prev" 는 크롤러가 글의 순서를 이해하는 데 씁니다.
+     화살표는 방향을 눈으로 알려주는 장식이라 스크린리더에서는 읽지 않게 감춥니다. */
+  return `<nav class="post-nav">
+  <a class="post-nav-link${isNext ? "" : " is-prev"}" href="${base}${nav.post.slug}/" rel="${isNext ? "next" : "prev"}">
+    <span class="post-nav-label">${isNext ? `${t.next_post} <span aria-hidden="true">→</span>` : `<span aria-hidden="true">← </span>${t.prev_post}`}</span>
+    <span class="post-nav-title">${esc(nav.post.title)}</span>
+  </a>
+</nav>`;
+}
+
 function contactLine(lang) {
   if (!CONTACT_ENABLED) return "";
   return `<p class="post-contact">${T[lang].contact} <a href="mailto:${esc(site.email)}">${esc(site.email)}</a></p>`;
@@ -503,7 +533,7 @@ ${newsletter(lang)}`;
 /* hasAlt: 같은 슬러그의 다른 언어판이 실제로 발행돼 있는가.
    없는 주소를 hreflang 으로 가리키면 구글은 상호 참조가 안 된다고 보고 그 짝을 통째로 무시하고,
    x-default 까지 404 면 국제 타게팅 자체가 깨집니다. 그래서 짝이 있을 때만 alternate 를 냅니다. */
-function buildPost(lang, post, hasAlt) {
+function buildPost(lang, post, hasAlt, nav) {
   const t = T[lang];
   const isEn = lang === "en";
   const tags = (post.tags || []).map((x) => `<span class="tag">${esc(x)}</span>`).join("");
@@ -518,6 +548,7 @@ function buildPost(lang, post, hasAlt) {
     ${tags ? `<div class="tags" style="margin-top:.8rem">${tags}</div>` : ""}
   </div>
   <div class="prose">${post.bodyHtml}</div>
+  ${postNav(lang, nav)}
   ${authorCard(lang)}
   ${contactLine(lang)}
   ${ADS_ENABLED ? `<div class="ad-slot">${t.ad}</div>` : ""}
@@ -588,11 +619,11 @@ const latestEn = enPosts[0] && enPosts[0].date;
 
 write("index.html", buildHome("ko", koPosts)); urls.push({ loc: "/", lastmod: latestKo });
 write("about/index.html", buildAbout("ko")); urls.push({ loc: "/about/" });
-koPosts.forEach((p) => { write(`posts/${p.slug}/index.html`, buildPost("ko", p, enSlugs.has(p.slug))); urls.push({ loc: `/posts/${p.slug}/`, lastmod: p.date }); });
+koPosts.forEach((p, i) => { write(`posts/${p.slug}/index.html`, buildPost("ko", p, enSlugs.has(p.slug), neighborOf(koPosts, i))); urls.push({ loc: `/posts/${p.slug}/`, lastmod: p.date }); });
 
 write("en/index.html", buildHome("en", enPosts)); urls.push({ loc: "/en/", lastmod: latestEn });
 write("en/about/index.html", buildAbout("en")); urls.push({ loc: "/en/about/" });
-enPosts.forEach((p) => { write(`en/posts/${p.slug}/index.html`, buildPost("en", p, koSlugs.has(p.slug))); urls.push({ loc: `/en/posts/${p.slug}/`, lastmod: p.date }); });
+enPosts.forEach((p, i) => { write(`en/posts/${p.slug}/index.html`, buildPost("en", p, koSlugs.has(p.slug), neighborOf(enPosts, i))); urls.push({ loc: `/en/posts/${p.slug}/`, lastmod: p.date }); });
 
 write("feed.xml", buildFeed(koPosts));
 write("sitemap.xml", buildSitemap(urls));

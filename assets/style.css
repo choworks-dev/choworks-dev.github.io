@@ -438,6 +438,44 @@ main.wrap {
 }
 .prose th { background: var(--bg-soft); font-weight: 700; }
 
+/* ---------- 다음 글 / 이전 글 (본문 바로 아래) ----------
+   본문이 끝난 자리에서 한 편 더 읽게 하는 줄입니다. 상자에 담지 않습니다.
+   글 끝의 연락 한 줄과 같은 이유로, 테두리를 두르면 본문이 아니라 붙여 놓은 것처럼 읽힙니다. */
+.post-nav {
+  margin-top: 40px;
+}
+
+.post-nav-link {
+  display: block;
+  color: var(--text);
+}
+.post-nav-link:hover { text-decoration: none; }
+.post-nav-link:hover .post-nav-title { color: var(--accent-2); }
+
+.post-nav-label {
+  display: block;
+  font-size: .82rem;
+  font-weight: 600;
+  color: var(--accent-2);
+}
+
+.post-nav-title {
+  display: block;
+  margin-top: .3rem;
+  font-size: 1.05rem;
+  line-height: 1.45;
+  font-weight: 700;
+  letter-spacing: -.01em;
+  transition: color .15s ease;
+}
+
+/* 가장 최근 글에만 나오는 "이전 글" 은 되돌아가는 방향이라 라벨을 한 톤 낮춰 둡니다. */
+.post-nav-link.is-prev .post-nav-label { color: var(--muted); }
+
+@media (max-width: 560px) {
+  .post-nav-title { font-size: 1rem; }
+}
+
 /* ---------- 저자 카드 (글 하단) ---------- */
 .author-card {
   display: flex;
@@ -664,6 +702,6 @@ main.wrap {
 }
 
 @media print {
-  .site-header, .site-footer, .newsletter, .ad-slot, .cta, .backlink { display: none; }
+  .site-header, .site-footer, .newsletter, .ad-slot, .cta, .backlink, .post-nav { display: none; }
   body { background: #fff; color: #000; }
 }
