@@ -1,16 +1,19 @@
-# codechains — 블로그
+# choworks.dev 블로그
 
-AI 트랜스폼 여정 기록 블로그. **원본(마크다운·빌드 스크립트)만 이 저장소에서 버전 관리**하고,
-GitHub Actions가 push마다 자동으로 빌드→배포합니다. 빌드 결과물(`site/`)은 파생물이라 커밋하지 않습니다.
+AI 트랜스폼 여정을 기록하는 블로그입니다. 마크다운 원본과 빌드 스크립트만 버전 관리하고,
+GitHub Actions가 push마다 빌드해서 배포합니다. 빌드 결과물(`site/`)은 파생물이라 커밋하지 않습니다.
+
+정적 사이트 생성기를 직접 만들어 씁니다. 런타임 의존성은 `front-matter` 와 `marked` 둘뿐이고
+마크다운을 HTML로 바꾸는 변환기는 `scripts/build.js` 파일 하나입니다.
 
 ## 구조
 ```
-codechains.github.io/
+choworks-dev.github.io/
 ├── content/                 # 글·소개 원본(마크다운). ko = content/posts-kr/, en = content/posts-en/
 │   └── site.json            # 사이트 설정(브랜드·태그라인·이메일·customDomain 등)
 ├── assets/                  # 정적 원본(스타일 등). 빌드가 site/assets/ 로 그대로 복사
-│   └── style.css            # 사이트 디자인 원본 — 여기를 고치면 배포에 반영됨
-├── scripts/build.js         # 마크다운 → 정적 HTML 변환기 (계속 발전 가능)
+│   └── style.css            # 사이트 디자인 원본. 여기를 고치면 배포에 반영됨
+├── scripts/build.js         # 마크다운 → 정적 HTML 변환기
 ├── package.json / package-lock.json
 ├── .github/workflows/deploy.yml   # push 시 자동 빌드+배포
 ├── .gitignore               # site/, node_modules/ 등 제외
@@ -23,28 +26,19 @@ codechains.github.io/
 - **빌드된 `site/`의 HTML은 절대 직접 고치지 말 것** (빌드 때마다 덮어써짐).
 - 특수 꾸밈이 필요하면 .md 안에 HTML을 직접 섞어도 됨.
 
-## 글 쓰는 흐름
-1. `content/posts-kr/`에 `YYYY-MM-DD-슬러그.md` 생성(아래 frontmatter 참고). 영어판은 `content/posts-en/`에 같은 파일명.
-2. Cursor 등에서 내용을 직접 수정.
-3. 로컬 미리보기: `npm install`(최초 1회) → `npm run dev` → http://localhost:4000 접속.
-4. 만족하면 `git add -A && git commit -m "..." && git push` → Actions가 자동 배포.
-
-## 로컬 개발 서버
+## 로컬에서 돌려보기
 ```
+npm install     # 최초 1회
 npm run dev     # http://localhost:4000, 저장하면 자동 재빌드 + 브라우저 자동 새로고침
 npm run build   # 1회 빌드만 (site/ 생성)
 ```
 - `content/`, `assets/`, `scripts/build.js` 를 저장하면 즉시 다시 빌드되고 열려 있는 탭이 스스로 새로고침됩니다.
 - 응답에 `no-store` 를 붙이므로 **로컬에서는 Ctrl+F5가 필요 없습니다.**
-- `site/index.html` 을 파일로 직접 열지 말 것 — HTML이 `/assets/style.css` 처럼 루트 절대경로를 쓰기 때문에
+- `site/index.html` 을 파일로 직접 열지 말 것. HTML이 `/assets/style.css` 처럼 루트 절대경로를 쓰기 때문에
   `file://` 로 열면 CSS가 안 잡힙니다. 반드시 위 서버로 확인하세요.
 - 포트를 바꾸려면 `PORT=5000 npm run dev` (PowerShell: `$env:PORT=5000; npm run dev`).
 
-## 초안(draft)
-frontmatter에 `draft: true`를 넣으면 **커밋·백업은 되지만 사이트에는 공개되지 않음**.
-다 다듬은 뒤 `draft: false`(또는 줄 삭제)로 바꿔 push하면 공개됩니다.
-
-## frontmatter 예시
+## frontmatter
 ```
 ---
 title: 글 제목
@@ -55,21 +49,27 @@ draft: true   # 준비되면 지우거나 false
 ---
 본문...
 ```
-새 글은 `content/_post-template.md` 를 `content/posts-kr/YYYY-MM-DD-슬러그.md` 로 복사해서 시작하세요.
+새 글은 `content/_post-template.md` 를 `content/posts-kr/YYYY-MM-DD-슬러그.md` 로 복사해서 시작합니다.
+영어판은 `content/posts-en/` 에 같은 파일명으로 둡니다.
+
+### 초안(draft)
+frontmatter에 `draft: true`를 넣으면 **커밋은 되지만 사이트에는 공개되지 않습니다.**
+다 다듬은 뒤 `draft: false`(또는 줄 삭제)로 바꿔 push하면 공개됩니다.
+아직 다듬는 중이라 `description` 을 채우지 못했다면 `draft: true` 를 넣으세요. 검사 대상에서 제외됩니다.
 
 ## 검색 최적화(SEO)는 빌드가 자동 처리
 frontmatter만 제대로 채우면 아래가 **모든 글에 자동으로** 들어갑니다. HTML을 직접 손댈 일은 없습니다.
 
 - `<title>` / `meta description` / `canonical`
 - Open Graph (`og:type=article`, `og:title/description/url`, `article:published_time`, `og:locale`)
-- 구조화 데이터 JSON-LD (`BlogPosting` — 제목·요약·발행일·저자·발행처·태그)
+- 구조화 데이터 JSON-LD (`BlogPosting`, 제목·요약·발행일·저자·발행처·태그)
 - `hreflang` 한/영 상호 연결, `<time datetime>`, `sitemap.xml` 의 `lastmod`
-- **저자 표기** — 제목 위 `날짜 · 글쓴이` 한 줄, 글 하단 저자 카드(이름·소개·소개 페이지/Email/GitHub 링크)
+- **저자 표기**. 제목 위 `날짜 · 글쓴이` 한 줄, 글 하단 저자 카드(이름·소개·소개 페이지/Email/GitHub 링크)
 
 > 모든 글은 `buildPost()` 하나를 거쳐 생성됩니다. 위 항목은 여기에 들어 있어서
 > **새 글을 추가하면 예외 없이 함께 붙습니다.** 글마다 따로 챙길 것이 없습니다.
-> 저자 이름·소개 문구는 `content/site.json` 의 `author` / `authorBioKo` / `authorBioEn` 한 곳에서 관리하며,
-> 여기를 고치면 과거 글까지 전부 다시 반영됩니다.
+> 저자 이름·소개 문구는 `content/site.json` 의 `authorKo` / `authorEn` / `authorBioKo` / `authorBioEn`
+> 한 곳에서 관리하며, 여기를 고치면 과거 글까지 전부 다시 반영됩니다.
 
 **빌드가 직접 검사합니다.** 아래가 비어 있으면 빌드가 실패해 배포되지 않습니다.
 
@@ -86,24 +86,13 @@ frontmatter만 제대로 채우면 아래가 **모든 글에 자동으로** 들�
 만든다는 뜻입니다. 한쪽만 있으면 그 글은 hreflang 없이 나가고 빌드가 경고합니다.
 영문판은 직역이 아니라 영어권 독자에게 맞춘 판으로 씁니다.
 
-빌드가 막지는 않습니다. 짝을 일부러 미루는 경우도 있기 때문입니다. 다만 경고가 뜬 상태는
-"작업이 끝나지 않았다"는 뜻으로 읽습니다.
+빌드가 막지는 않습니다. 짝을 일부러 미루는 경우도 있기 때문입니다.
 
 ### 문체 규칙: 긴 하이픈을 쓰지 않는다
 독자가 "AI가 쓴 글"이라고 가장 먼저 알아채는 지점이라, 노출되는 모든 텍스트에서 em dash(`—`)와
 en dash(`–`)를 쓰지 않고 쉼표나 마침표로 문장을 다시 구성합니다.
 의도적으로 넣을 때만 직접 넣으며, 그 경우 빌드 경고는 무시해도 됩니다(배포는 정상 진행).
 
-아직 다듬는 중이라 채우지 못했다면 `draft: true` 를 넣으세요. 검사 대상에서 제외됩니다.
-
 ### 대표 이미지(선택)
 `assets/og.png` (1200×630 권장) 를 넣고 `content/site.json` 의 `ogImage` 를 `"/assets/og.png"` 로 채우면
 링크 공유 시 썸네일이 붙습니다. 비워두면 이미지 없는 카드로 안전하게 처리됩니다.
-
-## 배포 설정 (최초 1회)
-- 저장소: `codechains.github.io` (public)
-- **Settings → Pages → Source = "GitHub Actions"**
-- 커스텀 도메인: `content/site.json`의 `customDomain`이 채워지면 빌드가 CNAME을 생성. 현재 값은 `choworks.dev`.
-  (DNS 연결 전에는 비워둘 것. 비어 있으면 CNAME을 만들지 않음)
-- 보조 도메인 `kadecho.dev`는 Cloudflare 리다이렉트 규칙으로 `choworks.dev`에 넘깁니다.
-  GitHub Pages는 저장소당 커스텀 도메인이 하나뿐이라 두 도메인을 동시에 붙일 수 없습니다.
