@@ -194,16 +194,18 @@ function checkPost(p, postsBySlug) {
 }
 
 /* 블로그 글 하나에서 뽑는 배치는 3의 배수(3, 6, 9)로만 만듭니다.
-   하루에 세 편을 올리므로, 3의 배수가 아니면 배치 끝에서 하루가 어중간하게 남습니다.
+   이건 하루에 몇 편을 올리느냐와 상관없습니다. 글 한 편이 도입·전개·마무리로 나뉘는 단위가 셋이라서요.
+   3의 배수가 아니면 소재가 한쪽만 다뤄지다 끊깁니다. 배치는 며칠에 걸쳐 다른 배치와 섞여 나가므로
+   발행 속도(PER_DOW)와는 애초에 맞물리지 않습니다. 둘을 같이 움직이면 안 됩니다.
    소재가 없는 파일(일상 편 등)은 쌓아가는 성격이라 이 규칙에서 뺍니다. */
-const PER_DAY = 3;
+const BATCH_STEP = 3;
 function batchIssues(batches) {
   const out = batches
-    .filter((b) => b.source && b.posts.length % PER_DAY !== 0)
+    .filter((b) => b.source && b.posts.length % BATCH_STEP !== 0)
     .map((b) => {
-      const short = PER_DAY - (b.posts.length % PER_DAY);
-      const down = b.posts.length - (b.posts.length % PER_DAY);
-      return `${b.file}: ${b.posts.length}편입니다. ${b.posts.length + short}편으로 늘리거나 ${down}편으로 줄이세요(3의 배수).`;
+      const short = BATCH_STEP - (b.posts.length % BATCH_STEP);
+      const down = b.posts.length - (b.posts.length % BATCH_STEP);
+      return `${b.file}: ${b.posts.length}편입니다. ${b.posts.length + short}편으로 늘리거나 ${down}편으로 줄이세요(${BATCH_STEP}의 배수).`;
     });
 
   /* 고유번호가 겹치면 번호로 글을 가리키는 일이 전부 어긋납니다.
@@ -313,19 +315,21 @@ const outline = (post) =>
 
 /* ---------- 발행 시각 ----------
    쓰레드는 아직 팔로우하지 않은 계정의 글을 넓게 노출시키는 단계라, 올리는 횟수가 곧 기회입니다.
-   하루 한두 편이면 그 기회를 거의 안 쓰고, 열 편을 넘기면 한 계정이 피드를 덮어 오히려 언팔이 늡니다.
-   그래서 평일 2~3편을 기준으로 둡니다.
+   하루 한 편이면 그 기회를 거의 안 쓰고, 열 편을 넘기면 한 계정이 피드를 덮어 오히려 언팔이 늡니다.
 
-   주말은 다르게 봅니다. 토요일은 아예 쉬고, 일요일은 일상 편 하나만 올립니다.
-   쉬는 날이 있어야 나머지 날이 성실해 보이고, 주말에 일 이야기를 들고 오는 계정은 피곤합니다.
-   읽는 사람도 사장이라 주말에는 일 생각을 안 하고 싶습니다.
+   그런데 첫 계정(@kadecho.dev)이 만든 다음 날 정지됐습니다. 걸린 것은 편수가 아니라
+   계정을 만들자마자 쏟아낸 활동량이었습니다. 새 계정도 같은 속도로 시작하면 같은 결과가 납니다.
+   그래서 평일을 2편으로 낮춰 고정하고, 시작 며칠은 ramp 로 하루 1편까지 더 낮춰 계정을 데웁니다.
 
-   규칙적일수록 손해입니다. 매일 정확히 세 번, 그것도 같은 분에 올라가면 사람이 아니라
-   예약 발행으로 읽힙니다. 그렇게 보이는 계정에는 댓글이 안 붙고, 댓글이 안 붙으면 노출이 떨어집니다.
-   그래서 편수도 분도 매번 다시 뽑습니다. 시간대만 지킵니다. */
+   주말은 토요일 1편, 일요일 0편입니다. 쉬는 날이 있어야 나머지 날이 성실해 보이고,
+   일요일에 일 이야기를 들고 오는 계정은 피곤합니다. 읽는 사람도 사장이라 그날은 일 생각을 안 하고 싶습니다.
 
-/* 하루 편수별 시간대. 21시대는 한국 사용자가 가장 붐비는 시간이라 몇 편이든 항상 씁니다.
-   일요일은 한 편뿐이라 아침과 저녁 중에 고릅니다. 매주 같은 시각이면 그것도 규칙이 됩니다. */
+   규칙적일수록 손해입니다. 같은 시각, 같은 분에 올라가면 사람이 아니라 예약 발행으로 읽힙니다.
+   그렇게 보이는 계정에는 댓글이 안 붙고, 댓글이 안 붙으면 노출이 떨어집니다.
+   편수는 위 규칙으로 고정하되, 시간대와 분은 매번 다시 뽑습니다. */
+
+/* 하루 편수별 시간대. 21시대는 한국 사용자가 가장 붐비는 시간이라 몇 편이든 항상 후보에 둡니다.
+   한 편만 올리는 날은 아침과 저녁 중에 고릅니다. 매번 같은 시각이면 그것도 규칙이 됩니다. */
 const HOUR_SETS = {
   1: [[10], [21]],
   2: [[8, 21], [12, 21], [8, 12]],
@@ -334,116 +338,58 @@ const HOUR_SETS = {
 };
 const pad = (n) => String(n).padStart(2, "0");
 const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
-const dowOfDate = (date) => new Date(`${date}T00:00:00Z`).getUTCDay();
 
-/* 요일 규칙.
-     토요일  안 올립니다. 쉬는 날이 있어야 나머지 날이 성실해 보입니다.
-     일요일  한 편만, 그것도 일상 편으로. 주말에 일 이야기를 들고 오는 계정은 피곤합니다.
-     평일    2~3편. 매일 정확히 세 편이면 사람이 아니라 예약 발행으로 읽힙니다. */
+/* 요일별 편수. 일요일 0 · 평일 2 · 토요일 1.
+   PER_DOW 를 고치면 큐 전체가 따라옵니다(npm run thread -- --replan). */
 const SAT = 6;
 const SUN = 0;
-const MIN_DAY = 2;
-const MAX_DAY = 3;
+const PER_DOW = { 0: 0, 1: 2, 2: 2, 3: 2, 4: 2, 5: 2, 6: 1 };
 
 const iso = (d) => d.toISOString().slice(0, 10);
 const addDay = (d, n) => new Date(d.getTime() + n * 86400000);
 
-/* 편수를 여러 날에 흩습니다. 앞에서부터 3편씩 몰면 주 초반만 시끄러워지므로 자리를 섞습니다. */
-function spread(total, days) {
-  const out = Array(days).fill(MIN_DAY);
-  let extra = total - MIN_DAY * days;
-  const idx = out.map((_, i) => i);
-  for (let i = idx.length - 1; i > 0; i -= 1) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [idx[i], idx[j]] = [idx[j], idx[i]];
-  }
-  for (let k = 0; k < extra && k < idx.length; k += 1) out[idx[k]] += 1;
-  return out;
-}
-
 /* 편들이 나갈 날짜와 시각을 정합니다. kinds 는 큐 순서대로의 성격 배열입니다.
+   순서는 건드리지 않습니다. 번호와 발행 순서가 어긋나면 앞 편을 가리키며 쓴 문장이 뒤로 갑니다.
 
-   일요일에 일상 편이 오게 하는 방법이 두 가지입니다. 편 순서를 바꾸거나, 평일 편수를 조절하거나.
-   여기서는 뒤쪽을 씁니다. 순서를 바꾸면 번호와 발행 순서가 어긋나고, 앞 편을 가리키며 쓴 문장이
-   뒤로 가버립니다. 평일을 2편으로 할지 3편으로 할지는 어차피 매번 다시 뽑는 값이라
-   그걸 조절하는 쪽은 아무것도 망가뜨리지 않습니다.
+   ramp 는 시작 며칠의 편수를 요일 규칙 대신 그대로 씁니다(예: [1, 1, 1]).
+   정지된 계정을 새로 만들고 다시 데울 때 쓰는 값이라 요일도 무시합니다.
+   계정을 만든 직후에 일요일이라고 하루 통째로 쉬면, 그날 한 편 올리는 것보다 오히려 손해입니다.
 
-   못 맞추는 주가 있으면 경고만 내고 넘어갑니다. 날짜가 아예 안 정해지는 것보다 낫습니다. */
-function planSchedule(kinds, startDate) {
+   주말에 업무 편이 놓이면 경고만 냅니다. 여기서 순서를 바꿔 고치지는 않습니다.
+   순서를 바꾸는 값과 날짜를 정하는 값을 한 함수에서 같이 만지면 무엇이 무엇을 밀었는지 알 수 없게 됩니다. */
+function planSchedule(kinds, startDate, ramp) {
   const out = [];
   const warn = [];
+  const head = Array.isArray(ramp) ? ramp : [];
   let i = 0;
+  let n = 0;
   let day = new Date(`${startDate}T00:00:00Z`);
 
-  const put = (date, size) => {
-    pick(HOUR_SETS[size]).forEach((h) => {
-      // 분은 1~59. 정각을 빼는 이유는 08:00 같은 시각이 예약 발행처럼 보이는 대표적인 모양이라서입니다.
-      out.push(`${date} ${pad(h)}:${pad(1 + Math.floor(Math.random() * 59))}`);
-      i += 1;
-    });
-  };
-
   while (i < kinds.length) {
-    // 다음 일요일까지의 평일들을 모읍니다. 토요일은 빼고요.
-    const weekdays = [];
-    let cur = new Date(day);
-    while (cur.getUTCDay() !== SUN) {
-      if (cur.getUTCDay() !== SAT) weekdays.push(iso(cur));
-      cur = addDay(cur, 1);
-    }
-    const sunday = iso(cur);
-    const left = kinds.length - i;
-    const W = weekdays.length;
-
-    if (!W) {
-      // 오늘이 일요일입니다
-      if (kinds[i] !== "life") warn.push(`${sunday} (일) 에 업무 편이 놓입니다.`);
-      put(sunday, 1);
-      day = addDay(cur, 1);
-      continue;
-    }
-
-    /* 일요일까지 갈 만큼 남았으면, 일요일 자리에 일상 편이 오도록 평일 총량을 고릅니다.
-       고를 수 있는 폭은 평일 하루 2~3편이라 [2W, 3W] 입니다. */
-    const lo = MIN_DAY * W;
-    const hi = MAX_DAY * W;
-    let total;
-    if (left > hi) {
-      const mid = Math.round((MIN_DAY + MAX_DAY) / 2 * W);
-      const fit = [];
-      for (let t = lo; t <= hi; t += 1) if (kinds[i + t] === "life") fit.push(t);
-      total = fit.length
-        ? fit.sort((a, b) => Math.abs(a - mid) - Math.abs(b - mid))[0]
-        : (warn.push(`${sunday} (일) 에 놓을 일상 편이 없습니다.`), mid);
-    } else {
-      total = left; // 이번 주 평일에 다 들어갑니다. 일요일까지 안 갑니다.
-    }
-
-    // 평일에 뿌립니다. 남은 편이 적으면 하루 2편도 못 채우므로 앞날부터 채우고 멈춥니다.
-    let dist = total >= lo ? spread(total, W) : [];
-    if (!dist.length) {
-      let rest = total;
-      for (const _ of weekdays) {
-        if (rest <= 0) break;
-        const size = Math.min(rest === MAX_DAY + 1 ? MIN_DAY : Math.min(MAX_DAY, rest), rest);
-        dist.push(size);
-        rest -= size;
+    const dow = day.getUTCDay();
+    const rule = n < head.length ? head[n] : PER_DOW[dow];
+    const size = Math.min(rule, kinds.length - i); // 마지막 날은 남은 만큼만
+    if (size > 0) {
+      const date = iso(day);
+      if (dow === SAT || dow === SUN) {
+        const work = kinds.slice(i, i + size).filter((k) => k !== "life").length;
+        if (work) warn.push(`${date} (${dow === SAT ? "토" : "일"}) 에 업무 편이 ${work}편 놓입니다.`);
       }
+      pick(HOUR_SETS[size]).forEach((h) => {
+        // 분은 1~59. 정각을 빼는 이유는 08:00 같은 시각이 예약 발행처럼 보이는 대표적인 모양이라서입니다.
+        out.push(`${date} ${pad(h)}:${pad(1 + Math.floor(Math.random() * 59))}`);
+        i += 1;
+      });
     }
-    dist.forEach((size, k) => size && put(weekdays[k], size));
-
-    if (i >= kinds.length) break;
-
-    if (kinds[i] !== "life") warn.push(`${sunday} (일) 에 업무 편이 놓입니다.`);
-    put(sunday, 1);
-    day = addDay(cur, 1);
+    day = addDay(day, 1);
+    n += 1;
   }
 
   return { when: out, warn };
 }
 
-/* 성격을 모르는 자리(새 배치 뼈대)에서 부릅니다. 전부 업무로 보고 일요일을 비워 둡니다.
-   일요일 자리는 일상 편의 것이라, 업무 배치가 미리 차지하면 나중에 끼울 데가 없습니다. */
+/* 성격을 모르는 자리(새 배치 뼈대)에서 부릅니다. 전부 업무로 봅니다.
+   주말 자리는 일상 편의 것이라, 업무 배치가 미리 차지하면 경고가 뜹니다. */
 function scheduleFor(startDate, count, kinds) {
   return planSchedule(kinds || Array(count).fill("work"), startDate).when;
 }
@@ -452,8 +398,8 @@ function seedFrom(post, startDate, afterId) {
   const hooks = hookCandidates(post);
   const heads = outline(post);
   let id = afterId || "";
-  // 소제목 수에서 출발하되 3의 배수로 맞춥니다(3, 6, 9). 하루 세 편이 기준이라 딱 떨어져야 합니다.
-  const count = Math.min(Math.max(Math.round(heads.length / PER_DAY) * PER_DAY, PER_DAY), PER_DAY * 3);
+  // 소제목 수에서 출발하되 3의 배수로 맞춥니다(3, 6, 9). 소재가 한쪽만 다뤄지다 끊기지 않게.
+  const count = Math.min(Math.max(Math.round(heads.length / BATCH_STEP) * BATCH_STEP, BATCH_STEP), BATCH_STEP * 3);
   const when = scheduleFor(startDate, count);
 
   const body = when
@@ -602,12 +548,12 @@ function writeText(dir, id, part, text) {
    규칙이 바뀌면 이미 짜둔 큐도 같이 바뀌어야 합니다. 마흔 줄을 손으로 고치면 반드시 실수가 납니다.
    순서는 건드리지 않습니다. 번호와 발행 순서가 어긋나면 앞 편을 가리키며 쓴 문장이 뒤로 갑니다.
    발행한 편은 지나간 기록이라 그대로 둡니다. */
-function replan(dir, startDate) {
+function replan(dir, startDate, ramp) {
   const queue = queueOf(loadThreads(dir));
   const todo = queue.filter((p) => p.status !== "posted");
   if (!todo.length) return { moved: 0, warn: [], first: "", last: "" };
 
-  const { when, warn } = planSchedule(todo.map((p) => p.kind), startDate);
+  const { when, warn } = planSchedule(todo.map((p) => p.kind), startDate, ramp);
   const at = new Map(todo.map((p, i) => [p.id, when[i]]));
 
   const files = fs.readdirSync(dir).filter((f) => f.endsWith(".md") && !f.startsWith("_"));
@@ -667,10 +613,15 @@ function cli(argv) {
   const replanArg = argv.find((a) => /^--replan(=\d{4}-\d{2}-\d{2})?$/.test(a));
   if (replanArg) {
     const start = replanArg.includes("=") ? replanArg.split("=")[1] : new Date().toISOString().slice(0, 10);
-    const r = replan(THREADS, start);
+    /* --ramp=1,1,1 은 시작 며칠의 편수를 요일 규칙 대신 그대로 씁니다.
+       계정을 새로 만들어 다시 데우는 동안에만 씁니다. */
+    const rampArg = argv.find((a) => /^--ramp=\d+(,\d+)*$/.test(a));
+    const ramp = rampArg ? rampArg.split("=")[1].split(",").map(Number) : [];
+    const r = replan(THREADS, start, ramp);
     console.log(`아직 안 올린 ${r.moved}편의 날짜와 시각을 다시 짰습니다.`);
     console.log(`  ${r.first} 부터 ${r.last} 까지`);
-    console.log("  토요일 0편 · 일요일 1편(일상) · 평일 2~3편");
+    if (ramp.length) console.log(`  처음 ${ramp.length}일은 ${ramp.join(" · ")}편 (계정 데우기)`);
+    console.log("  그 뒤로 평일 2편 · 토요일 1편 · 일요일 0편");
     r.warn.forEach((m) => console.log(`  경고: ${m}`));
     console.log("발행한 편은 건드리지 않았습니다.");
     return;
@@ -745,4 +696,4 @@ function cli(argv) {
 
 if (require.main === module) cli(process.argv.slice(2));
 
-module.exports = { LIMIT, SOFT, PER_DAY, STATUS, KIND, loadThreads, queueOf, queueStats, checkPost, batchIssues, countChars, seedFrom, scheduleFor, nextId, fillIds, writeIds, markPosted, writeText, planSchedule, replan };
+module.exports = { LIMIT, SOFT, BATCH_STEP, STATUS, KIND, loadThreads, queueOf, queueStats, checkPost, batchIssues, countChars, seedFrom, scheduleFor, nextId, fillIds, writeIds, markPosted, writeText, planSchedule, replan };
