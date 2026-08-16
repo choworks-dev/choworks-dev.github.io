@@ -134,6 +134,8 @@ button.copy.sync{visibility:visible;margin-left:.2rem}
 .howto .note{color:#5c6478;font-size:.76rem;margin-top:.4rem}
 .b-ready{background:#12222f;color:#7dd3fc}
 .b-posted{background:#1c1c24;color:#8b93a7}
+/* 알림은 갔는데 올렸다는 답이 안 온 편. 손이 가야 하는 자리라 호박색으로 둡니다. */
+.b-wait{background:#2b2313;color:#e8c67d}
 .b-th-none{background:#241a1f;color:#c98b9b}
 .b-work{background:#1a2233;color:#9db4e8}
 .b-life{background:#2a1f30;color:#d8a9e8}
@@ -622,6 +624,9 @@ function postCard(p) {
       <span class="when">${esc(p.time || "시각 미정")}</span>
       <span class="badge ${kcls}">${klabel}</span>
       <span class="badge ${scls}">${slabel}</span>
+      ${p.remindedAt && p.status !== "posted"
+        ? `<span class="badge b-wait" title="${esc(p.remindedAt.replace("T", " "))} 에 텔레그램으로 보냈습니다. 올렸으면 그 알림에 답장하세요.">알림 보냄</span>`
+        : ""}
     </div>
     ${issueLines(p.issues)}
     ${parts || `<p class="empty">내용이 비어 있습니다.</p>`}
@@ -642,6 +647,8 @@ function threadsView(queue, stats, contentDir, batches) {
     ? `남은 ${stats.left}편 · 업무 ${stats.work} / 일상 ${stats.life}` +
       ` · 준비됨 ${stats.ready}${stats.draft ? ` / 초안 ${stats.draft}` : ""}` +
       (stats.undated ? ` · 날짜 미정 ${stats.undated}` : "") +
+      // 알림은 갔는데 올렸다는 답이 안 온 편. 쌓이면 알림을 놓치고 있다는 뜻입니다.
+      (stats.waiting ? ` · 확인 대기 ${stats.waiting}` : "") +
       (stats.posted ? ` · 발행 ${stats.posted}` : "")
     : `남은 편이 없습니다${stats.posted ? ` (발행 ${stats.posted}편)` : ""}`;
 

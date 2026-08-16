@@ -25,6 +25,7 @@
 
    === 뒤의 토큰은 순서를 가리지 않고, 없어도 됩니다.
      날짜 2026-08-04 · 시각 08:20 · 성격 work|life · 상태 draft|ready|posted
+     ~2026-08-04T08:20 알림을 보낸 시각 · @2026-08-04T08:23 실제로 올린 시각 (자동화가 남깁니다)
    <!-- 이렇게 --> 적은 메모는 글자 수에도 복사에도 들어가지 않습니다.
 
    쓰기:  node scripts/threads.js <블로그슬러그>   (그 글에서 배치 뼈대를 만듭니다)
@@ -84,18 +85,34 @@ function nextId(id) {
    날짜만, 시각만, 성격만 적어도 됩니다. 못 알아본 토큰은 조용히 버리지 않고 그대로 돌려주어
    오타(예: redy)가 화면에서 눈에 띄게 합니다. */
 function parseMeta(line) {
-  const out = { id: "", date: "", time: "", kind: "", status: "", postedAt: "", unknown: [] };
+  const out = { id: "", date: "", time: "", kind: "", status: "", postedAt: "", remindedAt: "", unknown: [] };
   String(line).trim().split(/\s+/).filter(Boolean).forEach((tok) => {
     if (/^\d{4}-\d{2}-\d{2}$/.test(tok)) out.date = tok;
     else if (ID_RE.test(tok)) out.id = tok;
-    // @2026-08-03T09:02 는 실제로 올라간 시각입니다. 발행 자동화가 남깁니다.
+    // @2026-08-03T09:02 는 실제로 올라간 시각입니다. 발행 표시를 남길 때 붙습니다.
     else if (/^@/.test(tok)) out.postedAt = tok.slice(1);
+    // ~2026-08-03T09:02 는 "올릴 차례" 알림을 보낸 시각입니다. 알림 자동화가 남깁니다.
+    else if (/^~/.test(tok)) out.remindedAt = tok.slice(1);
     else if (/^\d{1,2}:\d{2}$/.test(tok)) out.time = tok.padStart(5, "0");
     else if (Object.prototype.hasOwnProperty.call(KIND, tok)) out.kind = tok;
     else if (Object.prototype.hasOwnProperty.call(STATUS, tok)) out.status = tok;
     else out.unknown.push(tok);
   });
   return out;
+}
+
+/* === 줄을 표준 형태로 다시 씁니다.  === 날짜 번호 시각 성격 상태 ~알림 @발행
+   파서는 순서를 가리지 않지만, 파일을 눈으로 볼 때 자리가 고정돼 있어야 읽힙니다.
+
+   줄을 다시 쓰는 곳이 다섯 군데인데, 각자 배열을 만들면 한 곳에서 시각 표시를 빠뜨립니다.
+   실제로 그렇게 해서 번호를 채울 때 @발행 시각이 조용히 지워지고 있었습니다.
+   그래서 한 곳에서만 만듭니다. 바꿀 값만 patch 로 주고 나머지는 읽은 그대로 둡니다. */
+function metaLine(m, patch) {
+  const v = { ...m, ...(patch || {}) };
+  const toks = [v.date, v.id, v.time, v.kind, v.status, ...(v.unknown || [])];
+  if (v.remindedAt) toks.push(`~${v.remindedAt}`);
+  if (v.postedAt) toks.push(`@${v.postedAt}`);
+  return `=== ${toks.filter(Boolean).join(" ")}`;
 }
 
 /* 한 편 안에서 답글로 이어 붙일 때만 쓰는 경계.
@@ -134,6 +151,9 @@ function parseBatch(file, raw) {
       kind: meta.kind || baseKind,
       status: meta.status || "draft",
       postedAt: meta.postedAt,
+      /* 알림은 나갔는데 아직 발행 표시가 없는 편 = 올리라고 알렸지만 올렸다는 답을 못 받은 편입니다.
+         큐는 이 편을 지나 다음으로 넘어가되, 화면에는 확인이 안 됐다고 남겨 둡니다. */
+      remindedAt: meta.remindedAt,
       unknown: meta.unknown,
       parts,
       len: parts.reduce((m, p) => Math.max(m, p.len), 0),
@@ -266,6 +286,9 @@ function queueStats(queue) {
     draft: left.filter((p) => p.status === "draft").length,
     ready: left.filter((p) => p.status === "ready").length,
     undated: left.filter((p) => !p.date).length,
+    /* 올리라고 알림은 갔는데 올렸다는 답이 안 온 편.
+       하나쯤은 방금 알림이 간 것이고, 쌓이기 시작하면 알림을 놓치고 있다는 뜻입니다. */
+    waiting: left.filter((p) => p.remindedAt).length,
     longestWorkRun: worst,
     longestTopicRun: worstTopic,
   };
@@ -440,17 +463,16 @@ function writeIds(dir) {
       const m = parseMeta(line.replace(/^=== */, ""));
       const id = m.id || assigned.get(`${b.file}#${seen}`) || "";
       if (!m.id && id) added += 1;
-      return `=== ${[m.date, id, m.time, m.kind, m.status, ...m.unknown].filter(Boolean).join(" ")}`;
+      return metaLine(m, { id });
     });
     fs.writeFileSync(file, out);
   });
   return added;
 }
 
-/* 발행한 편에 표시를 남깁니다. 고유번호로 찾아 상태만 바꿉니다.
-   발행 자동화가 성공한 직후에 부릅니다. 이게 안 되면 다음 실행이 같은 편을 또 올립니다.
-   그래서 찾지 못하면 조용히 넘어가지 않고 예외를 던집니다. */
-function markPosted(dir, id, when) {
+/* 편 하나의 === 줄에 표시를 남깁니다. 고유번호로 찾습니다.
+   찾지 못하면 조용히 넘어가지 않고 예외를 던집니다. 표시가 안 남으면 같은 편이 두 번 나갑니다. */
+function mark(dir, id, patch) {
   const files = fs.readdirSync(dir).filter((f) => f.endsWith(".md") && !f.startsWith("_"));
   for (const f of files) {
     const p = path.join(dir, f);
@@ -460,16 +482,30 @@ function markPosted(dir, id, when) {
       const m = parseMeta(line.replace(/^=== */, ""));
       if (m.id !== id || hit) return line;
       hit = true;
-      const parts = [m.date, m.id, m.time, m.kind, "posted", ...m.unknown].filter(Boolean);
-      // 올린 시각을 뒤에 남깁니다. 예약 시각과 실제 시각이 얼마나 벌어졌는지 나중에 볼 수 있게.
-      return `=== ${parts.join(" ")}${when ? ` @${when}` : ""}`;
+      return metaLine(m, patch);
     });
     if (hit) {
       fs.writeFileSync(p, out);
       return f;
     }
   }
-  throw new Error(`${id} 를 찾지 못했습니다. 표시를 못 남기면 다음 실행이 같은 편을 또 올립니다.`);
+  throw new Error(`${id} 를 찾지 못했습니다. 표시를 못 남기면 같은 편이 또 나갑니다.`);
+}
+
+/* 발행한 편에 표시를 남깁니다.
+   손으로 올린 뒤 텔레그램에 답장하면 알림 자동화가 그 답장을 읽고 여기를 부릅니다.
+   올린 시각을 @ 뒤에 남깁니다. 예약 시각과 실제 시각이 얼마나 벌어졌는지 나중에 볼 수 있게. */
+function markPosted(dir, id, when) {
+  return mark(dir, id, { status: "posted", postedAt: when || "" });
+}
+
+/* "이제 이걸 올리세요" 알림을 보낸 편에 표시를 남깁니다. 상태는 준비됨 그대로입니다.
+
+   알림을 보낸 것과 실제로 올린 것은 다른 일이라 표시를 나눕니다.
+   알림만 보고 발행됨으로 적어버리면, 알림을 놓친 편이 올라간 것으로 기록되어 조용히 사라집니다.
+   ~ 표시가 하는 일은 하나입니다. 같은 편에 알림을 두 번 보내지 않게 하는 것. */
+function markReminded(dir, id, when) {
+  return mark(dir, id, { remindedAt: when || "" });
 }
 
 /* 관리 화면에서 고친 본문을 파일에 다시 씁니다.
@@ -568,7 +604,7 @@ function replan(dir, startDate, ramp) {
       if (!slot || m.status === "posted") return line;
       const [date, time] = slot.split(" ");
       moved += 1;
-      return `=== ${[date, m.id, time, m.kind, m.status, ...m.unknown].filter(Boolean).join(" ")}`;
+      return metaLine(m, { date, time });
     });
     fs.writeFileSync(p, crlf ? out.replace(/\n/g, "\r\n") : out);
   });
@@ -590,7 +626,7 @@ function shiftDays(dir, days) {
       const d = new Date(`${m.date}T00:00:00Z`);
       d.setUTCDate(d.getUTCDate() + days);
       moved += 1;
-      return `=== ${[d.toISOString().slice(0, 10), m.id, m.time, m.kind, m.status, ...m.unknown].filter(Boolean).join(" ")}`;
+      return metaLine(m, { date: d.toISOString().slice(0, 10) });
     });
     fs.writeFileSync(p, out);
   });
@@ -607,6 +643,29 @@ function cli(argv) {
   if (argv.includes("--ids")) {
     const added = writeIds(THREADS);
     console.log(added ? `고유번호 ${added}개를 붙였습니다.` : "번호가 빠진 편이 없습니다.");
+    return;
+  }
+
+  /* 손으로 올린 편에 발행 표시를 남깁니다.  npm run thread -- --posted=AA03
+     평소에는 텔레그램에 답장하는 것으로 끝나고, 이건 답장이 안 먹혔을 때 쓰는 손잡이입니다.
+     번호를 안 주면 알림만 가고 확인이 안 된 편을 전부 발행됨으로 바꿉니다. */
+  const postedArg = argv.find((a) => /^--posted(=[A-Z]{2}\d{2}(,[A-Z]{2}\d{2})*)?$/.test(a));
+  if (postedArg) {
+    const now = new Date(Date.now() + 9 * 3600 * 1000).toISOString().slice(0, 16);
+    const ids = postedArg.includes("=")
+      ? postedArg.split("=")[1].split(",")
+      : queueOf(loadThreads(THREADS)).filter((p) => p.status !== "posted" && p.remindedAt).map((p) => p.id);
+    if (!ids.length) {
+      console.log("확인을 기다리는 편이 없습니다.");
+      return;
+    }
+    ids.forEach((id) => {
+      try {
+        console.log(`${id} 발행됨 (${now.replace("T", " ")}) · ${markPosted(THREADS, id, now)}`);
+      } catch (e) {
+        console.error(`[건너뜀] ${e.message}`);
+      }
+    });
     return;
   }
 
@@ -645,6 +704,11 @@ function cli(argv) {
   if (!args.length) {
     console.log(`큐: 남은 ${stats.left}편 (업무 ${stats.work} · 일상 ${stats.life} / 준비됨 ${stats.ready} · 초안 ${stats.draft}), 발행 ${stats.posted}편`);
     if (stats.undated) console.log(`  날짜 없는 편 ${stats.undated}개`);
+    if (stats.waiting) {
+      const wait = queue.filter((p) => p.status !== "posted" && p.remindedAt);
+      console.log(`  알림만 가고 발행 확인이 안 된 편 ${stats.waiting}개: ${wait.map((p) => p.id).join(", ")}`);
+      console.log("    올렸으면 텔레그램에 답장하거나  npm run thread -- --posted");
+    }
     if (stats.longestWorkRun >= 4) console.log(`  업무 글이 연속 ${stats.longestWorkRun}편입니다. 사이에 일상 편을 끼우세요.`);
     batchIssues(batches).forEach((m) => console.log(`  ${m}`));
 
@@ -696,4 +760,4 @@ function cli(argv) {
 
 if (require.main === module) cli(process.argv.slice(2));
 
-module.exports = { LIMIT, SOFT, BATCH_STEP, STATUS, KIND, loadThreads, queueOf, queueStats, checkPost, batchIssues, countChars, seedFrom, scheduleFor, nextId, fillIds, writeIds, markPosted, writeText, planSchedule, replan };
+module.exports = { LIMIT, SOFT, BATCH_STEP, STATUS, KIND, loadThreads, queueOf, queueStats, checkPost, batchIssues, countChars, seedFrom, scheduleFor, nextId, fillIds, writeIds, markPosted, markReminded, writeText, planSchedule, replan };

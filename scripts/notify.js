@@ -1,8 +1,12 @@
 /* ============================================================
-   발행 알림 (왓츠앱)
+   알림 보내기
 
-   쓰레드에 글이 올라가면 링크와 함께 알려 줍니다.
-   자동 발행은 사람이 안 보는 사이에 도는 일이라, 잘 나갔는지 확인할 길이 하나는 있어야 합니다.
+   쓰레드에 올릴 차례가 되면 원고를 폰으로 보내 줍니다(scripts/threads-remind.js).
+   무언가 실패했을 때도 여기로 알립니다.
+
+   지금 이 저장소가 실제로 쓰는 것은 텔레그램뿐입니다.
+   원고를 통째로 보내야 하고, 올렸다는 답장을 되받아야 하는데 그게 되는 쪽이 텔레그램입니다.
+   아래 왓츠앱 두 갈래는 발행 결과만 알리던 시절의 것이라 그대로 둡니다.
 
    세 가지 길이 있고, 설정된 쪽으로 보냅니다. 아무것도 설정하지 않으면 조용히 넘어갑니다.
 
@@ -47,6 +51,49 @@ async function telegram({ head, link }) {
   const body = await r.text();
   if (!r.ok) throw new Error(`텔레그램 ${r.status} ${body.slice(0, 300)}`);
   return true;
+}
+
+/* 텔레그램으로 글 한 통을 있는 그대로 보냅니다.
+   정해진 문구를 보내는 위쪽과 달리, 쓰레드 원고처럼 한 글자도 바뀌면 안 되는 것에 씁니다.
+
+   서식(parse_mode)을 주지 않습니다. 원고에 * 나 _ 가 있으면 서식 기호로 먹혀 글자가 사라집니다.
+   복사해서 그대로 올릴 글이라 그렇게 되면 알아채기도 어렵습니다.
+   링크 미리보기도 끕니다. 카드가 붙으면 정작 복사할 글이 화면 밖으로 밀립니다. */
+async function tgSend(text) {
+  const token = process.env.TELEGRAM_TOKEN;
+  const chat = process.env.TELEGRAM_CHAT_ID;
+  if (!token || !chat) throw new Error("TELEGRAM_TOKEN 과 TELEGRAM_CHAT_ID 가 없습니다.");
+
+  const r = await fetch(`https://api.telegram.org/bot${token}/sendMessage`, {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ chat_id: chat, text, disable_web_page_preview: true }),
+    signal: timeout(20000),
+  });
+  const body = await r.text();
+  if (!r.ok) throw new Error(`텔레그램 ${r.status} ${body.slice(0, 300)}`);
+  return JSON.parse(body).result;
+}
+
+/* 봇에게 온 답장들. "올렸다"는 확인을 이걸로 받습니다.
+
+   웹훅을 두지 않습니다. 서버가 없어야 이 저장소가 계속 정적 사이트로 남습니다.
+   대신 알림 회차가 돌 때마다 물어봅니다. 읽었다는 확인(offset)을 보내지 않아서
+   같은 답장이 24시간 동안 계속 보입니다. 그래서 부르는 쪽에서 반드시 시각으로 걸러야 합니다.
+   안 그러면 어제의 "ok" 하나가 오늘 편까지 올린 것으로 만듭니다. */
+async function tgUpdates() {
+  const token = process.env.TELEGRAM_TOKEN;
+  const chat = String(process.env.TELEGRAM_CHAT_ID || "");
+  if (!token || !chat) return [];
+
+  const r = await fetch(`https://api.telegram.org/bot${token}/getUpdates?limit=100`, { signal: timeout(20000) });
+  const body = await r.text();
+  if (!r.ok) throw new Error(`텔레그램 ${r.status} ${body.slice(0, 300)}`);
+  return (JSON.parse(body).result || [])
+    .map((u) => u.message || u.edited_message)
+    .filter((m) => m && m.text && String(m.chat && m.chat.id) === chat)
+    .map((m) => ({ at: m.date * 1000, text: String(m.text).trim() }))
+    .sort((a, b) => a.at - b.at);
 }
 
 async function whatsappCloud({ head, link }) {
@@ -143,7 +190,7 @@ async function notifyFailed({ what, url }) {
   return false;
 }
 
-module.exports = { notifyPosted, notifyFailed };
+module.exports = { notifyPosted, notifyFailed, tgSend, tgUpdates };
 
 /* 액션에서 바로 부를 수 있게 해둡니다.
      node scripts/notify.js fail "쓰레드 발행" "https://github.com/.../runs/123" */

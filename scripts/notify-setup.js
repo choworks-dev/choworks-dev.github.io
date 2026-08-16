@@ -1,7 +1,12 @@
 /* ============================================================
-   발행 알림 켜기 (이 PC 에서 한 번만 돌립니다)
+   쓰레드 알림 켜기 (이 PC 에서 한 번만 돌립니다)
+
+   올릴 차례가 되면 원고가 텔레그램으로 옵니다. 복사해서 쓰레드에 붙여넣고, 그 알림에
+   답장하면 발행 표시가 남습니다(scripts/threads-remind.js).
 
    실행:  npm run notify
+          gh 의 active 계정이 choworks-dev 여야 시크릿이 실운영 저장소에 들어갑니다.
+          gh auth switch --user choworks-dev
 
    하는 일
      1. 봇 토큰을 물어보고 진짜 봇인지 확인합니다
@@ -110,7 +115,7 @@ async function findChat(token, tries = 10) {
 }
 
 async function main() {
-  console.log("쓰레드 발행 알림을 켭니다 (텔레그램).\n");
+  console.log("쓰레드 알림을 켭니다 (텔레그램).\n");
   console.log("아직 봇이 없다면 먼저 이것부터 하세요.");
   console.log("  1. 텔레그램에서 @BotFather 를 찾아 대화 시작");
   console.log("  2. /newbot 보내기");
@@ -144,21 +149,29 @@ async function main() {
   const who = chat.username ? `@${chat.username}` : [chat.first_name, chat.last_name].filter(Boolean).join(" ");
   console.log(`\n대화방 확인: ${who || chat.id}\n`);
 
-  // 시험 알림. 진짜 발행 때와 같은 코드를 그대로 씁니다.
+  /* 시험 알림. 진짜 알림과 같은 코드(tgSend)로, 같은 모양으로 보냅니다.
+     시험에 진짜처럼 보이는 원고를 넣으면 나중에 그게 원래 오는 것인 줄 알게 되므로,
+     시험이라는 것이 첫 줄에서 바로 드러나게 둡니다. */
   process.env.TELEGRAM_TOKEN = token;
   process.env.TELEGRAM_CHAT_ID = String(chat.id);
   console.log("시험 알림을 보냅니다...");
-  /* 진짜 발행 때는 여기에 쓰레드 글 주소가 들어갑니다.
-     시험에 블로그 주소 같은 진짜 링크를 넣으면, 나중에 그게 원래 오는 것인 줄 알게 됩니다.
-     그래서 시험이라는 것이 문구에서 바로 드러나게 둡니다. */
-  const sent = await require("./notify").notifyPosted({
-    id: "시험 (실제 발행이 아닙니다)",
-    at: new Date(Date.now() + 9 * 3600 * 1000).toISOString().slice(0, 16).replace("T", " "),
-    len: 0,
-    link: "여기에 실제 쓰레드 글 주소가 들어갑니다",
-  });
+  let sent = true;
+  try {
+    const tg = require("./notify");
+    await tg.tgSend([
+      "시험입니다. 실제 알림이 아닙니다.",
+      "",
+      "올릴 차례가 되면 이 자리에 편 번호와 예약 시각이 오고,",
+      "바로 다음 메시지로 원고가 통째로 옵니다.",
+      "그 메시지를 복사해서 쓰레드에 붙여넣으면 끝입니다.",
+    ].join("\n"));
+    await tg.tgSend("(이 통에 원고만 들어옵니다. 길게 눌러 복사하세요.)");
+  } catch (e) {
+    console.error(`\n보내지 못했습니다: ${e.message}`);
+    sent = false;
+  }
   if (!sent) {
-    console.error("\n보내지 못했습니다. 깃허브에는 아무것도 넣지 않았습니다.");
+    console.error("깃허브에는 아무것도 넣지 않았습니다.");
     process.exitCode = 1;
     return;
   }
@@ -173,7 +186,11 @@ async function main() {
   console.log("\n깃허브 시크릿에 넣는 중...");
   set("TELEGRAM_TOKEN", token);
   set("TELEGRAM_CHAT_ID", String(chat.id));
-  console.log("\n됐습니다. 이제 글이 올라갈 때마다 링크가 텔레그램으로 옵니다.");
+  console.log("\n됐습니다. 이제 올릴 차례가 되면 원고가 텔레그램으로 옵니다.");
+  console.log("복사해서 쓰레드에 올린 뒤, 그 알림에 아무 답장이나 보내면 발행 표시가 남습니다.");
+  console.log("\n아직 알림 자동화가 꺼져 있다면:");
+  console.log("  gh variable set THREADS_ENABLED --body 1");
+  console.log("  gh workflow enable '쓰레드 알림'");
 }
 
 main()
