@@ -23,6 +23,7 @@
 
    올렸다는 확인
      알림에 아무 답장이나 보내면 다음 회차가 그걸 읽고 발행 표시를 남깁니다.
+     그 메시지에 대고 reply 로 답하면 어느 편인지 정확히 잡습니다(밀린 편이 둘 이상일 때 중요).
      알림을 보낸 것(~)과 실제로 올린 것(@)은 다른 표시입니다. 알림만 보고 발행됨으로 적으면
      놓친 편이 올라간 것으로 기록되어 조용히 사라집니다.
      답장이 안 먹혔으면 이 PC 에서:  npm run thread -- --posted=AA03
@@ -62,27 +63,52 @@ const scheduledAt = (p) => new Date(`${p.date}T${p.time}:00+09:00`).getTime();
 const stampAt = (s) => new Date(`${s}:00+09:00`).getTime(); // ~ · @ 표시를 진짜 시각으로
 
 /* 답장을 읽어 발행 표시를 남깁니다.
+   답장 하나가 편 하나를 확인합니다. 어느 편인지는 이 순서로 찾습니다.
 
-   답장 하나가 편 하나를 확인합니다. 번호(AA03)가 적혀 있으면 그 편, 없으면 확인을 기다리는
-   가장 오래된 편입니다. 폰에서 "ㅇ" 한 글자만 보내도 되게 하려는 것입니다.
+     1. 답장 본문에 적은 번호(AA03). 적었는데 확인 대기에 없으면 그 답장은 버립니다.
+        "AA03 올렸음" 을 엉뚱한 편의 확인으로 쓰는 것보다, 아무 일도 안 일어나는 쪽이 낫습니다.
+     2. 답장이 달린 원래 메시지. 안내문 통이면 거기 번호가 있고, 원고 통이면 원고가 그대로 있어
+        어느 편인지 그대로 나옵니다. 폰에서 그 메시지에 대고 답장하면 여기서 걸립니다.
+     3. 아무 통에나 그냥 보낸 답장이면 확인 대기 중 가장 오래된 편.
+
+   ID 로 찾는 자리를 2번에서 느슨하게 두는 이유는, 원고 본문에 우연히 "AB12" 꼴이 있을 수
+   있기 때문입니다. 확인 대기 목록에 있는 번호일 때만 씁니다.
 
    반드시 알림을 보낸 시각보다 뒤에 온 답장만 봅니다.
    텔레그램은 읽지 않은 답장을 24시간 동안 계속 돌려주기 때문에, 이 조건이 없으면
    어제 보낸 "ㅇ" 하나가 오늘 알림까지 올린 것으로 만듭니다. */
+const ID_IN = /\b[A-Za-z]{2}\d{2}\b/g;
+const norm = (s) => String(s || "").replace(/\s+/g, " ").trim();
+
 function matchConfirms(pending, msgs) {
   const left = [...pending].sort((a, b) => stampAt(a.remindedAt) - stampAt(b.remindedAt));
   const hits = [];
   msgs.forEach((m) => {
     // 안 올렸다는 답장은 확인으로 치지 않습니다. 그 편은 확인 대기로 그대로 둡니다.
     if (/취소|안\s*올|나중|\bskip\b|\bno\b/i.test(m.text)) return;
-    /* 번호를 적었으면 그 편만 봅니다. 적었는데 그 편이 확인 대기에 없으면 아무것도 안 합니다.
-       "AA03 올렸음" 을 엉뚱한 편의 확인으로 쓰는 것보다, 아무 일도 안 일어나는 쪽이 낫습니다. */
-    const named = (m.text.match(/\b[A-Za-z]{2}\d{2}\b/) || [])[0];
     const fresh = (p) => m.at >= stampAt(p.remindedAt); // 알림보다 뒤에 온 답장만
-    const i = named
-      ? left.findIndex((p) => p.id === named.toUpperCase() && fresh(p))
-      : left.findIndex(fresh);
+    const quoted = norm(m.replyText);
+
+    const said = (m.text.match(ID_IN) || [])[0]; // 1. 답장에 직접 적은 번호
+    let i = said ? left.findIndex((p) => p.id === said.toUpperCase() && fresh(p)) : -1;
+    if (said && i < 0) return;
+
+    if (i < 0 && quoted) { // 2. 답장이 달린 원래 메시지에서
+      const ids = (quoted.match(ID_IN) || []).map((s) => s.toUpperCase());
+      i = left.findIndex((p) => ids.includes(p.id) && fresh(p));
+      /* 원고 통에 대고 답장한 경우. 그 통에는 번호가 없고 원고만 있으므로 원고로 찾습니다.
+         기다리는 사이에 원고를 고쳤을 수 있어 앞부분만 봅니다. */
+      if (i < 0) {
+        i = left.findIndex((p) => fresh(p) && p.parts.some((x) => {
+          const a = norm(x.text);
+          return a && (a === quoted || a.slice(0, 30) === quoted.slice(0, 30));
+        }));
+      }
+    }
+
+    if (i < 0 && !quoted) i = left.findIndex(fresh); // 3. 그냥 보낸 답장
     if (i < 0) return;
+
     const [p] = left.splice(i, 1);
     hits.push({ id: p.id, at: m.at, text: m.text });
   });
@@ -157,7 +183,7 @@ async function send(post, parts, lateMin) {
     many
       ? `아래 ${parts.length}개 메시지를 순서대로 복사해 올리세요. 첫 통이 본문, 나머지가 답글입니다.`
       : "아래 메시지를 복사해서 쓰레드에 올리세요.",
-    "올린 뒤 여기에 아무 답장이나 보내면 발행 표시를 남깁니다.",
+    `올린 뒤 이 메시지에 reply 로 아무 말이나 보내면 ${post.id} 에 발행 표시를 남깁니다.`,
   ].filter((l) => l !== null).join("\n");
 
   if (!LIVE) {

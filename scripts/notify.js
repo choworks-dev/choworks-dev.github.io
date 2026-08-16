@@ -89,10 +89,17 @@ async function tgUpdates() {
   const r = await fetch(`https://api.telegram.org/bot${token}/getUpdates?limit=100`, { signal: timeout(20000) });
   const body = await r.text();
   if (!r.ok) throw new Error(`텔레그램 ${r.status} ${body.slice(0, 300)}`);
+  /* replyText 는 답장이 달린 원래 메시지의 글입니다.
+     그 통이 안내문이면 편 번호가 들어 있고, 원고 통이면 원고가 그대로 들어 있습니다.
+     둘 다 어느 편에 대한 답인지 가리키므로, 답장 본문("ㅇ")보다 이쪽이 훨씬 정확합니다. */
   return (JSON.parse(body).result || [])
     .map((u) => u.message || u.edited_message)
     .filter((m) => m && m.text && String(m.chat && m.chat.id) === chat)
-    .map((m) => ({ at: m.date * 1000, text: String(m.text).trim() }))
+    .map((m) => ({
+      at: m.date * 1000,
+      text: String(m.text).trim(),
+      replyText: String((m.reply_to_message && m.reply_to_message.text) || "").trim(),
+    }))
     .sort((a, b) => a.at - b.at);
 }
 
