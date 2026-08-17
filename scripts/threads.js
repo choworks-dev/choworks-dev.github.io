@@ -220,10 +220,16 @@ function checkPost(p, postsBySlug) {
   return issues;
 }
 
-/* 블로그 글 하나에서 뽑는 배치는 3의 배수(3, 6, 9)로만 만듭니다.
-   이건 하루에 몇 편을 올리느냐와 상관없습니다. 글 한 편이 도입·전개·마무리로 나뉘는 단위가 셋이라서요.
-   3의 배수가 아니면 소재가 한쪽만 다뤄지다 끊깁니다. 배치는 며칠에 걸쳐 다른 배치와 섞여 나가므로
-   발행 속도(PER_DOW)와는 애초에 맞물리지 않습니다. 둘을 같이 움직이면 안 됩니다.
+/* 블로그 글 하나에서 뽑는 배치는 3편입니다. 글 한 편이 도입·전개·마무리로 나뉘는 단위가 셋이라서요.
+   이건 하루에 몇 편을 올리느냐와 상관없습니다. 발행 속도(PER_DOW)와는 애초에 맞물리지 않으므로
+   둘을 같이 움직이면 안 됩니다.
+
+   2026-08-17 에 9편에서 3편으로 줄였습니다. 한 글에서 아홉 편을 뽑으면 뒤로 갈수록 우려낸 티가 나고,
+   무엇보다 큐가 길어져서 오늘 쓴 글의 쓰레드가 몇 주 뒤에나 나갑니다. 배치는 큐 맨 뒤에 붙으니까요.
+   글이 자주 나오는 편이 계정에도 낫습니다. 이미 만들어 둔 9편짜리 배치는 그대로 둡니다.
+
+   검사는 3의 배수인지만 봅니다. 옛 배치(9편)를 경고로 만들지 않으려는 것이고, 늘리고 싶은 날에도
+   3편 단위로 늘어야 소재가 한쪽만 다뤄지다 끊기지 않기 때문입니다.
    소재가 없는 파일(일상 편 등)은 쌓아가는 성격이라 이 규칙에서 뺍니다. */
 const BATCH_STEP = 3;
 function batchIssues(batches) {
@@ -446,8 +452,10 @@ function seedFrom(post, startDate, afterId) {
   const hooks = hookCandidates(post);
   const heads = outline(post);
   let id = afterId || "";
-  // 소제목 수에서 출발하되 3의 배수로 맞춥니다(3, 6, 9). 소재가 한쪽만 다뤄지다 끊기지 않게.
-  const count = Math.min(Math.max(Math.round(heads.length / BATCH_STEP) * BATCH_STEP, BATCH_STEP), BATCH_STEP * 3);
+  /* 글 한 편에서 3편만 뽑습니다. 소제목이 여덟 개여도 셋으로 줄입니다.
+     소제목 수에 맞춰 아홉 편까지 늘리던 것을 그만뒀습니다. 이유는 BATCH_STEP 주석에 있습니다.
+     어느 소제목을 고를지는 사람이 정합니다. 여기서는 앞의 셋을 뼈대로 깔아만 둡니다. */
+  const count = BATCH_STEP;
   const when = scheduleFor(startDate, count);
 
   const body = when

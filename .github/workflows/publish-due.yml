@@ -1,0 +1,63 @@
+name: 예약 발행
+
+# 글 머리말에 publishAt 이 적혀 있고 draft: true 이면, 그 시각에 draft 를 지우고 푸시합니다.
+# 푸시가 배포 워크플로를 깨우므로 사이트에는 몇 분 뒤에 올라옵니다.
+#
+# 예약 시각 120분 앞부터 회차가 그 글을 맡고, 남은 시간은 스크립트 안에서 기다립니다.
+# 깃허브 예약 실행이 10분마다 돌지 않기 때문입니다. 하루치를 세어보니 128번 돌아야 할 것이
+# 17번 돌았고 간격이 평균 80분, 최대 214분이었습니다. 좁은 창으로는 시각을 못 맞춥니다.
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch: # 수동으로도 돌려볼 수 있습니다
+
+# draft 줄을 지운 파일을 저장소에 다시 적어야 하므로 쓰기 권한이 필요합니다.
+permissions:
+  contents: write
+
+# 여러 실행이 겹치면 같은 글을 두 번 커밋하려다 밀칩니다.
+concurrency:
+  group: publish-due
+  cancel-in-progress: false
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    # 예약 시각까지 최대 120분을 기다립니다. 거기에 준비와 커밋 시간을 더해 넉넉히 잡습니다.
+    timeout-minutes: 135
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      # 머리말을 읽는 데 front-matter 가 필요합니다.
+      - run: npm ci
+
+      - name: 예약된 글 확인 후 공개
+        run: node scripts/publish-due.js
+
+      # [skip ci] 를 붙이지 않습니다. 이 푸시가 배포를 깨워야 글이 사이트에 올라갑니다.
+      - name: 공개 커밋
+        run: |
+          if [ -z "$(git status --porcelain content)" ]; then
+            echo "바뀐 것이 없습니다."
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add content
+          git commit -m "예약 발행"
+          git pull --rebase origin main
+          git push origin HEAD:main
+
+      # 실패했으면 알립니다. 조용히 안 도는 것이 제일 위험합니다.
+      - name: 실패 알리기
+        if: failure()
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          node scripts/notify.js fail "예약 발행" \
+            "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
