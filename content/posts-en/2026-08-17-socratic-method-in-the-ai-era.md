@@ -31,8 +31,6 @@ The method had a fatal constraint. The person answering had to be sitting in fro
 
 So conditions applied. You had to live in Athens, have time to spend in the agora, and catch Socrates in a decent mood. Step outside what he knew and the conversation stopped there. Ask the same question three times and the other person gets tired. Above all, saying "I don't know" to another human being has a price. Which is why, historically, this way of learning was always a privilege of a tiny few. It belonged to whoever could stand next to a teacher.
 
-I have never met a single one of those conditions. I run a small company outside the capital, with nobody nearby to ask, and decades of things I simply let pass without understanding them.
-
 ## The constraint is gone
 
 I now run the Socratic method with Claude, and not one of those limits survives.
