@@ -39,7 +39,15 @@ const site = JSON.parse(fs.readFileSync(path.join(CONTENT, "site.json"), "utf8")
    그 바깥에 글자를 두면 어디선가는 잘립니다. 지금 여백(위 68, 아래 76)이면 넉넉합니다. */
 const WIDTH = 1200;
 const HEIGHT = 600;
-const SCALE = 2; // 고해상도 화면에서도 글자가 또렷하도록 2배로 캡처
+/* 1배, 즉 1200x600 그대로 뽑습니다. 한동안 2배(2400x1200)로 뽑았는데 실측해 보니 그럴 이유가
+   없었습니다. 카드가 실제로 그려지는 폭은 카카오톡 250~300px, 쓰레드·X 350~500px 이라
+   3배 밀도 폰에서도 1500px 을 넘지 않고, 플랫폼들은 받은 그림을 자기 서버에서 다시 인코딩해
+   내려보내므로 원본을 크게 올려도 축소본이 보입니다. 반대로 손해는 둘이었습니다.
+   2배일 때 영문 카드가 347KB 로 아래 카카오 한도의 70% 까지 찼고(제목이 세 줄이 되면 넘습니다),
+   PNG 는 델타 압축이 안 되니 --force 한 번마다 4MB 가 깃 히스토리에 영구히 쌓였습니다.
+   OG_SCALE=2 로 임시로 올려 볼 수는 있습니다. 배율을 바꿨으면 --force 로 전부 다시 그리세요.
+   캐시는 카드 내용만 보기 때문에 배율 변경을 감지하지 못합니다. */
+const SCALE = Number(process.env.OG_SCALE || 1);
 const KAKAO_LIMIT_KB = 500; // 카카오톡이 받아주는 og:image 용량 한도
 const FORCE = process.argv.includes("--force");
 
