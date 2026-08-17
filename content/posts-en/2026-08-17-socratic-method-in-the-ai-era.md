@@ -11,11 +11,9 @@ The way I learn things now has almost nothing in common with the way I was taugh
 
 Socrates gave no lectures and wrote no books. All he did was corner people and ask them questions.
 
-The pattern usually runs like this. Someone claims to know something. What courage is, what justice is. Socrates asks them to define it. They offer a definition. He doesn't argue with it. Instead he asks about one case where the definition doesn't hold. They revise it. He asks about another case that breaks the revision. A few rounds of this and the person arrives at the point of realizing they never knew the thing at all. The Greeks called that state aporia, a dead end.
+The pattern runs like this. Someone claims to know what courage is, so Socrates asks them to define it. A definition arrives. He doesn't argue with it. He asks about one case where it doesn't hold. They revise, and he asks about a case that breaks the revision. A few rounds of this and the person arrives at realizing they never knew the thing at all. The Greeks called that dead end aporia.
 
-That isn't the end of it. Only someone who knows they don't know starts asking in earnest. From that point the conversation turns toward an answer. Socrates called his role midwifery: not putting knowledge into people, but delivering what was already in them.
-
-Plato's Meno has the demonstration. Socrates takes a boy who has never studied geometry and asks him how to draw a square with twice the area of a given square. The boy says double the length of the sides. That's wrong. Socrates doesn't say so. He has the boy draw it and asks again. The boy discovers his own error and eventually arrives at the answer, that the diagonal becomes the new side. Socrates never told him anything.
+Only someone who knows they don't know starts asking in earnest. Socrates called his own role midwifery: not putting knowledge into people, but delivering what was already in them. In Plato's Meno, a boy who has never studied geometry gets nothing but questions and works out how to double the area of a square on his own. Socrates never told him anything.
 
 ## Why it worked
 
