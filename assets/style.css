@@ -397,6 +397,26 @@ main.wrap {
   border-top: 1px solid var(--border);
 }
 
+/* ---------- 그림 ----------
+   본문의 {{svg: 이름}} 이 여기로 펴집니다(scripts/diagram.js).
+   넓은 화면은 가로 그림, 폰은 세로 그림. 하나를 줄여 쓰면 폰에서 글자가 4px 대로 내려가 안 읽힙니다.
+   세로 그림이 없는 그림은 has-narrow 가 안 붙어서 폰에서도 가로 그림을 그대로 씁니다. */
+.diagram {
+  margin: 1.6rem 0;
+  padding: 0;
+}
+.diagram svg {
+  display: block;
+  width: 100%;
+  height: auto;
+}
+.diagram .dg-narrow { display: none; }
+
+@media (max-width: 560px) {
+  .diagram.has-narrow .dg-wide { display: none; }
+  .diagram.has-narrow .dg-narrow { display: block; }
+}
+
 .prose code {
   font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, monospace;
   font-size: .88em;

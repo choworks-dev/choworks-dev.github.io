@@ -8,6 +8,7 @@
 const fs = require("fs");
 const path = require("path");
 const { marked } = require("marked");
+const { expandDiagrams } = require("./diagram");
 const fm = require("front-matter");
 
 const read = (p) => fs.readFileSync(p, "utf8");
@@ -62,7 +63,9 @@ function loadPosts(dir) {
         date,
         stamp: normStamp(parsed.attributes.date, date),
         rawBody: parsed.body, // 검사용 원문(마크다운). 렌더링에는 bodyHtml 을 씁니다.
-        bodyHtml: marked.parse(parsed.body),
+        /* {{svg: 이름}} 을 먼저 펴 넣고 마크다운을 돌립니다.
+           순서를 바꾸면 안 됩니다. marked 가 먼저 지나가면 그 줄이 그냥 글자로 남습니다. */
+        bodyHtml: marked.parse(expandDiagrams(parsed.body)),
       };
     })
     /* 나중에 발행한 글이 항상 위로. 시각이 완전히 같으면 파일명 역순으로 갈라

@@ -17,64 +17,7 @@ I built it on GitHub Actions scheduled runs. You put one file in the repository 
 
 No server to manage, and nothing to pay on a public repository. Here is the whole flow.
 
-<svg viewBox="0 0 900 380" role="img" aria-labelledby="flowTitle flowDesc" style="width:100%;height:auto;max-width:900px;margin:1.5rem 0;font-family:system-ui,-apple-system,sans-serif">
-  <title id="flowTitle">How the reminder automation flows</title>
-  <desc id="flowDesc">GitHub's scheduler wakes a temporary machine, which pulls the code and drafts from the repository, sends the draft to Telegram, and writes the result back to the repository.</desc>
-  <defs>
-    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-      <path d="M0,0 L10,5 L0,10 z" fill="var(--muted,#9aa7bd)"/>
-    </marker>
-    <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-      <path d="M0,0 L10,5 L0,10 z" fill="var(--accent,#6ee7b7)"/>
-    </marker>
-  </defs>
-
-  <g fill="var(--card,#161c26)" stroke="var(--border,#232b38)" stroke-width="1.5">
-    <rect x="16" y="170" width="184" height="104" rx="10"/>
-    <rect x="244" y="170" width="184" height="104" rx="10"/>
-    <rect x="472" y="170" width="184" height="104" rx="10"/>
-    <rect x="700" y="170" width="184" height="104" rx="10"/>
-  </g>
-  <rect x="244" y="30" width="184" height="86" rx="10" fill="var(--card,#161c26)" stroke="var(--accent,#6ee7b7)" stroke-width="2"/>
-
-  <g fill="var(--text,#e6ebf3)" font-size="15" font-weight="600" text-anchor="middle">
-    <text x="108" y="202">My repository</text>
-    <text x="336" y="60">GitHub scheduler</text>
-    <text x="336" y="202">Temporary machine</text>
-    <text x="564" y="202">Telegram</text>
-    <text x="792" y="202">My phone</text>
-  </g>
-  <g fill="var(--muted,#9aa7bd)" font-size="12.5" text-anchor="middle">
-    <text x="108" y="226">drafts and code</text>
-    <text x="336" y="226">runs my code</text>
-    <text x="564" y="226">holds messages 24h</text>
-    <text x="792" y="226">I paste it in myself</text>
-  </g>
-  <text x="336" y="84" fill="var(--accent,#6ee7b7)" font-size="12.5" font-weight="600" text-anchor="middle">this is what oversleeps</text>
-  <g fill="var(--muted,#9aa7bd)" font-size="11" text-anchor="middle" opacity="0.85">
-    <text x="108" y="254">mine</text>
-    <text x="336" y="104">GitHub's</text>
-    <text x="336" y="254">GitHub's</text>
-    <text x="564" y="254">outside service</text>
-    <text x="792" y="254">a person</text>
-  </g>
-
-  <g stroke="var(--muted,#9aa7bd)" stroke-width="1.8" fill="none" marker-end="url(#ar)">
-    <path d="M200,222 H236"/>
-    <path d="M428,222 H464"/>
-    <path d="M656,222 H692"/>
-    <path d="M336,274 V318 H108 V280"/>
-  </g>
-  <path d="M336,116 V162" stroke="var(--accent,#6ee7b7)" stroke-width="2" fill="none" marker-end="url(#arw)"/>
-
-  <g fill="var(--muted,#9aa7bd)" font-size="11.5" text-anchor="middle">
-    <text x="218" y="212">checkout</text>
-    <text x="446" y="212">send draft</text>
-    <text x="674" y="212">alert lands</text>
-    <text x="230" y="336">writes the "posted it" mark back to the repository</text>
-  </g>
-  <text x="348" y="146" fill="var(--accent,#6ee7b7)" font-size="11.5" text-anchor="start">creates a run and wakes it</text>
-</svg>
+{{svg: threads-remind-flow-en}}
 
 That one arrow coming down from the top is the whole story. **GitHub only does the waking. Everything else is my own code.** And the waking is the part I cannot fix.
 

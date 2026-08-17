@@ -17,64 +17,7 @@ publishAt: 2026-08-18 17:00
 
 서버가 없으니 관리할 것도 없고, 공개 저장소라 요금도 0원입니다. 전체 흐름은 이렇습니다.
 
-<svg viewBox="0 0 900 380" role="img" aria-labelledby="flowTitle flowDesc" style="width:100%;height:auto;max-width:900px;margin:1.5rem 0;font-family:system-ui,'Apple SD Gothic Neo','Malgun Gothic',sans-serif">
-  <title id="flowTitle">알림 자동화의 흐름</title>
-  <desc id="flowDesc">깃허브 예약 실행기가 임시 컴퓨터를 깨우면, 그 컴퓨터가 저장소에서 코드와 원고를 내려받아 텔레그램으로 보내고, 결과를 저장소에 다시 적습니다.</desc>
-  <defs>
-    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-      <path d="M0,0 L10,5 L0,10 z" fill="var(--muted,#9aa7bd)"/>
-    </marker>
-    <marker id="arw" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
-      <path d="M0,0 L10,5 L0,10 z" fill="var(--accent,#6ee7b7)"/>
-    </marker>
-  </defs>
-
-  <g fill="var(--card,#161c26)" stroke="var(--border,#232b38)" stroke-width="1.5">
-    <rect x="16" y="170" width="184" height="104" rx="10"/>
-    <rect x="472" y="170" width="184" height="104" rx="10"/>
-    <rect x="700" y="170" width="184" height="104" rx="10"/>
-    <rect x="244" y="170" width="184" height="104" rx="10"/>
-  </g>
-  <rect x="244" y="30" width="184" height="86" rx="10" fill="var(--card,#161c26)" stroke="var(--accent,#6ee7b7)" stroke-width="2"/>
-
-  <g fill="var(--text,#e6ebf3)" font-size="15" font-weight="600" text-anchor="middle">
-    <text x="108" y="202">내 저장소</text>
-    <text x="336" y="62">깃허브 예약 실행기</text>
-    <text x="336" y="202">임시 리눅스 컴퓨터</text>
-    <text x="564" y="202">텔레그램</text>
-    <text x="792" y="202">내 폰</text>
-  </g>
-  <g fill="var(--muted,#9aa7bd)" font-size="12.5" text-anchor="middle">
-    <text x="108" y="226">원고 파일과 코드</text>
-    <text x="336" y="226">코드가 여기서 실행됩니다</text>
-    <text x="564" y="226">메시지를 24시간 보관</text>
-    <text x="792" y="226">복사해서 직접 올립니다</text>
-  </g>
-  <text x="336" y="86" fill="var(--accent,#6ee7b7)" font-size="12.5" font-weight="600" text-anchor="middle">여기가 제때 안 깨어납니다</text>
-  <g fill="var(--muted,#9aa7bd)" font-size="11" text-anchor="middle" opacity="0.85">
-    <text x="108" y="254">우리 것</text>
-    <text x="336" y="106">깃허브 것</text>
-    <text x="336" y="254">깃허브 것</text>
-    <text x="564" y="254">외부 서비스</text>
-    <text x="792" y="254">사람</text>
-  </g>
-
-  <g stroke="var(--muted,#9aa7bd)" stroke-width="1.8" fill="none" marker-end="url(#ar)">
-    <path d="M200,222 H236"/>
-    <path d="M428,222 H464"/>
-    <path d="M656,222 H692"/>
-    <path d="M336,274 V318 H108 V280"/>
-  </g>
-  <path d="M336,116 V162" stroke="var(--accent,#6ee7b7)" stroke-width="2" fill="none" marker-end="url(#arw)"/>
-
-  <g fill="var(--muted,#9aa7bd)" font-size="11.5" text-anchor="middle">
-    <text x="218" y="212">내려받기</text>
-    <text x="446" y="212">원고 전송</text>
-    <text x="674" y="212">알림 도착</text>
-    <text x="230" y="336">올렸다는 표시를 저장소에 다시 적습니다</text>
-  </g>
-  <text x="348" y="146" fill="var(--accent,#6ee7b7)" font-size="11.5" text-anchor="start">회차를 만들어 깨움</text>
-</svg>
+{{svg: threads-remind-flow}}
 
 위에서 내려오는 화살표 하나가 이 글의 전부입니다. **저 깨우는 일만 깃허브가 하고 나머지는 전부 제 코드가 합니다.** 그런데 못 고치는 자리가 하필 저기입니다.
 

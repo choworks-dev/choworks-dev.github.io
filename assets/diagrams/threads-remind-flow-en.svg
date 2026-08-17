@@ -1,0 +1,109 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 380" width="900" height="380" role="img" aria-labelledby="flowTitleEn flowDescEn" style="font-family:system-ui,-apple-system,sans-serif">
+  <title id="flowTitleEn">How the reminder automation flows</title>
+  <desc id="flowDescEn">GitHub's scheduler wakes a GitHub server, which pulls the code and drafts from the repository, sends the draft to Telegram, and writes the result back to the repository.</desc>
+
+  <!-- Same drawing as threads-remind-flow.svg, English labels. Keep both in sync.
+       The data-standalone bits are only for opening this file directly; the build strips them
+       so the page's own --card / --text variables drive the colors.
+       Icon ids are prefixed ice- because the wide and narrow drawings share one page. -->
+  <style data-standalone>
+    svg { --card:#ffffff; --border:#e2e8f0; --text:#16202e; --muted:#5a6b83; --accent:#0f9d76; --bg:#ffffff; }
+    @media (prefers-color-scheme: dark) {
+      svg { --card:#161c26; --border:#232b38; --text:#e6ebf3; --muted:#9aa7bd; --accent:#6ee7b7; --bg:#0e1116; }
+    }
+  </style>
+  <rect data-standalone x="0" y="0" width="900" height="380" fill="var(--bg,#ffffff)"/>
+
+  <defs>
+    <marker id="dge-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="var(--muted,#9aa7bd)"/>
+    </marker>
+    <marker id="dge-b" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="var(--accent,#6ee7b7)"/>
+    </marker>
+
+    <symbol id="ice-repo" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M6 3h11a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H6a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2z"/>
+      <path d="M8.5 3v18"/>
+    </symbol>
+    <symbol id="ice-clock" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="12" cy="12" r="8.5"/>
+      <path d="M12 7.5V12l3 1.9"/>
+    </symbol>
+    <symbol id="ice-server" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="3.5" y="4.5" width="17" height="6" rx="1.6"/>
+      <rect x="3.5" y="13.5" width="17" height="6" rx="1.6"/>
+      <path d="M7 7.5h.01M7 16.5h.01"/>
+    </symbol>
+    <symbol id="ice-send" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21.5 2.5 15 21.5l-3.8-8.7-8.7-3.8z"/>
+      <path d="M21.5 2.5 11.2 12.8"/>
+    </symbol>
+    <symbol id="ice-phone" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="6.5" y="2.5" width="11" height="19" rx="2.6"/>
+      <path d="M10.5 18.4h3"/>
+    </symbol>
+  </defs>
+
+  <g fill="var(--card,#161c26)" stroke="var(--border,#232b38)" stroke-width="1.5">
+    <rect x="16"  y="170" width="184" height="104" rx="10"/>
+    <rect x="244" y="170" width="184" height="104" rx="10"/>
+    <rect x="472" y="170" width="184" height="104" rx="10"/>
+    <rect x="700" y="170" width="184" height="104" rx="10"/>
+  </g>
+  <rect x="244" y="30" width="184" height="86" rx="10" fill="var(--card,#161c26)" stroke="var(--accent,#6ee7b7)" stroke-width="2"/>
+
+  <g fill="var(--card,#161c26)" stroke="var(--border,#232b38)" stroke-width="1.5">
+    <circle cx="108" cy="170" r="15"/>
+    <circle cx="336" cy="170" r="15"/>
+    <circle cx="564" cy="170" r="15"/>
+    <circle cx="792" cy="170" r="15"/>
+  </g>
+  <circle cx="336" cy="30" r="15" fill="var(--card,#161c26)" stroke="var(--accent,#6ee7b7)" stroke-width="2"/>
+
+  <g style="color:var(--muted,#9aa7bd)">
+    <use href="#ice-repo"   x="99"  y="161" width="18" height="18"/>
+    <use href="#ice-server" x="327" y="161" width="18" height="18"/>
+    <use href="#ice-send"   x="555" y="161" width="18" height="18"/>
+    <use href="#ice-phone"  x="783" y="161" width="18" height="18"/>
+  </g>
+  <use href="#ice-clock" x="327" y="21" width="18" height="18" style="color:var(--accent,#6ee7b7)"/>
+
+  <g fill="var(--text,#e6ebf3)" font-size="15" font-weight="600" text-anchor="middle">
+    <text x="108" y="202">My repository</text>
+    <text x="336" y="60">GitHub scheduler</text>
+    <text x="336" y="202">GitHub server</text>
+    <text x="564" y="202">Telegram</text>
+    <text x="792" y="202">My phone</text>
+  </g>
+  <g fill="var(--muted,#9aa7bd)" font-size="12.5" text-anchor="middle">
+    <text x="108" y="226">drafts and code</text>
+    <text x="336" y="226">runs my code</text>
+    <text x="564" y="226">holds messages 24h</text>
+    <text x="792" y="226">I paste it in myself</text>
+  </g>
+  <text x="336" y="84" fill="var(--accent,#6ee7b7)" font-size="12.5" font-weight="600" text-anchor="middle">this is what oversleeps</text>
+  <g fill="var(--muted,#9aa7bd)" font-size="11" text-anchor="middle" opacity="0.85">
+    <text x="108" y="254">mine</text>
+    <text x="336" y="104">GitHub's</text>
+    <text x="336" y="254">GitHub's</text>
+    <text x="564" y="254">outside service</text>
+    <text x="792" y="254">a person</text>
+  </g>
+
+  <g stroke="var(--muted,#9aa7bd)" stroke-width="1.8" fill="none" marker-end="url(#dge-a)">
+    <path d="M200,222 H236"/>
+    <path d="M428,222 H464"/>
+    <path d="M656,222 H692"/>
+    <path d="M336,274 V318 H108 V280"/>
+  </g>
+  <path d="M336,116 V150" stroke="var(--accent,#6ee7b7)" stroke-width="2" fill="none" marker-end="url(#dge-b)"/>
+
+  <g fill="var(--muted,#9aa7bd)" font-size="11.5" text-anchor="middle">
+    <text x="218" y="212">checkout</text>
+    <text x="446" y="212">send draft</text>
+    <text x="674" y="212">alert lands</text>
+    <text x="230" y="336">writes the posted-it mark back to the repository</text>
+  </g>
+  <text x="356" y="140" fill="var(--accent,#6ee7b7)" font-size="11.5" text-anchor="start">creates a run and wakes it</text>
+</svg>
