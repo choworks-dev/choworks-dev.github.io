@@ -36,10 +36,15 @@ const fs = require("fs");
 const path = require("path");
 const fm = require("front-matter");
 
-/* 쓰레드 한 편의 글자 수 상한. SOFT 를 넘으면 아직 올라가긴 하지만 미리 알려줍니다.
-   (여백을 남겨두는 이유: 올리기 직전에 한 문장 덧붙이는 일이 대부분이라) */
+/* 쓰레드 한 편의 글자 수. 둘은 성격이 다릅니다.
+     LIMIT  쓰레드가 받아주는 상한. 이걸 넘으면 저장 자체를 막습니다.
+     SOFT   우리가 정한 길이. 넘어도 올라가지만 검사에서 잡습니다.
+
+   SOFT 를 200자로 둡니다. 그 위로 가면 피드에서 접히고, 접힌 글은 잘 안 펴집니다.
+   스크롤을 멈추지 않고 한 번에 읽히는 길이가 실제로 읽히는 길이입니다.
+   길게 쓸 말이 있으면 늘리지 말고 --- 로 답글을 나눕니다. */
 const LIMIT = 500;
-const SOFT = 460;
+const SOFT = 200;
 
 /* 상태는 세 가지뿐이고 뜻이 정해져 있습니다.
      draft   원고가 아직 안 끝났습니다. 뼈대만 있거나 쓰는 중입니다. 상태를 안 적으면 이것으로 봅니다.
@@ -190,8 +195,10 @@ function checkPost(p, postsBySlug) {
   p.parts.forEach((part) => {
     if (part.len > LIMIT) {
       add("error", `${where(part)}${part.len}자입니다. ${part.len - LIMIT}자를 줄이거나 --- 로 나누세요(상한 ${LIMIT}자).`);
-    } else if (part.len > SOFT) {
-      add("warn", `${where(part)}${part.len}자로 상한(${LIMIT}자)에 거의 닿았습니다.`);
+    } else if (part.len > SOFT && p.status !== "posted") {
+      /* 이미 올린 편은 빼줍니다. 쓰레드에 올라간 그대로가 기록이라 여기서 고칠 수 없는데,
+         길이 규칙을 나중에 조인 탓에 옛 편들이 영영 경고로 남으면 새 경고가 안 보입니다. */
+      add("warn", `${where(part)}${part.len}자입니다. 한 편은 ${SOFT}자 안쪽으로 씁니다(넘으면 피드에서 접힙니다).`);
     }
     if (/[—–]/.test(part.text)) {
       add("warn", `${where(part)}긴 하이픈(— 또는 –)이 있습니다. 쉼표나 마침표로 바꾸세요.`);
@@ -342,34 +349,44 @@ const outline = (post) =>
 
    그런데 첫 계정(@kadecho.dev)이 만든 다음 날 정지됐습니다. 걸린 것은 편수가 아니라
    계정을 만들자마자 쏟아낸 활동량이었습니다. 새 계정도 같은 속도로 시작하면 같은 결과가 납니다.
-   그래서 평일을 2편으로 낮춰 고정하고, 시작 며칠은 ramp 로 하루 1편까지 더 낮춰 계정을 데웁니다.
+   그래서 편수를 요일로 묶어 고정하고, 시작 며칠은 ramp 로 하루 1편까지 더 낮춰 계정을 데웁니다.
 
-   주말은 토요일 1편, 일요일 0편입니다. 쉬는 날이 있어야 나머지 날이 성실해 보이고,
-   일요일에 일 이야기를 들고 오는 계정은 피곤합니다. 읽는 사람도 사장이라 그날은 일 생각을 안 하고 싶습니다.
+   지금은 평일 3편입니다. 계정이 며칠 버틴 뒤에 올렸습니다.
+   쉬는 날은 토요일 하나입니다. 쉬는 날이 있어야 나머지 날이 성실해 보입니다.
+   일요일은 1편만 둡니다. 일요일에 일 이야기를 쏟아내는 계정은 피곤한데, 그날 저녁에는
+   읽는 사람도 다음 주 일을 생각하기 시작하므로 한 편은 남겨 둡니다. 그 한 편은 일상 편이 낫습니다.
 
    규칙적일수록 손해입니다. 같은 시각, 같은 분에 올라가면 사람이 아니라 예약 발행으로 읽힙니다.
    그렇게 보이는 계정에는 댓글이 안 붙고, 댓글이 안 붙으면 노출이 떨어집니다.
    편수는 위 규칙으로 고정하되, 시간대와 분은 매번 다시 뽑습니다. */
 
 /* 하루 편수별 시간대. 21시대는 한국 사용자가 가장 붐비는 시간이라 몇 편이든 항상 후보에 둡니다.
-   한 편만 올리는 날은 아침과 저녁 중에 고릅니다. 매번 같은 시각이면 그것도 규칙이 됩니다. */
+   한 편만 올리는 날은 아침과 저녁 중에 고릅니다. 매번 같은 시각이면 그것도 규칙이 됩니다.
+   평일 기본이 3편이라 3에 한 벌만 두면 평일이 전부 같은 시간표가 됩니다. 그래서 여러 벌을 둡니다. */
 const HOUR_SETS = {
   1: [[10], [21]],
   2: [[8, 21], [12, 21], [8, 12]],
-  3: [[8, 12, 21]],
+  3: [[8, 12, 21], [8, 13, 21], [9, 12, 21], [8, 12, 20], [9, 13, 21]],
   4: [[8, 12, 18, 21]],
 };
 const pad = (n) => String(n).padStart(2, "0");
 const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
-/* 요일별 편수. 일요일 0 · 평일 2 · 토요일 1.
+/* 요일별 편수. 일요일 1 · 평일 3 · 토요일 0.
    PER_DOW 를 고치면 큐 전체가 따라옵니다(npm run thread -- --replan). */
 const SAT = 6;
 const SUN = 0;
-const PER_DOW = { 0: 0, 1: 2, 2: 2, 3: 2, 4: 2, 5: 2, 6: 1 };
+const PER_DOW = { 0: 1, 1: 3, 2: 3, 3: 3, 4: 3, 5: 3, 6: 0 };
+const PER_DOW_TEXT = "평일 3편 · 토요일 0편 · 일요일 1편";
 
 const iso = (d) => d.toISOString().slice(0, 10);
 const addDay = (d, n) => new Date(d.getTime() + n * 86400000);
+
+/* 예약 시각은 전부 한국 시각입니다. "오늘" 과 "지금 몇 시" 를 UTC 로 물으면 아홉 시간이 어긋나서
+   아침에 --replan 을 돌리면 어제부터 다시 짭니다. 그래서 여기서만 시차를 더해 씁니다. */
+const kstNow = () => new Date(Date.now() + 9 * 3600 * 1000);
+const kstToday = () => kstNow().toISOString().slice(0, 10);
+const kstHour = () => kstNow().getUTCHours();
 
 /* 편들이 나갈 날짜와 시각을 정합니다. kinds 는 큐 순서대로의 성격 배열입니다.
    순서는 건드리지 않습니다. 번호와 발행 순서가 어긋나면 앞 편을 가리키며 쓴 문장이 뒤로 갑니다.
@@ -378,9 +395,13 @@ const addDay = (d, n) => new Date(d.getTime() + n * 86400000);
    정지된 계정을 새로 만들고 다시 데울 때 쓰는 값이라 요일도 무시합니다.
    계정을 만든 직후에 일요일이라고 하루 통째로 쉬면, 그날 한 편 올리는 것보다 오히려 손해입니다.
 
+   notBefore 는 첫날에만 쓰는 시각 하한(시)입니다. 오늘부터 다시 짤 때 이미 지나간 시각에
+   편을 놓지 않기 위한 값입니다. 지난 시각에 놓이면 알림 자동화가 그 편을 지나쳐 버리거나,
+   다음 회차가 "지난 날짜" 로 보고 큐를 통째로 멈춥니다. 첫날에 안 들어간 편은 다음 날로 밀립니다.
+
    주말에 업무 편이 놓이면 경고만 냅니다. 여기서 순서를 바꿔 고치지는 않습니다.
    순서를 바꾸는 값과 날짜를 정하는 값을 한 함수에서 같이 만지면 무엇이 무엇을 밀었는지 알 수 없게 됩니다. */
-function planSchedule(kinds, startDate, ramp) {
+function planSchedule(kinds, startDate, ramp, notBefore) {
   const out = [];
   const warn = [];
   const head = Array.isArray(ramp) ? ramp : [];
@@ -391,14 +412,18 @@ function planSchedule(kinds, startDate, ramp) {
   while (i < kinds.length) {
     const dow = day.getUTCDay();
     const rule = n < head.length ? head[n] : PER_DOW[dow];
-    const size = Math.min(rule, kinds.length - i); // 마지막 날은 남은 만큼만
-    if (size > 0) {
-      const date = iso(day);
-      if (dow === SAT || dow === SUN) {
-        const work = kinds.slice(i, i + size).filter((k) => k !== "life").length;
+    const date = iso(day);
+    // 마지막 날은 남은 만큼만. ramp 로 시간대 표에 없는 숫자가 들어와도 죽지 않게 4에서 자릅니다.
+    const want = Math.min(rule, kinds.length - i, 4);
+    if (want > 0) {
+      const floor = date === startDate ? notBefore || 0 : 0;
+      const sets = HOUR_SETS[want].map((s) => s.filter((h) => h >= floor)).filter((s) => s.length);
+      const hours = sets.length ? pick(sets) : []; // 남은 시간대가 없으면 그날은 통째로 건너뜁니다
+      if (hours.length && (dow === SAT || dow === SUN)) {
+        const work = kinds.slice(i, i + hours.length).filter((k) => k !== "life").length;
         if (work) warn.push(`${date} (${dow === SAT ? "토" : "일"}) 에 업무 편이 ${work}편 놓입니다.`);
       }
-      pick(HOUR_SETS[size]).forEach((h) => {
+      hours.forEach((h) => {
         // 분은 1~59. 정각을 빼는 이유는 08:00 같은 시각이 예약 발행처럼 보이는 대표적인 모양이라서입니다.
         out.push(`${date} ${pad(h)}:${pad(1 + Math.floor(Math.random() * 59))}`);
         i += 1;
@@ -584,12 +609,12 @@ function writeText(dir, id, part, text) {
    규칙이 바뀌면 이미 짜둔 큐도 같이 바뀌어야 합니다. 마흔 줄을 손으로 고치면 반드시 실수가 납니다.
    순서는 건드리지 않습니다. 번호와 발행 순서가 어긋나면 앞 편을 가리키며 쓴 문장이 뒤로 갑니다.
    발행한 편은 지나간 기록이라 그대로 둡니다. */
-function replan(dir, startDate, ramp) {
+function replan(dir, startDate, ramp, notBefore) {
   const queue = queueOf(loadThreads(dir));
   const todo = queue.filter((p) => p.status !== "posted");
   if (!todo.length) return { moved: 0, warn: [], first: "", last: "" };
 
-  const { when, warn } = planSchedule(todo.map((p) => p.kind), startDate, ramp);
+  const { when, warn } = planSchedule(todo.map((p) => p.kind), startDate, ramp, notBefore);
   const at = new Map(todo.map((p, i) => [p.id, when[i]]));
 
   const files = fs.readdirSync(dir).filter((f) => f.endsWith(".md") && !f.startsWith("_"));
@@ -671,16 +696,20 @@ function cli(argv) {
 
   const replanArg = argv.find((a) => /^--replan(=\d{4}-\d{2}-\d{2})?$/.test(a));
   if (replanArg) {
-    const start = replanArg.includes("=") ? replanArg.split("=")[1] : new Date().toISOString().slice(0, 10);
+    const start = replanArg.includes("=") ? replanArg.split("=")[1] : kstToday();
     /* --ramp=1,1,1 은 시작 며칠의 편수를 요일 규칙 대신 그대로 씁니다.
        계정을 새로 만들어 다시 데우는 동안에만 씁니다. */
     const rampArg = argv.find((a) => /^--ramp=\d+(,\d+)*$/.test(a));
     const ramp = rampArg ? rampArg.split("=")[1].split(",").map(Number) : [];
-    const r = replan(THREADS, start, ramp);
+    /* 오늘부터 다시 짜는 경우에만 지금 시각을 넘깁니다. 이미 지난 시간대에 편이 놓이면
+       알림이 안 가거나 다음 회차가 지난 날짜로 보고 멈춥니다. 다음 시부터 잡습니다. */
+    const notBefore = start === kstToday() ? kstHour() + 1 : 0;
+    const r = replan(THREADS, start, ramp, notBefore);
     console.log(`아직 안 올린 ${r.moved}편의 날짜와 시각을 다시 짰습니다.`);
     console.log(`  ${r.first} 부터 ${r.last} 까지`);
+    if (notBefore) console.log(`  오늘은 ${notBefore}시 이후 시간대만 씁니다 (지난 시각에 놓지 않으려고)`);
     if (ramp.length) console.log(`  처음 ${ramp.length}일은 ${ramp.join(" · ")}편 (계정 데우기)`);
-    console.log("  그 뒤로 평일 2편 · 토요일 1편 · 일요일 0편");
+    console.log(`  그 뒤로 ${PER_DOW_TEXT}`);
     r.warn.forEach((m) => console.log(`  경고: ${m}`));
     console.log("발행한 편은 건드리지 않았습니다.");
     return;
@@ -731,9 +760,17 @@ function cli(argv) {
     return;
   }
 
-  // 시작 날짜는 인자로 받습니다. 안 주면 오늘. (배치를 언제부터 흘릴지는 그때그때 다르므로)
+  /* 시작 날짜는 인자로 받습니다. 안 주면 큐의 맨 뒤 다음 날입니다.
+
+     오늘로 두면 안 됩니다. 큐는 보통 2~3주치가 이미 차 있어서, 오늘부터 날짜를 매기면
+     새 배치가 이미 자리를 잡은 편들 사이에 끼어들어 갑니다. 같은 날 21:28 과 21:29 처럼
+     1분 간격으로 두 편이 놓이고, 무엇보다 오늘 쓴 글의 편들이 2주 전 글의 편들보다
+     먼저 나갑니다. 쓰레드는 블로그 글이 나온 순서대로 흘러야 합니다.
+     맨 뒤에 붙여 놓고 --replan 으로 당기는 것이 순서를 안 깨는 유일한 방향입니다. */
   const startArg = args.find((a) => /^\d{4}-\d{2}-\d{2}$/.test(a));
-  const start = startArg || new Date().toISOString().slice(0, 10);
+  const last = queue.filter((p) => p.date).map((p) => p.date).sort().pop();
+  const tail = last ? iso(addDay(new Date(`${last}T00:00:00Z`), 1)) : kstToday();
+  const start = startArg || tail;
 
   args.filter((a) => a !== startArg).forEach((slug) => {
     const post = posts.find((p) => p.slug === slug);
@@ -751,9 +788,11 @@ function cli(argv) {
     // 이미 쓰인 번호 다음부터 이어 붙입니다
     const used = loadThreads(THREADS).flatMap((b) => b.posts.map((p) => p.id)).filter(Boolean).sort();
     fs.writeFileSync(out, seedFrom(post, start, used[used.length - 1] || ""), "utf8");
-    console.log(`만들었습니다: ${path.relative(ROOT, out)} (${start} 부터)`);
+    console.log(`만들었습니다: ${path.relative(ROOT, out)} (${start} 부터${startArg ? "" : ", 큐 맨 뒤"})`);
   });
 
+  console.log("\n원고를 채운 뒤에 날짜를 당깁니다. 그 전에는 큐 맨 뒤에 그대로 둡니다.");
+  console.log(`  npm run thread -- --replan=${kstToday()}`);
   console.log("\n관리 페이지의 쓰레드 탭에서 나갈 순서와 편별 글자 수를 봅니다.");
   console.log("  npm run dev → http://localhost:4000/admin");
 }
