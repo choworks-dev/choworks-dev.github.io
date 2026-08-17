@@ -205,10 +205,14 @@ function checkPost(p, postsBySlug) {
     }
   });
 
-  /* 링크가 붙은 글은 도달이 눈에 띄게 떨어집니다.
-     그래서 링크는 아껴 씁니다. 여기서는 첫 편에 걸리는 것만 막습니다. */
-  if (p.parts.length > 1 && hasLink(p.parts[0].text)) {
-    add("warn", "링크가 첫 편에 있습니다. 링크가 붙은 글은 덜 퍼지므로 답글로 내리세요.");
+  /* 링크는 아예 쓰지 않습니다. 2026-08-17 에 정했고 있던 것도 전부 걷어냈습니다.
+     링크가 붙은 글은 도달이 눈에 띄게 떨어집니다. 밖으로 내보내는 글을 플랫폼이 덜 퍼뜨리는 건
+     당연한 일이라, 아껴 쓰는 정도로는 이길 수 없습니다.
+     블로그로 오게 하려면 링크 대신 프로필에 두고, 글에서는 궁금하게만 만듭니다.
+     발행된 편은 이제 와서 못 고치니 빼줍니다. */
+  const linked = p.parts.filter((x) => hasLink(x.text));
+  if (linked.length && p.status !== "posted") {
+    add("warn", `${linked.length}곳에 링크가 있습니다. 쓰레드 원고에는 링크를 넣지 않습니다(도달이 떨어집니다).`);
   }
 
   if (!p.id) add("warn", "고유번호가 없습니다. npm run thread -- --ids 로 채우세요.");
@@ -357,7 +361,8 @@ const outline = (post) =>
    계정을 만들자마자 쏟아낸 활동량이었습니다. 새 계정도 같은 속도로 시작하면 같은 결과가 납니다.
    그래서 편수를 요일로 묶어 고정하고, 시작 며칠은 ramp 로 하루 1편까지 더 낮춰 계정을 데웁니다.
 
-   지금은 평일 3편입니다. 계정이 며칠 버틴 뒤에 올렸습니다.
+   지금은 평일 2편입니다. 한 글에서 3편만 뽑기로 하면서 같이 내렸습니다.
+   소재가 줄었는데 발행 속도를 그대로 두면 큐가 며칠 만에 비고, 그러면 급하게 쓴 편이 나갑니다.
    쉬는 날은 토요일 하나입니다. 쉬는 날이 있어야 나머지 날이 성실해 보입니다.
    일요일은 1편만 둡니다. 일요일에 일 이야기를 쏟아내는 계정은 피곤한데, 그날 저녁에는
    읽는 사람도 다음 주 일을 생각하기 시작하므로 한 편은 남겨 둡니다. 그 한 편은 일상 편이 낫습니다.
@@ -375,15 +380,20 @@ const HOUR_SETS = {
   3: [[8, 12, 21], [8, 13, 21], [9, 12, 21], [8, 12, 20], [9, 13, 21]],
   4: [[8, 12, 18, 21]],
 };
+
+/* 일요일 한 편은 저녁에 둡니다. 낮에는 일 생각을 안 하고 싶은 날이고,
+   저녁이 되어야 다음 주가 눈에 들어옵니다. 그 한 편만 그때 걸리면 됩니다.
+   두 벌을 두는 이유는 매주 같은 시각이면 그것도 예약 발행처럼 보이기 때문입니다. */
+const SUN_HOURS = [[20], [21]];
 const pad = (n) => String(n).padStart(2, "0");
 const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
-/* 요일별 편수. 일요일 1 · 평일 3 · 토요일 0.
+/* 요일별 편수. 일요일 1 · 평일 2 · 토요일 0.
    PER_DOW 를 고치면 큐 전체가 따라옵니다(npm run thread -- --replan). */
 const SAT = 6;
 const SUN = 0;
-const PER_DOW = { 0: 1, 1: 3, 2: 3, 3: 3, 4: 3, 5: 3, 6: 0 };
-const PER_DOW_TEXT = "평일 3편 · 토요일 0편 · 일요일 1편";
+const PER_DOW = { 0: 1, 1: 2, 2: 2, 3: 2, 4: 2, 5: 2, 6: 0 };
+const PER_DOW_TEXT = "평일 2편 · 토요일 0편 · 일요일 1편";
 
 const iso = (d) => d.toISOString().slice(0, 10);
 const addDay = (d, n) => new Date(d.getTime() + n * 86400000);
@@ -423,7 +433,9 @@ function planSchedule(kinds, startDate, ramp, notBefore) {
     const want = Math.min(rule, kinds.length - i, 4);
     if (want > 0) {
       const floor = date === startDate ? notBefore || 0 : 0;
-      const sets = HOUR_SETS[want].map((s) => s.filter((h) => h >= floor)).filter((s) => s.length);
+      // 일요일 한 편짜리 자리만 저녁 표를 씁니다. ramp 로 편수가 달라진 날은 평소 표를 그대로 씁니다.
+      const table = dow === SUN && want === 1 ? SUN_HOURS : HOUR_SETS[want];
+      const sets = table.map((s) => s.filter((h) => h >= floor)).filter((s) => s.length);
       const hours = sets.length ? pick(sets) : []; // 남은 시간대가 없으면 그날은 통째로 건너뜁니다
       if (hours.length && (dow === SAT || dow === SUN)) {
         const work = kinds.slice(i, i + hours.length).filter((k) => k !== "life").length;

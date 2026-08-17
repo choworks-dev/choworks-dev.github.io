@@ -47,10 +47,10 @@ const DIR = path.join(ROOT, "content", "threads");
 const LIVE = Boolean(process.env.TELEGRAM_TOKEN && process.env.TELEGRAM_CHAT_ID);
 
 /* 하루에 알릴 수 있는 최대 편수. 큐가 어떻게 짜였든 여기서 한 번 더 막습니다.
-   계획(threads.js 의 PER_DOW, 지금 평일 3편)보다 한 편 높게 둡니다. 계획과 같은 숫자면
+   계획(threads.js 의 PER_DOW, 지금 평일 2편)보다 한 편 높게 둡니다. 계획과 같은 숫자면
    안전장치가 아니라 그냥 상한이 되어서, 손으로 한 편 끼워 넣은 날에 마지막 편이 조용히 안 나갑니다.
    PER_DOW 를 올리면 이 값도 같이 올려야 합니다. */
-const DAILY_CAP = 4;
+const DAILY_CAP = 3;
 
 /* LEAD_MIN  이만큼 앞이면 이 회차가 그 편을 맡아 예약 시각까지 기다립니다.
    깃허브 예약 실행이 밀리는 폭을 덮을 만큼 넉넉해야 합니다.
