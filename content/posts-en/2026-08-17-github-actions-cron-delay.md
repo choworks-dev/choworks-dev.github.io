@@ -3,8 +3,6 @@ title: I Told It to Run Every 10 Minutes. It Ran 17 Times.
 date: 2026-08-18 17:00:00 +09:00
 description: A free scheduled job stopped keeping time. Counting the runs showed 17 where 128 were due. What I fixed without buying a server, and what I chose to live with.
 tags: [GitHub Actions, automation, scheduling, infrastructure, solo business]
-draft: true
-publishAt: 2026-08-18 17:00
 ---
 
 I built a small automation that sends me a draft at a set time. No server, no monthly bill. Then one day the draft didn't arrive. The code was fine. There were no errors. When I counted the actual runs, it had fired 17 times over 21 hours where it should have fired 128.
