@@ -157,7 +157,9 @@ async function confirmPosted(queue) {
 /* 기다리는 동안 관리 화면에서 원고를 고쳤을 수 있습니다.
    깃허브 액션은 회차가 시작할 때 받아온 파일을 그대로 들고 있어서, 그대로 보내면 옛 글이 갑니다.
    보내기 직전에 한 번 더 받아와 지금 원고를 씁니다.
-   받아오는 데 실패하면 들고 있던 원고로 보냅니다. 안 보내는 것보다는 낫습니다. */
+   받아오는 데 실패하면 들고 있던 원고로 보냅니다. 안 보내는 것보다는 낫습니다.
+
+   보낼 원고를 돌려줍니다. 이미 나간 편이면 null 을 돌려주고, 부르는 쪽은 조용히 끝냅니다. */
 function refresh(post, parts) {
   if (process.env.GITHUB_ACTIONS !== "true") return parts; // 이 PC 에서는 작업 중인 파일을 건드리지 않습니다
   const r = require("child_process").spawnSync("git", ["pull", "--rebase", "origin", "main"], {
@@ -171,7 +173,22 @@ function refresh(post, parts) {
   const cur = T.queueOf(T.loadThreads(DIR)).find((p) => p.id === post.id);
   if (!cur) throw new Error(`${post.id} 이 큐에서 사라졌습니다. 알리지 않습니다.`);
   if (cur.status !== "ready") throw new Error(`${post.id} 이 ${T.STATUS[cur.status]} 으로 바뀌었습니다. 알리지 않습니다.`);
-  if (cur.remindedAt) throw new Error(`${post.id} 은 이미 알림이 나갔습니다(${cur.remindedAt}). 두 번 보내지 않습니다.`);
+  /* 이미 나간 편이면 안 보내고 조용히 끝냅니다. 오류가 아닙니다.
+
+     앞 회차가 예약 시각까지 기다리는 동안 다음 회차들이 concurrency 대기열에 쌓입니다.
+     앞 회차가 보내고 ~표시를 푸시한 뒤 락이 풀리면, 대기하던 회차가 몇 초 만에 시작하는데
+     그 몇 초 사이에는 깃허브가 방금 올라간 커밋을 아직 안 내주는 일이 있습니다.
+     그러면 뒤 회차의 checkout 에는 표시가 없어 같은 편을 또 맡고, 여기 pull 에서야 알게 됩니다.
+     LEAD_MIN 이 120분이라 잡이 한두 시간 떠 있는 일이 흔해졌고, 그만큼 뒤에 회차가 걸립니다.
+
+     여기서 던지면 잡이 실패로 끝나고 실패 알림과 깃허브 실패 메일이 나갑니다.
+     중복을 막은 것은 이 안전장치가 제 일을 한 것이지 고장이 아닙니다.
+     정상 동작에 실패 메일이 섞이면 진짜 고장이 왔을 때 그 메일을 안 읽게 됩니다. */
+  if (cur.remindedAt) {
+    console.log(`\n${post.id} 은 이미 알림이 나갔습니다(${cur.remindedAt}). 두 번 보내지 않고 끝냅니다.`);
+    console.log("앞 회차가 보낸 뒤 이 회차가 옛 파일로 시작한 것입니다. 다음 편은 다음 회차가 맡습니다.");
+    return null;
+  }
   const fresh = cur.parts.map((x) => x.text);
   if (fresh.join("\n\n") !== parts.join("\n\n")) {
     console.log("\n기다리는 사이에 원고가 바뀌었습니다. 고친 글로 보냅니다.");
@@ -281,6 +298,8 @@ async function main() {
   await new Promise((r) => setTimeout(r, waitMs));
 
   const parts = refresh(post, post.parts.map((x) => x.text));
+  if (!parts) return; // 기다리는 사이에 앞 회차가 이미 보냈습니다
+
   const lateMin = (Date.now() - at) / 60000;
   if (!(await send(post, parts, lateMin))) return;
 
