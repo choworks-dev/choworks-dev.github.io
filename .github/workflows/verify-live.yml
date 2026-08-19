@@ -1,0 +1,48 @@
+name: 사이트 점검
+
+# 하루 한 번, 글이 실제로 사이트에 떠 있는지 밖에서 확인합니다.
+#
+# 예약 발행 워크플로도 발행 직후에 같은 확인을 합니다. 그런데 그것은 그 워크플로가 돌았을 때
+# 얘기입니다. 회차가 통째로 안 돌거나 저장소 설정이 꺼져 있으면 확인 자체가 안 불립니다.
+# 그때는 아무 일도 안 일어나고 아무 알림도 안 옵니다. 그게 제일 위험한 상태라 밖에 하나 더 둡니다.
+#
+# 보는 것은 액션 로그가 아니라 독자가 여는 것과 같은 주소입니다.
+# 그래서 아직 모르는 종류의 고장도 여기서 걸립니다.
+on:
+  schedule:
+    - cron: "30 0 * * *" # 09:30 KST 언저리. 깃허브가 제때 안 돌리므로 시각은 대략입니다
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+      - run: npm ci
+
+      # 문제가 있으면 스크립트가 직접 알리고 잡을 빨간불로 끝냅니다.
+      - name: 글이 실제로 떠 있는지 확인
+        id: verify
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: node scripts/verify-live.js
+
+      # 스크립트가 알리기 전에 죽은 경우만 여기서 알립니다.
+      # 이미 알린 것을 또 보내면 다음부터 알림을 안 보게 됩니다.
+      - name: 실패 알리기
+        if: failure() && steps.verify.outputs.notified != '1'
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: |
+          node scripts/notify.js fail "사이트 점검" \
+            "${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"

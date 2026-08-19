@@ -25,8 +25,9 @@ concurrency:
 jobs:
   publish:
     runs-on: ubuntu-latest
-    # 예약 시각까지 최대 120분을 기다립니다. 거기에 준비와 커밋 시간을 더해 넉넉히 잡습니다.
-    timeout-minutes: 135
+    # 예약 시각까지 최대 120분, 그 뒤 사이트에 뜨는지 확인하며 최대 15분을 더 기다립니다.
+    # 거기에 준비와 커밋 시간을 더해 넉넉히 잡습니다.
+    timeout-minutes: 155
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
@@ -38,6 +39,7 @@ jobs:
       - run: npm ci
 
       - name: 예약된 글 확인 후 공개
+        id: publish
         run: node scripts/publish-due.js
 
       - name: 공개 커밋
@@ -68,9 +70,24 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: gh workflow run deploy.yml --ref main
 
+      # 여기까지는 전부 "실행됐는가" 입니다. 정작 중요한 것은 "떴는가" 입니다.
+      # 2026-08-18 에 이 잡은 성공으로 끝났고 커밋도 푸시도 됐지만 글은 사이트에 없었습니다.
+      # 그래서 마지막에 진짜 주소를 열어 봅니다. 중간에 무엇이 고장 나든 여기서 걸립니다.
+      #
+      # 성공해도 알립니다. 문제가 있을 때만 오는 알림은, 알림이 고장난 것과
+      # 아무 일도 없는 것을 구별해 주지 못합니다. 예약한 시각에 폰이 조용하면 그게 신호입니다.
+      - name: 사이트에 떴는지 확인
+        id: verify
+        if: steps.commit.outputs.pushed == '1'
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+        run: node scripts/verify-live.js --wait=${{ steps.publish.outputs.published }}
+
       # 실패했으면 알립니다. 조용히 안 도는 것이 제일 위험합니다.
+      # 확인 스텝이 이미 알린 경우는 뺍니다. 같은 일로 두 번 울리면 다음부터 안 보게 됩니다.
       - name: 실패 알리기
-        if: failure()
+        if: failure() && steps.verify.outputs.notified != '1'
         env:
           TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
           TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}

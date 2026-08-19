@@ -113,6 +113,7 @@ async function main() {
   /* 기다리는 사이에 같은 시각의 다른 글도 때가 됐을 수 있으니 다시 봅니다.
      한/영 짝은 같은 시각이라 여기서 같이 걸립니다. 한쪽만 나가면 그 글은 짝 없이 발행됩니다. */
   let n = 0;
+  const slugs = new Set();
   due()
     .filter((x) => x.at <= Date.now())
     .forEach((x) => {
@@ -123,9 +124,17 @@ async function main() {
       }
       fs.writeFileSync(x.path, out);
       console.log(`공개: ${x.file}`);
+      slugs.add(x.file.replace(/\.md$/, "").replace(/^\d{4}-\d{2}-\d{2}-/, ""));
       n += 1;
     });
   console.log(n ? `${n}개를 공개했습니다.` : "공개할 글이 없었습니다.");
+
+  /* 어느 글을 공개했는지 워크플로에 넘깁니다.
+     뒤에서 이 주소들이 실제로 뜨는지 확인해야 하는데, 로그를 긁어 알아내게 두면
+     로그 문구를 고치는 날 조용히 끊깁니다. */
+  if (process.env.GITHUB_OUTPUT) {
+    fs.appendFileSync(process.env.GITHUB_OUTPUT, `published=${[...slugs].join(",")}\n`);
+  }
 }
 
 if (require.main === module) {
