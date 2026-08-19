@@ -167,10 +167,20 @@ async function audit() {
   /* 공개해 둔 글인데 사이트에 없는 것. 배포가 빠졌거나 빌드가 이 글을 떨어뜨린 것입니다. */
   const live = all.filter((p) => !p.draft);
   const codes = await Promise.all(live.map((p) => status(p.url)));
-  live.forEach((p, i) => {
-    console.log(`  ${codes[i]} ${p.url}`);
-    if (codes[i] !== 200) problems.push(`사이트에 없음 (${codes[i]}) ${p.lang} ${p.url}`);
-  });
+  live.forEach((p, i) => console.log(`  ${codes[i]} ${p.url}`));
+
+  /* 한 번 더 물어봅니다. 마침 배포가 도는 중이거나 한 번 튄 응답까지 고장으로 세면
+     멀쩡한 날에도 알림이 옵니다. 그런 알림은 몇 번 받고 나면 안 보게 됩니다. */
+  const bad = live.filter((p, i) => codes[i] !== 200);
+  if (bad.length) {
+    console.log(`  ${bad.length}건이 200 이 아닙니다. 1분 뒤에 한 번 더 봅니다.`);
+    await sleep(60000);
+    const again = await Promise.all(bad.map((p) => status(p.url)));
+    bad.forEach((p, i) => {
+      console.log(`  다시 ${again[i]} ${p.url}`);
+      if (again[i] !== 200) problems.push(`사이트에 없음 (${again[i]}) ${p.lang} ${p.url}`);
+    });
+  }
 
   /* 예약 시각이 지났는데 아직 초안인 글. 예약 발행이 안 돈 것입니다.
      한 시간의 여유를 둡니다. 회차가 늦게 도는 것까지 고장으로 세면 알림을 믿지 않게 됩니다. */
