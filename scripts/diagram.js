@@ -43,8 +43,22 @@ function stripStandalone(svg) {
 
 /* 크기는 CSS 가 정합니다. 파일에 박힌 width/height 를 남기면 그 크기로 굳어서
    본문 폭에 안 맞습니다. viewBox 는 그대로 둡니다. 비율은 거기서 나옵니다. */
+/* 펴 넣은 뒤에도 이 덩어리는 마크다운을 통과합니다. 그래서 파일에 있는 대로 두면 안 됩니다.
+   marked 는 빈 줄에서 HTML 덩어리를 끊고, 그다음부터는 다시 마크다운으로 읽습니다.
+   SVG 는 4칸씩 들여써 있으니 그 줄들이 전부 코드 블록이 되어, 그림 절반이 <pre><code> 로 나갑니다.
+   2026-08-18 에 실제로 그렇게 나갔습니다. 브라우저는 오류를 안 내고 조용히 그렇게 그립니다.
+   빈 줄을 없애고 들여쓰기를 걷어내면 통째로 한 덩어리로 남습니다.
+   SVG 는 태그 사이 공백을 안 따지므로 그림은 그대로입니다. */
+function flatten(svg) {
+  return svg
+    .split(/\r?\n/)
+    .map((l) => l.trim())
+    .filter(Boolean)
+    .join("\n");
+}
+
 function prepare(svg, cls) {
-  const clean = stripStandalone(svg);
+  const clean = flatten(stripStandalone(svg));
   return clean.replace(/^<svg\b([^>]*)>/, (m, attrs) => {
     const kept = attrs.replace(/\s(width|height|class)="[^"]*"/g, "");
     return `<svg${kept} class="${cls}">`;
@@ -72,4 +86,4 @@ function expandDiagrams(md) {
   });
 }
 
-module.exports = { expandDiagrams, stripStandalone, prepare };
+module.exports = { expandDiagrams, stripStandalone, prepare, flatten };
