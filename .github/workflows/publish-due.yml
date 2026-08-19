@@ -12,8 +12,10 @@ on:
   workflow_dispatch: # 수동으로도 돌려볼 수 있습니다
 
 # draft 줄을 지운 파일을 저장소에 다시 적어야 하므로 쓰기 권한이 필요합니다.
+# actions: write 는 아래에서 배포 워크플로를 손으로 깨우는 데 씁니다.
 permissions:
   contents: write
+  actions: write
 
 # 여러 실행이 겹치면 같은 글을 두 번 커밋하려다 밀칩니다.
 concurrency:
@@ -38,8 +40,8 @@ jobs:
       - name: 예약된 글 확인 후 공개
         run: node scripts/publish-due.js
 
-      # [skip ci] 를 붙이지 않습니다. 이 푸시가 배포를 깨워야 글이 사이트에 올라갑니다.
       - name: 공개 커밋
+        id: commit
         run: |
           if [ -z "$(git status --porcelain content)" ]; then
             echo "바뀐 것이 없습니다."
@@ -51,6 +53,20 @@ jobs:
           git commit -m "예약 발행"
           git pull --rebase origin main
           git push origin HEAD:main
+          echo "pushed=1" >> "$GITHUB_OUTPUT"
+
+      # 이 푸시는 배포를 못 깨웁니다. 깃허브는 기본 GITHUB_TOKEN 으로 만든 푸시로는
+      # 새 워크플로를 시작하지 않습니다. 워크플로가 자기를 무한히 깨우는 것을 막는 규칙입니다.
+      # 그래서 [skip ci] 를 안 붙이는 것만으로는 부족하고, 배포를 손으로 깨워야 합니다.
+      # workflow_dispatch 는 그 규칙의 예외라 GITHUB_TOKEN 으로도 실행됩니다(PAT 이 필요 없습니다).
+      #
+      # 2026-08-18 에 글이 정각에 공개되고도 사이트에 안 올라간 이유가 이것입니다.
+      # 잡은 성공으로 끝나서 아래 실패 알림도 안 울렸습니다.
+      - name: 배포 깨우기
+        if: steps.commit.outputs.pushed == '1'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh workflow run deploy.yml --ref main
 
       # 실패했으면 알립니다. 조용히 안 도는 것이 제일 위험합니다.
       - name: 실패 알리기
