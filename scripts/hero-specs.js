@@ -377,6 +377,80 @@ MOTIF.socratic = (box) => {
   return s;
 };
 
+/* 견적서 한 장이 두 갈래로 갈립니다. 위는 직접 할 것, 아래는 맡길 것.
+   견적서가 안 알려주는 것이 바로 이 갈림이라는 게 글의 요지입니다. */
+MOTIF.quotepaper = (box, P) => {
+  const w = box.mode === "w";
+  if (w) {
+    return put(96, 34, 0.92, invoice()) +
+      line("M290,110 C350,110 360,104 400,104", { stroke: A, sw: 2, arrow: P + "aa" }) +
+      line("M290,166 C350,166 360,186 400,186", { op: 0.55, sw: 1.8, arrow: P + "am" }) +
+      card(410, 78, 330, 54, { accent: true }) + cardLines(410, 105, 280, 0) +
+      `<g opacity="0.5">${card(410, 160, 330, 54)}${cardLines(410, 187, 280, 3)}</g>`;
+  }
+  return put(112, 18, 0.56, invoice()) +
+    line("M180,158 V186", { stroke: A, sw: 2, arrow: P + "aa" }) +
+    card(38, 194, 284, 40, { accent: true }) + cardLines(38, 214, 236, 0) +
+    `<g opacity="0.5">${card(38, 242, 284, 34)}${cardLines(38, 259, 236, 3)}</g>`;
+};
+
+/* 돋보기 옆에 주소 목록. 동그라미가 찬 것이 색인된 것, 빈 것이 안 된 것입니다.
+   "안 나온다" 가 한 덩어리가 아니라 주소마다 갈린다는 게 이 글의 첫 문장입니다. */
+MOTIF.notfound = (box) => {
+  const w = box.mode === "w";
+  const hit = [1, 1, 0, 1, 1, 0];
+  if (w) {
+    let s = put(126, 78, 1.05, magnifier());
+    hit.forEach((on, i) => {
+      const y = 74 + i * 32;
+      s += on
+        ? dot(360, y, 6, { fill: A })
+        : ring(360, y, 6, { stroke: M, sw: 1.6, op: 0.55 });
+      s += bar(380, y - 2.5, [220, 176, 246, 198, 160, 232][i], { op: on ? 0.55 : 0.25 });
+    });
+    return s;
+  }
+  let s = put(26, 30, 0.62, magnifier());
+  hit.slice(0, 5).forEach((on, i) => {
+    const y = 176 + i * 26;
+    s += on ? dot(48, y, 5, { fill: A }) : ring(48, y, 5, { stroke: M, sw: 1.5, op: 0.55 });
+    s += bar(64, y - 2.5, [200, 156, 226, 178, 140][i], { op: on ? 0.55 : 0.25 });
+  });
+  return s;
+};
+
+/* 카드 두 장. 왼쪽은 그림 자리가 비어 있고 오른쪽은 채워져 있습니다.
+   단톡방에서 보이는 차이가 정확히 이것입니다. */
+MOTIF.preview = (box, P) => {
+  const w = box.mode === "w";
+  if (w) {
+    return put(122, 68, 0.94, linkCard()) +
+      line("M336,138 H408", { stroke: A, sw: 2, arrow: P + "aa" }) +
+      put(430, 68, 0.94, linkCard({ filled: true }));
+  }
+  return put(80, 22, 0.98, linkCard()) +
+    line("M180,180 V208", { stroke: A, sw: 2, arrow: P + "aa" }) +
+    put(80, 214, 0.5, linkCard({ filled: true }));
+};
+
+/* 계단. 왼쪽 아래 첫 칸만 또렷합니다. 무엇을 하느냐보다 어디서부터냐가 이 글의 이야기입니다. */
+MOTIF.steps = (box) => {
+  const w = box.mode === "w";
+  /* 칸 수를 cnt 로 둡니다. n 은 hero-kit 의 반올림 함수라 여기서 가리면 안 됩니다. */
+  const [x0, y0, bw, bh, dx, dy, cnt] = w ? [120, 214, 118, 42, 138, 38, 5] : [40, 244, 96, 34, 62, 40, 4];
+  let s = "";
+  for (let i = cnt - 1; i >= 0; i--) {
+    const x = x0 + i * dx, y = y0 - i * dy;
+    const first = i === 0;
+    s += `<g opacity="${first ? 1 : n(0.34 + (cnt - i) * 0.1)}">` +
+      card(x, y, bw, bh, { accent: first }) +
+      dot(x + 18, y + bh / 2, 3.4, { fill: first ? A : M }) +
+      bar(x + 32, y + bh / 2 - 2, bw - 52, { fill: first ? A : M, op: first ? 0.8 : 0.5 }) +
+      `</g>`;
+  }
+  return s;
+};
+
 /* 기록 더미. 아래가 오래된 것이라 흐리고, 값표는 맨 위 한 장에만 붙습니다.
    쌓인 것 전부에 값이 붙은 게 아니라 지금 붙기 시작했다는 뜻입니다.
    이 표지는 사용자가 보고 통과시킨 것이라 모양을 바꾸지 않습니다. */
@@ -402,6 +476,41 @@ MOTIF.record = (box, P) => {
   return s + ring(bx, by, br, { stroke: A, sw: 2, fill: C }) +
     `<use href="#${P}tag" x="${n(bx - br * 0.59)}" y="${n(by - br * 0.59)}" width="${n(br * 1.18)}" height="${n(br * 1.18)}" style="color:${A}"/>`;
 };
+
+/* 견적서 한 장. 모서리가 접혀 있어야 종이로 읽힙니다. 200x240 */
+function invoice() {
+  let s = shape("M4,4 H158 L186,32 V236 H4 Z", { fill: C, stroke: M, sw: 2 }) +
+    line("M158,4 V32 H186", { op: 0.6, sw: 1.6 });
+  [72, 102, 132, 162].forEach((y, i) => {
+    s += dot(30, y, 3.2, { op: 0.7 }) +
+      bar(44, y - 2, [72, 58, 84, 64][i], { op: 0.45 }) +
+      bar(130, y - 2, 40, { op: 0.45 });
+  });
+  /* 합계 줄만 또렷합니다. 견적서에서 사람이 실제로 읽는 것은 이 한 줄뿐입니다. */
+  return s + line("M28,188 H172", { op: 0.5, sw: 1.4 }) +
+    bar(108, 200, 62, { fill: A, op: 0.9, h: 5 });
+}
+
+/* 돋보기. 128x128 */
+function magnifier() {
+  return ring(56, 56, 42, { stroke: M, sw: 2.4, fill: C }) +
+    ring(56, 56, 33, { stroke: M, sw: 1.3, op: 0.4 }) +
+    line("M86,86 L120,120", { sw: 4, stroke: M });
+}
+
+/* 링크 미리보기 카드. 위쪽이 그림 자리입니다. 200x150 */
+function linkCard(o = {}) {
+  const st = o.filled ? A : M;
+  let s = shape("M4,4 H196 V146 H4 Z", { fill: C, stroke: st, sw: o.filled ? 2.2 : 1.8 });
+  s += o.filled
+    ? shape("M14,14 H186 V88 H14 Z", { fill: A, stroke: "none", sw: 0, op: 0.28 }) +
+      /* 채워진 쪽에는 그림이 있다는 표시만. 무엇의 그림인지는 중요하지 않습니다. */
+      line("M40,72 L74,44 L104,70 L128,54 L162,80", { stroke: A, sw: 2, op: 0.85 })
+    : shape("M14,14 H186 V88 H14 Z", { fill: "none", stroke: M, sw: 1.6, op: 0.4 });
+  if (!o.filled) s += line("M14,14 L186,88 M186,14 L14,88", { stroke: M, sw: 1.2, op: 0.18 });
+  return s + bar(16, 104, o.filled ? 140 : 96, { op: o.filled ? 0.75 : 0.35 }) +
+    bar(16, 120, o.filled ? 104 : 62, { op: o.filled ? 0.5 : 0.25 });
+}
 
 /* ------------------------------------------------------------
    글마다의 내용
@@ -513,6 +622,66 @@ const SPECS = [
       title: "Question and answer in front of Socrates",
       desc: "Speech bubbles alternate left and right in front of a bust of Socrates, growing sharper toward the end because understanding comes from asking again.",
       caption: ["Ask once and it is a search", "Ask back and it is a dialogue"],
+    },
+  },
+  {
+    key: "quotepaper", slug: "before-outsourcing-your-website", motif: MOTIF.quotepaper,
+    chip: "Buy vs Build",
+    glow: { w: [420, 140, 320, 150], n: [180, 150, 190, 150] },
+    ko: {
+      title: "견적서가 두 갈래로 갈린다",
+      desc: "견적서 한 장에서 두 갈래가 갈려 나갑니다. 위는 직접 할 수 있는 일이고 아래는 사람에게 맡길 일입니다.",
+      caption: ["옮기는 일과 만드는 일", "값이 붙는 자리가 다르다"],
+    },
+    en: {
+      title: "One quote, two kinds of work",
+      desc: "Two branches split out of a single quote. The upper one is work you can now do yourself; the lower one is work to hire out.",
+      caption: ["Moving and making", "are priced differently"],
+    },
+  },
+  {
+    key: "notfound", slug: "not-showing-up-on-google", motif: MOTIF.notfound,
+    chip: "Indexed?",
+    glow: { w: [400, 150, 320, 150], n: [180, 180, 190, 150] },
+    ko: {
+      title: "주소마다 색인 상태가 다르다",
+      desc: "돋보기 옆에 주소가 줄지어 있고, 동그라미가 찬 것은 색인된 주소이며 빈 것은 아직 안 된 주소입니다.",
+      caption: ["안 나온다는 말에", "뜻이 두 가지 있다"],
+    },
+    en: {
+      title: "Each address has its own status",
+      desc: "Addresses listed beside a magnifier. Filled circles are indexed pages and hollow ones are not indexed yet.",
+      caption: ["Not showing up", "means two different things"],
+    },
+  },
+  {
+    key: "preview", slug: "kakao-link-preview", motif: MOTIF.preview,
+    chip: "Link Card",
+    glow: { w: [540, 138, 320, 150], n: [180, 150, 190, 150] },
+    ko: {
+      title: "그림이 빠진 카드와 붙은 카드",
+      desc: "링크 카드 두 장이 나란히 있습니다. 왼쪽은 그림 자리가 비어 있고 오른쪽은 채워져 있습니다.",
+      caption: ["같은 링크인데", "같은 회사로 안 보인다"],
+    },
+    en: {
+      title: "A card without an image, and one with",
+      desc: "Two link preview cards side by side. The left one has an empty image slot and the right one is filled in.",
+      caption: ["The same link", "does not read as the same company"],
+    },
+  },
+  {
+    key: "steps", slug: "what-to-automate-first", motif: MOTIF.steps,
+    chip: "Start Here",
+    glow: { w: [200, 210, 320, 150], n: [110, 230, 190, 150] },
+    ko: {
+      title: "첫 칸만 또렷한 계단",
+      desc: "계단처럼 놓인 칸들 가운데 왼쪽 아래 첫 칸만 또렷합니다. 무엇을 하느냐보다 어디서부터냐가 먼저입니다.",
+      caption: ["무엇을 없앨까보다", "어디서부터가 먼저다"],
+    },
+    en: {
+      title: "Steps, with only the first one lit",
+      desc: "Blocks arranged as a staircase with only the bottom-left one in full color. Where to begin matters before what to automate.",
+      caption: ["Before what to remove", "comes where to start"],
     },
   },
   {
