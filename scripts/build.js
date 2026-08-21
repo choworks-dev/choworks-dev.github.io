@@ -58,9 +58,20 @@ const esc = (s) => String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replac
    - 없으면 안 되는 것(title/date/description)은 오류 → 빌드 중단 → 배포되지 않음
    - 품질 문제(설명 길이, 태그 누락 등)는 경고 → 배포는 되지만 로그에 남음
    초안이라 아직 못 채웠다면 frontmatter 에 draft: true 를 넣으세요. 검사 대상에서 빠집니다. */
-const SEO = { descMin: 40, descMax: 160, titleMax: 60 };
+/* 기준이 언어마다 다릅니다.
+
+   검색 결과에서 잘리는 기준은 글자 수가 아니라 픽셀 폭입니다. 한글은 한 글자가 영문
+   두 글자쯤의 폭을 차지하므로, 같은 자릿수라도 한국어가 먼저 잘립니다.
+   2026-08-22 에 발행된 열여섯 페이지를 재어 보니 한국어판 여덟 편 중 일곱 편의
+   description 이 잘리고 있었습니다. 그때까지 영문 기준(40~160)을 한국어에도 그대로
+   적용하고 있었기 때문입니다. */
+const SEO = {
+  ko: { descMin: 40, descMax: 80, titleMax: 30 },
+  en: { descMin: 110, descMax: 155, titleMax: 60 },
+};
 
 function checkSeo(posts, label) {
+  const S = SEO[label === "en" ? "en" : "ko"];
   /* 검사 결과는 글 단위로 모읍니다.
      콘솔 출력용 문자열과, 로컬 관리 페이지가 글마다 배지로 보여줄 목록이 같은 데이터에서 나옵니다. */
   const issues = []; // { slug, level: "error" | "warn", msg }
@@ -84,12 +95,12 @@ function checkSeo(posts, label) {
       err(`description 이 없습니다. 검색결과에 보이는 문장이라 글마다 반드시 달라야 합니다.`);
     } else {
       const len = String(p.description).trim().length;
-      if (len < SEO.descMin) warn(`description 이 ${len}자로 짧습니다(권장 ${SEO.descMin}~${SEO.descMax}자).`);
-      if (len > SEO.descMax) warn(`description 이 ${len}자로 깁니다. 검색결과에서 뒷부분이 잘립니다(권장 ${SEO.descMax}자 이내).`);
+      if (len < S.descMin) warn(`description 이 ${len}자로 짧습니다(권장 ${S.descMin}~${S.descMax}자).`);
+      if (len > S.descMax) warn(`description 이 ${len}자로 깁니다. 검색결과에서 뒷부분이 잘립니다(권장 ${S.descMax}자 이내).`);
     }
 
-    if (p.title && String(p.title).length > SEO.titleMax) {
-      warn(`title 이 ${String(p.title).length}자로 깁니다. 검색결과에서 잘릴 수 있습니다(권장 ${SEO.titleMax}자 이내).`);
+    if (p.title && String(p.title).length > S.titleMax) {
+      warn(`title 이 ${String(p.title).length}자로 깁니다. 검색결과에서 잘릴 수 있습니다(권장 ${S.titleMax}자 이내).`);
     }
     if (!(p.tags || []).length) warn(`tags 가 없습니다.`);
 
@@ -233,7 +244,22 @@ ${dims ? `<meta property="og:image:width" content="${dims.w}">
      검색 결과의 제목은 한글 기준 30자 안팎에서 잘립니다. 같은 문장을 두 자리에 쓰면
      한쪽이 반드시 손해를 봅니다. homeTitle 이 비어 있으면 예전처럼 태그라인을 씁니다. */
   const homeTitle = (isEn ? site.homeTitleEn : site.homeTitleKo) || (isEn ? site.taglineEn : site.taglineKo);
-  const fullTitle = title ? `${title} · ${site.brand}` : `${site.brand} · ${homeTitle}`;
+  /* 글 페이지에는 브랜드를 안 붙입니다.
+
+     " · choworks.dev" 가 15자인데, 한국어 검색 결과는 30자쯤에서 잘립니다.
+     즉 브랜드가 제목 자리의 절반을 먹습니다. 2026-08-22 에 재어 보니 여덟 편 중 여섯 편의
+     제목이 검색 결과에서 중간에 끊기고 있었고, 끊긴 자리가 대부분 글 제목이었습니다.
+
+     브랜드는 어차피 결과 화면에 도메인으로 따로 표시됩니다. 제목에서 한 번 더 말할 이유가 없습니다.
+     홈·소개·404 처럼 글이 아닌 페이지에는 그대로 붙입니다. 거기는 브랜드가 곧 제목입니다.
+
+     og:title 은 따로 둡니다. 링크를 공유했을 때는 어느 사이트 글인지가 보여야 하고,
+     거기에는 글자 수 제한이 검색 결과만큼 빡빡하지 않습니다. */
+  const brandless = ogType === "article";
+  const fullTitle = title
+    ? (brandless ? title : `${title} · ${site.brand}`)
+    : `${site.brand} · ${homeTitle}`;
+  const shareTitle = title ? `${title} · ${site.brand}` : fullTitle;
   const desc = description || (isEn ? site.descriptionEn : site.descriptionKo);
   return `<!doctype html>
 <html lang="${isEn ? "en" : "ko"}" data-theme="dark">
@@ -250,7 +276,7 @@ ${noIndex ? `<meta name="robots" content="noindex, nofollow">
 <meta property="og:site_name" content="${esc(site.brand)}">
 <meta property="og:locale" content="${isEn ? "en_US" : "ko_KR"}">
 <meta property="og:locale:alternate" content="${isEn ? "ko_KR" : "en_US"}">
-<meta property="og:title" content="${esc(fullTitle)}">
+<meta property="og:title" content="${esc(shareTitle)}">
 <meta property="og:description" content="${esc(desc)}">
 <meta property="og:url" content="${site.url}${canonical}">
 ${published ? `<meta property="article:published_time" content="${published}">

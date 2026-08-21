@@ -1,7 +1,7 @@
 ---
 title: I Told It to Run Every 10 Minutes. It Ran 17 Times.
 date: 2026-08-18 17:00:00 +09:00
-description: A free scheduled job stopped keeping time. Counting the runs showed 17 where 128 were due. What I fixed without buying a server, and what I chose to live with.
+description: A free scheduled job kept missing its time. Counting the runs showed 17 where 128 should have been. How I fixed it without buying a server.
 tags: [GitHub Actions, automation, scheduling, infrastructure, solo business]
 ---
 
