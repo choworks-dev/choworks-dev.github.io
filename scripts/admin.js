@@ -331,7 +331,12 @@ const CONTROL_JS = `<script>
       if (b.getAttribute('data-view') === name) b.setAttribute('aria-current','page');
       else b.removeAttribute('aria-current');
     });
-    ['posts','threads'].forEach(function(v){
+    /* 보여줄 섹션 목록을 여기에 적어두지 않습니다. 탭 버튼에서 읽습니다.
+       예전에는 ['posts','threads'] 를 박아뒀는데, 탭을 하나 더 만들었을 때
+       이 줄을 같이 고치는 것을 잊어서 탭은 눌리는데 화면이 빈 채로 있었습니다.
+       버튼이 곧 목록이면 그 실수가 아예 안 생깁니다. */
+    tabs.forEach(function(b){
+      var v = b.getAttribute('data-view');
       var el = document.getElementById('view-' + v);
       if (el) el.style.display = (v === name ? '' : 'none');
     });
