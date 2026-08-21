@@ -1,5 +1,5 @@
 {
-  "updated": "2026-08-21T14:32:53.610Z",
+  "updated": "2026-08-21T16:44:56.692Z",
   "source": "cloudflare-web-analytics",
   "caveat": "무료 플랜은 표본 추정이라 10 단위로 반올림됩니다. 우리 방문도 섞여 있습니다.",
   "range": {
@@ -8,72 +8,17 @@
     "days": 90
   },
   "totals": {
-    "views": 130,
-    "visits": 80
+    "views": 100,
+    "visits": 0
   },
   "byDay": [
     {
-      "date": "2026-08-15",
-      "views": 30,
-      "visits": 30
-    },
-    {
-      "date": "2026-08-16",
-      "views": 10,
-      "visits": 10
-    },
-    {
-      "date": "2026-08-17",
-      "views": 30,
-      "visits": 10
-    },
-    {
-      "date": "2026-08-18",
-      "views": 20,
-      "visits": 10
-    },
-    {
       "date": "2026-08-19",
-      "views": 20,
-      "visits": 10
-    },
-    {
-      "date": "2026-08-20",
-      "views": 10,
-      "visits": 10
-    },
-    {
-      "date": "2026-08-21",
-      "views": 10,
+      "views": 100,
       "visits": 0
     }
   ],
-  "byPath": [
-    {
-      "path": "/",
-      "views": 80
-    },
-    {
-      "path": "/posts/socratic-method-in-the-ai-era/",
-      "views": 10
-    },
-    {
-      "path": "/about/",
-      "views": 10
-    },
-    {
-      "path": "/en/posts/socratic-method-in-the-ai-era/",
-      "views": 10
-    },
-    {
-      "path": "/en/about/",
-      "views": 10
-    },
-    {
-      "path": "/en/",
-      "views": 10
-    }
-  ],
+  "byPath": [],
   "byReferrer": [
     {
       "host": "",
