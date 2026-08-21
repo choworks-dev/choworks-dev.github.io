@@ -1,5 +1,5 @@
 {
-  "updated": "2026-08-21T14:28:48.418Z",
+  "updated": "2026-08-21T14:32:53.610Z",
   "source": "cloudflare-web-analytics",
   "caveat": "무료 플랜은 표본 추정이라 10 단위로 반올림됩니다. 우리 방문도 섞여 있습니다.",
   "range": {
