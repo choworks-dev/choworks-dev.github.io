@@ -176,11 +176,43 @@ function loadThreads(dir) {
     .sort((a, b) => a.file.localeCompare(b.file));
 }
 
-/* 배치들을 나갈 순서 하나로 폅니다. 화면이 답해야 하는 질문이 "다음에 뭐가 나가나" 라서요. */
+/* 배치들을 나갈 순서 하나로 폅니다. 화면이 답해야 하는 질문이 "다음에 뭐가 나가나" 라서요.
+
+   지금 적혀 있는 날짜 순으로 폅니다. 이미 짜둔 큐를 보여주는 자리이므로 여기서 순서를
+   다시 정하지 않습니다. 순서를 바꾸는 것은 --replan 하나뿐입니다.
+   보는 함수와 정하는 함수를 갈라 두지 않으면 무엇이 무엇을 밀었는지 알 수 없게 됩니다. */
 function queueOf(batches) {
   const all = [];
   batches.forEach((b) => b.posts.forEach((p) => all.push({ ...p, file: b.file, source: b.source })));
   return all.sort((a, b) => a.sortKey - b.sortKey || a.file.localeCompare(b.file) || a.n - b.n);
+}
+
+/* --replan 이 쓰는 순서.
+
+   2026-08-22 에 규칙을 바꿨습니다. 그전에는 배치들이 서로 섞여서 흘렀습니다.
+   wix 1편, 견적 1편, wix 2편 하는 식이라 한 글의 이야기가 며칠에 걸쳐 끊겼습니다.
+   이제는 블로그 글이 나온 순서대로, 한 배치를 끝내고 다음 배치로 넘어갑니다.
+
+   일상 편은 주말로 보냅니다. "업무 세 편마다 일상 한 편" 규칙은 같은 날 없앴습니다.
+   그 규칙이 업무 편의 순서를 깨는 유일한 이유였습니다.
+   주말은 원래 일상 편의 자리이기도 해서, 순서를 안 깨면서 일상 편이 갈 곳이 거기입니다.
+
+   블로그 날짜를 모르는 배치(source 가 없거나 글을 못 찾은 경우)는 파일 이름 순으로 뒤에 붙입니다. */
+function replanOrder(batches, postsBySlug) {
+  const work = [];
+  const life = [];
+  batches.forEach((b) => {
+    const src = b.source && postsBySlug ? postsBySlug.get(b.source) : null;
+    const blogAt = src && src.date ? src.date : "9999-12-31";
+    b.posts.forEach((p) => {
+      const item = { ...p, file: b.file, source: b.source, blogAt };
+      (p.kind === "life" ? life : work).push(item);
+    });
+  });
+  const byBlog = (a, z) => a.blogAt.localeCompare(z.blogAt) || a.file.localeCompare(z.file) || a.n - z.n;
+  work.sort(byBlog);
+  life.sort((a, z) => a.sortKey - z.sortKey || a.file.localeCompare(z.file) || a.n - z.n);
+  return { work, life };
 }
 
 /* 한 편 검사. 블로그의 SEO 검사와 달리 빌드를 멈추지 않습니다.
@@ -390,12 +422,20 @@ const SUN_HOURS = [[20], [21]];
 const pad = (n) => String(n).padStart(2, "0");
 const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
 
-/* 요일별 편수. 일요일 1 · 평일 2 · 토요일 0.
-   PER_DOW 를 고치면 큐 전체가 따라옵니다(npm run thread -- --replan). */
+/* 요일별 편수. 평일 3 · 토요일 1 · 일요일 1.
+   PER_DOW 를 고치면 큐 전체가 따라옵니다(npm run thread -- --replan).
+
+   2026-08-22 에 평일 2·토 0·일 1 에서 올렸습니다. 블로그 발행이 늘어서입니다.
+   블로그 한 편이 쓰레드 세 편이라, 블로그를 자주 내면 큐가 밀리기만 합니다.
+   위의 "소재가 늘어도 안 올린다" 는 계정을 갓 만들었을 때의 규칙이었습니다.
+   계정이 자리를 잡은 뒤에는 발행 속도가 블로그 발행 속도를 따라가야 합니다.
+
+   PER_DOW 를 올리면 threads-remind.js 의 DAILY_CAP 도 같이 올려야 합니다.
+   둘이 같은 숫자면 안전장치가 아니라 그냥 상한이 되어서 그날 마지막 편이 조용히 안 나갑니다. */
 const SAT = 6;
 const SUN = 0;
-const PER_DOW = { 0: 1, 1: 2, 2: 2, 3: 2, 4: 2, 5: 2, 6: 0 };
-const PER_DOW_TEXT = "평일 2편 · 토요일 0편 · 일요일 1편";
+const PER_DOW = { 0: 1, 1: 3, 2: 3, 3: 3, 4: 3, 5: 3, 6: 1 };
+const PER_DOW_TEXT = "평일 3편 · 토요일 1편 · 일요일 1편";
 
 const iso = (d) => d.toISOString().slice(0, 10);
 const addDay = (d, n) => new Date(d.getTime() + n * 86400000);
@@ -439,10 +479,6 @@ function planSchedule(kinds, startDate, ramp, notBefore) {
       const table = dow === SUN && want === 1 ? SUN_HOURS : HOUR_SETS[want];
       const sets = table.map((s) => s.filter((h) => h >= floor)).filter((s) => s.length);
       const hours = sets.length ? pick(sets) : []; // 남은 시간대가 없으면 그날은 통째로 건너뜁니다
-      if (hours.length && (dow === SAT || dow === SUN)) {
-        const work = kinds.slice(i, i + hours.length).filter((k) => k !== "life").length;
-        if (work) warn.push(`${date} (${dow === SAT ? "토" : "일"}) 에 업무 편이 ${work}편 놓입니다.`);
-      }
       hours.forEach((h) => {
         // 분은 1~59. 정각을 빼는 이유는 08:00 같은 시각이 예약 발행처럼 보이는 대표적인 모양이라서입니다.
         out.push(`${date} ${pad(h)}:${pad(1 + Math.floor(Math.random() * 59))}`);
@@ -631,13 +667,31 @@ function writeText(dir, id, part, text) {
    규칙이 바뀌면 이미 짜둔 큐도 같이 바뀌어야 합니다. 마흔 줄을 손으로 고치면 반드시 실수가 납니다.
    순서는 건드리지 않습니다. 번호와 발행 순서가 어긋나면 앞 편을 가리키며 쓴 문장이 뒤로 갑니다.
    발행한 편은 지나간 기록이라 그대로 둡니다. */
-function replan(dir, startDate, ramp, notBefore) {
-  const queue = queueOf(loadThreads(dir));
-  const todo = queue.filter((p) => p.status !== "posted");
-  if (!todo.length) return { moved: 0, warn: [], first: "", last: "" };
+function replan(dir, startDate, ramp, notBefore, postsBySlug) {
+  const batches = loadThreads(dir);
+  const { work, life } = replanOrder(batches, postsBySlug);
+  const todoWork = work.filter((p) => p.status !== "posted");
+  const todoLife = life.filter((p) => p.status !== "posted");
+  if (!todoWork.length && !todoLife.length) return { moved: 0, warn: [], first: "", last: "" };
 
-  const { when, warn } = planSchedule(todo.map((p) => p.kind), startDate, ramp, notBefore);
-  const at = new Map(todo.map((p, i) => [p.id, when[i]]));
+  /* 자리를 먼저 다 만들고, 평일 자리에는 업무를 주말 자리에는 일상을 넣습니다.
+     일상이 모자라면 그 주말 자리에 업무가 들어가고, 업무가 먼저 끝나면 남은 자리를 일상이 씁니다.
+     자리를 비워 두지는 않습니다. 큐가 있는데 안 나가는 날이 생기면 그게 더 손해입니다. */
+  const total = todoWork.length + todoLife.length;
+  const { when, warn } = planSchedule(Array(total).fill("work"), startDate, ramp, notBefore);
+
+  const at = new Map();
+  const restWork = todoWork.slice();
+  const restLife = todoLife.slice();
+  when.forEach((slot) => {
+    const dow = new Date(`${slot.split(" ")[0]}T00:00:00Z`).getUTCDay();
+    const weekend = dow === SAT || dow === SUN;
+    const take = weekend
+      ? (restLife.length ? restLife : restWork)
+      : (restWork.length ? restWork : restLife);
+    const p = take.shift();
+    if (p) at.set(p.id, slot);
+  });
 
   const files = fs.readdirSync(dir).filter((f) => f.endsWith(".md") && !f.startsWith("_"));
   let moved = 0;
@@ -726,7 +780,10 @@ function cli(argv) {
     /* 오늘부터 다시 짜는 경우에만 지금 시각을 넘깁니다. 이미 지난 시간대에 편이 놓이면
        알림이 안 가거나 다음 회차가 지난 날짜로 보고 멈춥니다. 다음 시부터 잡습니다. */
     const notBefore = start === kstToday() ? kstHour() + 1 : 0;
-    const r = replan(THREADS, start, ramp, notBefore);
+    /* 순서를 블로그 발행일로 정하므로 글 목록이 필요합니다.
+       못 읽으면 배치 파일 이름 순으로 떨어집니다(replanOrder 의 9999-12-31). */
+    const bySlug = new Map(loadPosts(path.join(CONTENT, "posts-kr")).map((x) => [x.slug, x]));
+    const r = replan(THREADS, start, ramp, notBefore, bySlug);
     console.log(`아직 안 올린 ${r.moved}편의 날짜와 시각을 다시 짰습니다.`);
     console.log(`  ${r.first} 부터 ${r.last} 까지`);
     if (notBefore) console.log(`  오늘은 ${notBefore}시 이후 시간대만 씁니다 (지난 시각에 놓지 않으려고)`);
@@ -760,7 +817,9 @@ function cli(argv) {
       console.log(`  알림만 가고 발행 확인이 안 된 편 ${stats.waiting}개: ${wait.map((p) => p.id).join(", ")}`);
       console.log("    올렸으면 텔레그램에 답장하거나  npm run thread -- --posted");
     }
-    if (stats.longestWorkRun >= 4) console.log(`  업무 글이 연속 ${stats.longestWorkRun}편입니다. 사이에 일상 편을 끼우세요.`);
+    /* "업무 글이 연속 넷" 경고는 2026-08-22 에 뺐습니다.
+       배치를 섞어 흘리던 시절의 규칙인데, 이제는 한 배치를 끝내고 다음으로 넘어갑니다.
+       정상인 것에 경고를 띄우면 사람이 경고 자체를 안 보게 됩니다. */
     batchIssues(batches).forEach((m) => console.log(`  ${m}`));
 
     const next = queue.filter((p) => p.status !== "posted").slice(0, 5);

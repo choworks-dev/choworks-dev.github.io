@@ -34,6 +34,44 @@ const DEFAULT_EDITOR = "cursor";
 
 let EDITOR = DEFAULT_EDITOR; // buildAdmin 이 시작할 때 실제 값으로 채웁니다
 
+/* 예약 발행 읽기.
+
+   머리말에 draft: true 와 publishAt 두 줄이 있으면 워크플로 "예약 발행" 이 그 시각에
+   두 줄을 지우고 커밋합니다. 즉 publishAt 은 "언제 나가는가" 이고 date 는 "언제 쓴 글인가" 입니다.
+   둘이 달라도 됩니다. 겹쳐 보이지만 뜻이 다릅니다(scripts/publish-due.js 참고).
+
+   시각은 한국 시각으로 적습니다. publish-due.js 와 같은 규칙으로 읽어야
+   화면에 보이는 시각과 실제로 나가는 시각이 어긋나지 않습니다. */
+function parseKst(v) {
+  if (!v) return null;
+  const s = String(v).trim();
+  const m = s.match(/^(\d{4})-(\d{2})-(\d{2})(?:[ T](\d{2}):(\d{2}))?/);
+  if (!m) return null;
+  const [, y, mo, d, hh, mm] = m;
+  // 한국은 UTC+9. 적힌 시각에서 9시간을 빼면 UTC 가 됩니다.
+  return Date.UTC(+y, +mo - 1, +d, +(hh || "0") - 9, +(mm || "0"));
+}
+
+function scheduleOf(p, now) {
+  if (!p.draft || !p.publishAt) return null;
+  const at = parseKst(p.publishAt);
+  if (at === null || Number.isNaN(at)) return null;
+  const d = new Date(at);
+  const kst = new Date(at + 9 * 3600 * 1000);
+  const pad = (n) => String(n).padStart(2, "0");
+  const when = `${kst.getUTCFullYear()}-${pad(kst.getUTCMonth() + 1)}-${pad(kst.getUTCDate())} ${pad(kst.getUTCHours())}:${pad(kst.getUTCMinutes())}`;
+  const diff = at - now;
+  const late = diff < 0;
+  /* 남은 시간은 사람이 읽는 단위로 줄입니다. "3일 뒤" 면 충분하고 분까지 필요 없습니다. */
+  const mins = Math.round(Math.abs(diff) / 60000);
+  const label = late
+    ? "지남"
+    : mins < 60 ? `${mins}분 뒤`
+      : mins < 60 * 24 ? `${Math.round(mins / 60)}시간 뒤`
+        : `${Math.round(mins / 60 / 24)}일 뒤`;
+  return { at, when, label, late };
+}
+
 const uriPath = (absPath) => encodeURI(absPath.replace(/\\/g, "/"));
 const editorHref = (absPath) => `${EDITOR}://file/${uriPath(absPath)}`;
 
@@ -89,6 +127,8 @@ footer a{color:#7aa2ff}
 .tabs button{background:none;border:0;border-bottom:2px solid transparent;color:#8b93a7;padding:.6rem .9rem;font:inherit;font-size:.88rem;cursor:pointer;margin-bottom:-1px}
 .tabs button:hover{color:#e6e9ef}
 .tabs button[aria-current=page]{color:#e6e9ef;border-bottom-color:#6ee7b7;font-weight:600}
+.badge.b-sched{background:#2a2416;color:#e5c07b;border-color:#4a3f22}
+.sched{color:#e5c07b;font-size:.74rem;margin-top:.15rem;font-variant-numeric:tabular-nums}
 .tabs .n{color:#5c6478;font-variant-numeric:tabular-nums;margin-left:.35rem}
 
 /* ---------- 방문 ----------
@@ -693,14 +733,13 @@ function threadsView(queue, stats, contentDir, batches) {
 
   /* 업무 이야기가 연달아 나가면 계정이 광고판이 됩니다.
      "섞어야지" 라는 다짐은 숫자로 보이지 않으면 지켜지지 않아서, 여기서 세어 보여줍니다. */
-  const runWarn = (stats.longestWorkRun >= 4
-    ? `<div class="warn">경고: 업무 글이 연속 ${stats.longestWorkRun}편입니다. 사이에 일상 편을 끼우세요.</div>`
-    : "") +
-    /* 편수보다 이쪽이 피로를 만듭니다. 같은 블로그 글에서 나온 편이 줄줄이 이어지면
-       기록이 아니라 연재 광고로 읽히고, 첫 편에 흥미를 느껴 팔로우한 사람이 사흘째에 떠납니다. */
-    (stats.longestTopicRun >= 3
-      ? `<div class="warn">경고: 같은 소재가 연속 ${stats.longestTopicRun}편입니다. 배치를 겹쳐서 흘리세요.</div>`
-      : "");
+  /* 2026-08-22 에 두 경고를 다 뺐습니다.
+
+     "업무 글이 연속 넷" 과 "같은 소재가 연속 셋" 은 배치를 섞어 흘리던 시절의 규칙입니다.
+     이제는 블로그 글이 나온 순서대로 한 배치를 끝내고 다음으로 넘어갑니다.
+     즉 같은 소재가 연속 세 편인 것이 정상이고, 그게 이 계정이 지키기로 한 모양입니다.
+     정상인 것에 경고를 띄우면 사람이 경고를 안 보게 되고, 그러면 진짜 경고도 같이 묻힙니다. */
+  const runWarn = "";
 
   /* 블로그 글 하나에서 뽑는 배치는 3의 배수여야 합니다. 소재가 도입·전개·마무리로 나뉘어서요.
      하루 발행 편수와는 별개입니다(그쪽은 threads.js 의 PER_DOW).
@@ -923,9 +962,20 @@ function row(p) {
     .join(" ")
     .toLowerCase();
 
-  const status = p.draft
-    ? `<span class="badge b-draft">초안</span>`
-    : `<span class="badge b-live">공개</span>`;
+  /* 상태는 셋입니다. 공개 · 예약 · 초안.
+
+     예약은 draft 이면서 publishAt 이 있는 글입니다. 워크플로 "예약 발행" 이 그 시각에
+     두 줄을 지우고 커밋합니다. 그냥 초안과 눈으로 구별돼야 합니다.
+     둘을 같은 "초안" 으로 보여주면, 나갈 글과 그냥 쟁여둔 글이 섞여서
+     "이번 주에 뭐가 나가나" 를 표에서 못 읽습니다.
+
+     시각을 못 읽으면 초안으로 둡니다. 잘못 적은 publishAt 을 예약으로 보여주면
+     나갈 거라고 믿고 있다가 안 나갑니다. 안 나가는 것보다 안 나갈 것처럼 보이는 편이 낫습니다. */
+  const status = !p.draft
+    ? `<span class="badge b-live">공개</span>`
+    : p.schedule
+      ? `<span class="badge b-sched">예약 ${esc(p.schedule.label)}</span>`
+      : `<span class="badge b-draft">초안</span>`;
   const en = p.hasEn
     ? `<span class="badge b-ok">EN</span>`
     : `<span class="badge b-none">EN 없음</span>`;
@@ -946,13 +996,35 @@ function row(p) {
     ? `<span class="title">${esc(p.title || "(제목 없음)")}</span>`
     : `<a class="title" href="${p.url}" target="_blank" rel="noopener">${esc(p.title || "(제목 없음)")}</a>`;
 
+  /* 예약 시각이 지났는데 아직 초안이면 붉게 보여줍니다.
+     이건 워크플로가 안 돌았다는 뜻이라 사람이 봐야 합니다.
+     verify-live.js 도 같은 것을 하루 한 번 잡지만, 여기서도 보이는 편이 낫습니다.
+     화면을 열 때마다 눈에 걸리는 것이 하루 한 번 오는 알림보다 빠릅니다. */
+  const late = p.schedule && p.schedule.late
+    ? `<div class="err">예약 시각이 지났는데 아직 초안입니다. 워크플로 "예약 발행" 을 확인하세요.</div>`
+    : "";
+
+  /* 한/영 예약이 어긋나면 짝 없이 한 편만 나갑니다. 2026-08-18 에 실제로 그렇게 됐습니다.
+     한쪽만 예약돼 있거나 시각이 다르면 여기서 잡습니다. */
+  let pairWarn = "";
+  if (p.hasEn && (p.schedule || p.enSchedule)) {
+    if (p.schedule && !p.enSchedule) pairWarn = "영문판에 publishAt 이 없습니다. 한국어판만 나갑니다.";
+    else if (!p.schedule && p.enSchedule) pairWarn = "한국어판에 publishAt 이 없습니다. 영문판만 나갑니다.";
+    else if (p.schedule && p.enSchedule && p.schedule.at !== p.enSchedule.at) {
+      pairWarn = `예약 시각이 다릅니다. 한국어 ${p.schedule.when} · 영문 ${p.enSchedule.when}`;
+    }
+  }
+  const pairBox = pairWarn ? `<div class="err">${esc(pairWarn)}</div>` : "";
+
   return `<tr data-search="${esc(search)}">
   <td class="n">${p.n}</td>
-  <td class="date">${esc(p.date || "?")}</td>
+  <td class="date">${esc(p.date || "?")}${p.schedule ? `<div class="sched">${esc(p.schedule.when)}</div>` : ""}</td>
   <td>
     ${titleCell}
     ${p.description ? `<div class="desc">${esc(p.description)}</div>` : ""}
     ${tags ? `<div class="tags">${tags}</div>` : ""}
+    ${late}
+    ${pairBox}
     ${issues}
   </td>
   <td>${status}${en}${th}</td>
@@ -1031,6 +1103,7 @@ function buildAdmin({ koAll, enAll, issuesBySlug, contentDir, builtAt, editor })
 
   // 번호는 발행 순서(가장 오래된 글이 1번). 새 글이 나와도 기존 번호가 밀리지 않습니다.
   const total = koAll.length;
+  const now = Date.now();
   const koRows = koAll.map((p, i) => ({
     ...p,
     n: total - i, // koAll 은 최신순 정렬
@@ -1042,6 +1115,9 @@ function buildAdmin({ koAll, enAll, issuesBySlug, contentDir, builtAt, editor })
     koPath: path.join(koDir, p.file),
     enPath: path.join(enDir, p.file),
     issues: issuesBySlug.ko.get(p.slug) || [],
+    schedule: scheduleOf(p, now),
+    /* 한쪽에만 publishAt 을 넣으면 짝 없이 한 편만 나갑니다. 실제로 났던 사고라 여기서 잡습니다. */
+    enSchedule: scheduleOf(enBySlug.get(p.slug) || {}, now),
   }));
 
   // 한국어판 없이 영문만 있는 글 — 목록·홈 어디에도 짝이 없어 눈에 잘 띄지 않습니다
@@ -1060,6 +1136,10 @@ function buildAdmin({ koAll, enAll, issuesBySlug, contentDir, builtAt, editor })
 
   const drafts = koAll.filter((p) => p.draft).length;
   const live = total - drafts;
+  /* 예약과 그냥 초안을 갈라 셉니다. "초안 5" 만 보이면 그중 몇 편이 나갈 예정인지 모릅니다. */
+  const sched = koRows.filter((r) => r.schedule).length;
+  const nextUp = koRows.filter((r) => r.schedule && !r.schedule.late)
+    .sort((a, b) => a.schedule.at - b.schedule.at)[0];
 
   return `<!doctype html>
 <html lang="ko">
@@ -1092,7 +1172,8 @@ function buildAdmin({ koAll, enAll, issuesBySlug, contentDir, builtAt, editor })
     <select id="editor" title="파일 열기 링크가 어느 에디터로 갈지 고릅니다. 선택은 이 브라우저에 기억됩니다.">
       ${EDITORS.map((e) => `<option value="${e.id}"${e.id === EDITOR ? " selected" : ""}>${esc(e.label)} 로 열기</option>`).join("\n      ")}
     </select>
-    <span class="count">검색 결과 <b id="shown">${total}</b> / 전체 ${total} (공개 ${live} · 초안 ${drafts}) · 한 페이지 ${PAGE_SIZE}개</span>
+    <span class="count">검색 결과 <b id="shown">${total}</b> / 전체 ${total} (공개 ${live} · 예약 ${sched} · 초안 ${drafts - sched}) · 한 페이지 ${PAGE_SIZE}개</span>
+    ${nextUp ? `<span class="count">다음 발행 <b>${esc(nextUp.schedule.when)}</b> (${esc(nextUp.schedule.label)}) ${esc(nextUp.title)}</span>` : ""}
   </div>
 
   ${table(koRows)}
