@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 320" width="360" height="320" role="img" aria-label="Cover art: older records fade toward the bottom while only the topmost one carries a price tag" style="font-family:system-ui,'Segoe UI',sans-serif">
+  <!-- Vertical layout for phones. Shrinking the wide cover would put the bottom line at 5px.
+       Same idea as record-hero-en.svg, only the proportions change. Change both together.
+       Ids are prefixed rhn- because the wide version is on the same page. -->
+  <style data-standalone>
+    svg { --card:#ffffff; --bg-soft:#f5f7fa; --border:#e2e8f0; --text:#16202e; --muted:#5a6b83; --accent:#0f9d76; --bg:#ffffff; }
+    @media (prefers-color-scheme: dark) {
+      svg { --card:#161c26; --bg-soft:#141922; --border:#232b38; --text:#e6ebf3; --muted:#9aa7bd; --accent:#6ee7b7; --bg:#0e1116; }
+    }
+  </style>
+  <rect data-standalone x="0" y="0" width="360" height="320" fill="var(--bg,#ffffff)"/>
+
+  <defs>
+    <linearGradient id="rhn-panel" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0"   stop-color="var(--bg-soft,#141922)"/>
+      <stop offset="0.55" stop-color="var(--bg-soft,#141922)"/>
+      <stop offset="1"   stop-color="var(--bg,#0e1116)"/>
+    </linearGradient>
+    <radialGradient id="rhn-glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="var(--accent,#6ee7b7)" stop-opacity="0.20"/>
+      <stop offset="1" stop-color="var(--accent,#6ee7b7)" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="rhn-dots" x="0" y="0" width="24" height="24" patternUnits="userSpaceOnUse">
+      <circle cx="1.2" cy="1.2" r="1.2" fill="var(--muted,#9aa7bd)" opacity="0.16"/>
+    </pattern>
+    <clipPath id="rhn-clip"><rect x="0" y="0" width="360" height="320" rx="14"/></clipPath>
+    <symbol id="rhn-tag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M20.6 12.6 12.4 20.8 3.4 11.8V3.4h8.4z"/>
+      <circle cx="8.2" cy="8.2" r="1.5"/>
+    </symbol>
+  </defs>
+
+  <g clip-path="url(#rhn-clip)">
+    <rect x="0" y="0" width="360" height="320" fill="url(#rhn-panel)"/>
+    <rect x="0" y="0" width="360" height="320" fill="url(#rhn-dots)"/>
+    <ellipse cx="200" cy="108" rx="180" ry="130" fill="url(#rhn-glow)"/>
+  </g>
+  <rect x="0.75" y="0.75" width="358.5" height="318.5" rx="14" fill="none" stroke="var(--border,#232b38)" stroke-width="1.5"/>
+
+  <g stroke="var(--border,#232b38)" stroke-width="1.4">
+    <g fill="var(--card,#161c26)">
+      <rect x="62" y="228" width="210" height="24" rx="6" opacity="0.40"/>
+      <rect x="68" y="206" width="210" height="24" rx="6" opacity="0.55"/>
+      <rect x="74" y="184" width="210" height="24" rx="6" opacity="0.68"/>
+      <rect x="80" y="162" width="210" height="24" rx="6" opacity="0.80"/>
+      <rect x="86" y="140" width="210" height="24" rx="6" opacity="0.90"/>
+      <rect x="92" y="118" width="210" height="24" rx="6"/>
+    </g>
+  </g>
+  <rect x="98" y="96" width="210" height="24" rx="6" fill="var(--card,#161c26)" stroke="var(--accent,#6ee7b7)" stroke-width="2"/>
+
+  <g fill="var(--muted,#9aa7bd)">
+    <g opacity="0.40"><circle cx="78" cy="240" r="3.2"/><rect x="91" y="235" width="104" height="3.4" rx="1.7"/><rect x="91" y="243" width="66" height="3.4" rx="1.7"/></g>
+    <g opacity="0.55"><circle cx="84" cy="218" r="3.2"/><rect x="97" y="213" width="88" height="3.4" rx="1.7"/><rect x="97" y="221" width="78" height="3.4" rx="1.7"/></g>
+    <g opacity="0.68"><circle cx="90" cy="196" r="3.2"/><rect x="103" y="191" width="116" height="3.4" rx="1.7"/><rect x="103" y="199" width="60" height="3.4" rx="1.7"/></g>
+    <g opacity="0.80"><circle cx="96" cy="174" r="3.2"/><rect x="109" y="169" width="82" height="3.4" rx="1.7"/><rect x="109" y="177" width="104" height="3.4" rx="1.7"/></g>
+    <g opacity="0.90"><circle cx="102" cy="152" r="3.2"/><rect x="115" y="147" width="110" height="3.4" rx="1.7"/><rect x="115" y="155" width="70" height="3.4" rx="1.7"/></g>
+    <g><circle cx="108" cy="130" r="3.2"/><rect x="121" y="125" width="96" height="3.4" rx="1.7"/><rect x="121" y="133" width="84" height="3.4" rx="1.7"/></g>
+  </g>
+  <g fill="var(--accent,#6ee7b7)">
+    <circle cx="114" cy="108" r="3.2"/>
+    <rect x="127" y="103" width="104" height="3.4" rx="1.7" opacity="0.75"/>
+    <rect x="127" y="111" width="72" height="3.4" rx="1.7" opacity="0.75"/>
+  </g>
+
+  <circle cx="308" cy="96" r="14" fill="var(--card,#161c26)" stroke="var(--accent,#6ee7b7)" stroke-width="2"/>
+  <use href="#rhn-tag" x="299" y="87" width="18" height="18" style="color:var(--accent,#6ee7b7)"/>
+
+  <rect x="196" y="22" width="142" height="24" rx="12" fill="none" stroke="var(--border,#232b38)" stroke-width="1.4"/>
+  <text x="267" y="38" fill="var(--muted,#9aa7bd)" font-size="11.5" font-weight="600" text-anchor="middle" style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:0.08em">Data as Asset</text>
+
+  <g fill="var(--muted,#9aa7bd)" font-size="12" text-anchor="middle" style="letter-spacing:0.05em">
+    <text x="180" y="280">Email · Chat · Source code</text>
+    <text x="180" y="299">And the years nobody deleted</text>
+  </g>
+</svg>

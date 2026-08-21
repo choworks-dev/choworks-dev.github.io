@@ -1,0 +1,114 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 300" width="900" height="300" role="img" aria-labelledby="rhTitleEn rhDescEn" style="font-family:system-ui,'Segoe UI',sans-serif">
+  <title id="rhTitleEn">The moment a pile of records becomes an asset</title>
+  <desc id="rhDescEn">Older records lie faded at the bottom and grow sharper toward the top. A price tag hangs off the topmost one. Records nobody deleted have started to carry a price.</desc>
+
+  <!-- Cover art for the top of the post. It sets a tone rather than explaining anything,
+       so there are no numbers and no proper nouns. The body and data-value-flip-en.svg do that job.
+       Put a price in the cover and the cover becomes the summary, which gives the reader
+       one less reason to read on.
+
+       Elements marked data-standalone are only for viewing this file on its own; they are
+       stripped when the SVG is inlined so colors follow the site variables and the theme toggle works.
+       Ids are prefixed rhw- because the wide and narrow versions land on the same page. -->
+  <style data-standalone>
+    svg { --card:#ffffff; --bg-soft:#f5f7fa; --border:#e2e8f0; --text:#16202e; --muted:#5a6b83; --accent:#0f9d76; --bg:#ffffff; }
+    @media (prefers-color-scheme: dark) {
+      svg { --card:#161c26; --bg-soft:#141922; --border:#232b38; --text:#e6ebf3; --muted:#9aa7bd; --accent:#6ee7b7; --bg:#0e1116; }
+    }
+  </style>
+  <rect data-standalone x="0" y="0" width="900" height="300" fill="var(--bg,#ffffff)"/>
+
+  <defs>
+    <linearGradient id="rhw-panel" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0"   stop-color="var(--bg-soft,#141922)"/>
+      <stop offset="0.55" stop-color="var(--bg-soft,#141922)"/>
+      <stop offset="1"   stop-color="var(--bg,#0e1116)"/>
+    </linearGradient>
+    <radialGradient id="rhw-glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="var(--accent,#6ee7b7)" stop-opacity="0.20"/>
+      <stop offset="1" stop-color="var(--accent,#6ee7b7)" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="rhw-dots" x="0" y="0" width="24" height="24" patternUnits="userSpaceOnUse">
+      <circle cx="1.2" cy="1.2" r="1.2" fill="var(--muted,#9aa7bd)" opacity="0.16"/>
+    </pattern>
+    <clipPath id="rhw-clip"><rect x="0" y="0" width="900" height="300" rx="14"/></clipPath>
+    <symbol id="rhw-tag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M20.6 12.6 12.4 20.8 3.4 11.8V3.4h8.4z"/>
+      <circle cx="8.2" cy="8.2" r="1.5"/>
+    </symbol>
+  </defs>
+
+  <g clip-path="url(#rhw-clip)">
+    <rect x="0" y="0" width="900" height="300" fill="url(#rhw-panel)"/>
+    <rect x="0" y="0" width="900" height="300" fill="url(#rhw-dots)"/>
+    <ellipse cx="486" cy="69" rx="300" ry="150" fill="url(#rhw-glow)"/>
+  </g>
+  <rect x="0.75" y="0.75" width="898.5" height="298.5" rx="14" fill="none" stroke="var(--border,#232b38)" stroke-width="1.5"/>
+
+  <!-- Cover art for the top of the post. It sets a tone rather than explaining anything,
+       so there are no numbers and no proper nouns. The body and data-value-flip-en.svg do that job.
+       Put a price in the cover and the cover becomes the summary, which gives the reader
+       one less reason to read on.
+
+       Elements marked data-standalone are only for viewing this file on its own; they are
+       stripped when the SVG is inlined so colors follow the site variables and the theme toggle works.
+       Ids are prefixed rhw- because the wide and narrow versions land on the same page. -->
+  <g stroke="var(--border,#232b38)" stroke-width="1.4">
+    <g fill="var(--card,#161c26)">
+      <rect x="280" y="224" width="300" height="26" rx="6" opacity="0.40"/>
+      <rect x="288" y="200" width="300" height="26" rx="6" opacity="0.52"/>
+      <rect x="296" y="176" width="300" height="26" rx="6" opacity="0.64"/>
+      <rect x="304" y="152" width="300" height="26" rx="6" opacity="0.76"/>
+      <rect x="312" y="128" width="300" height="26" rx="6" opacity="0.86"/>
+      <rect x="320" y="104" width="300" height="26" rx="6" opacity="0.94"/>
+      <rect x="328" y="80"  width="300" height="26" rx="6"/>
+    </g>
+  </g>
+  <rect x="336" y="56" width="300" height="26" rx="6" fill="var(--card,#161c26)" stroke="var(--accent,#6ee7b7)" stroke-width="2"/>
+
+  <g fill="var(--muted,#9aa7bd)">
+    <g opacity="0.40">
+      <circle cx="296" cy="237" r="3.4"/><rect x="310" y="232" width="150" height="3.6" rx="1.8"/><rect x="310" y="240" width="96" height="3.6" rx="1.8"/>
+    </g>
+    <g opacity="0.52">
+      <circle cx="304" cy="213" r="3.4"/><rect x="318" y="208" width="132" height="3.6" rx="1.8"/><rect x="318" y="216" width="112" height="3.6" rx="1.8"/>
+    </g>
+    <g opacity="0.64">
+      <circle cx="312" cy="189" r="3.4"/><rect x="326" y="184" width="164" height="3.6" rx="1.8"/><rect x="326" y="192" width="88" height="3.6" rx="1.8"/>
+    </g>
+    <g opacity="0.76">
+      <circle cx="320" cy="165" r="3.4"/><rect x="334" y="160" width="120" height="3.6" rx="1.8"/><rect x="334" y="168" width="150" height="3.6" rx="1.8"/>
+    </g>
+    <g opacity="0.86">
+      <circle cx="328" cy="141" r="3.4"/><rect x="342" y="136" width="158" height="3.6" rx="1.8"/><rect x="342" y="144" width="102" height="3.6" rx="1.8"/>
+    </g>
+    <g opacity="0.94">
+      <circle cx="336" cy="117" r="3.4"/><rect x="350" y="112" width="138" height="3.6" rx="1.8"/><rect x="350" y="120" width="120" height="3.6" rx="1.8"/>
+    </g>
+    <g>
+      <circle cx="344" cy="93" r="3.4"/><rect x="358" y="88" width="170" height="3.6" rx="1.8"/><rect x="358" y="96" width="94" height="3.6" rx="1.8"/>
+    </g>
+  </g>
+  <g fill="var(--accent,#6ee7b7)">
+    <circle cx="352" cy="69" r="3.4"/>
+    <rect x="366" y="64" width="146" height="3.6" rx="1.8" opacity="0.75"/>
+    <rect x="366" y="72" width="108" height="3.6" rx="1.8" opacity="0.75"/>
+  </g>
+
+  <!-- Cover art for the top of the post. It sets a tone rather than explaining anything,
+       so there are no numbers and no proper nouns. The body and data-value-flip-en.svg do that job.
+       Put a price in the cover and the cover becomes the summary, which gives the reader
+       one less reason to read on.
+
+       Elements marked data-standalone are only for viewing this file on its own; they are
+       stripped when the SVG is inlined so colors follow the site variables and the theme toggle works.
+       Ids are prefixed rhw- because the wide and narrow versions land on the same page. -->
+  <path d="M636,69 H664" stroke="var(--accent,#6ee7b7)" stroke-width="1.6" fill="none"/>
+  <circle cx="682" cy="69" r="17" fill="var(--card,#161c26)" stroke="var(--accent,#6ee7b7)" stroke-width="2"/>
+  <use href="#rhw-tag" x="672" y="59" width="20" height="20" style="color:var(--accent,#6ee7b7)"/>
+
+  <rect x="712" y="24" width="152" height="26" rx="13" fill="none" stroke="var(--border,#232b38)" stroke-width="1.4"/>
+  <text x="788" y="41" fill="var(--muted,#9aa7bd)" font-size="12" font-weight="600" text-anchor="middle" style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:0.08em">Data as Asset</text>
+
+  <text x="450" y="277" fill="var(--muted,#9aa7bd)" font-size="12.5" text-anchor="middle" style="letter-spacing:0.06em">Email · Chat · Source code · And the years nobody deleted</text>
+</svg>
