@@ -32,3 +32,6 @@ NAVER.local.md
 
 # 그림 미리보기(로컬 전용)
 .preview/
+
+# 방문 분석용 자격 증명 (로컬 전용)
+.env.analytics

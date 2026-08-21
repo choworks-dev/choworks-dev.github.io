@@ -14,7 +14,8 @@
     "thread:token": "node scripts/threads-token.js",
     "thread:remind": "node scripts/threads-remind.js",
     "notify": "node scripts/notify-setup.js",
-    "verify": "node scripts/verify-live.js"
+    "verify": "node scripts/verify-live.js",
+    "stats": "node scripts/stats-fetch.js"
   },
   "keywords": [],
   "author": "",

@@ -91,6 +91,31 @@ footer a{color:#7aa2ff}
 .tabs button[aria-current=page]{color:#e6e9ef;border-bottom-color:#6ee7b7;font-weight:600}
 .tabs .n{color:#5c6478;font-variant-numeric:tabular-nums;margin-left:.35rem}
 
+/* ---------- 방문 ----------
+   숫자를 크게 안 씁니다. 표본 추정이라 10 단위로 뭉쳐 있는데 크게 띄우면 그걸 잊습니다. */
+.snote{background:#171d26;border:1px solid #262d3a;border-left:3px solid #6ee7b7;
+       border-radius:8px;padding:.7rem .9rem;margin-bottom:1rem;color:#a7b0c2;font-size:.85rem;line-height:1.65}
+.snote b{color:#e6e9ef}
+.sgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:.9rem;margin-top:.9rem}
+.scard{background:#12171f;border:1px solid #1c222c;border-radius:10px;padding:.85rem 1rem}
+.scard h3{margin:0 0 .6rem;font-size:.86rem;color:#e6e9ef;font-weight:600;display:flex;align-items:baseline;gap:.5rem}
+.scard h3 small{color:#5c6478;font-size:.76rem;font-weight:400}
+.stbl{width:100%;border-collapse:collapse}
+.stbl td{padding:.2rem 0;vertical-align:middle}
+.stbl td.n{width:3.2rem;text-align:right;padding-right:.7rem;color:#8b93a7;font-variant-numeric:tabular-nums;font-size:.82rem}
+.stbl td:last-child{position:relative;padding:.28rem .5rem}
+/* 값은 막대 길이가 아니라 왼쪽 숫자로 읽습니다. 막대는 눈으로 순위만 잡는 용도입니다. */
+.sfill{position:absolute;left:0;top:2px;bottom:2px;background:#1b2a2a;border-radius:4px;z-index:0}
+.slabel{position:relative;z-index:1;color:#a7b0c2;font-size:.82rem;word-break:break-all}
+.sdays{display:flex;align-items:flex-end;gap:3px;overflow-x:auto;padding-top:.3rem}
+.sbar{display:flex;flex-direction:column;align-items:center;gap:.3rem;min-width:34px}
+.sbar i{display:block;width:16px;background:#2f6d5b;border-radius:3px 3px 0 0}
+.sbar em{font-style:normal;color:#5c6478;font-size:.68rem;font-variant-numeric:tabular-nums;white-space:nowrap}
+.empty{background:#12171f;border:1px solid #1c222c;border-radius:10px;padding:1.4rem;color:#a7b0c2}
+.empty p{margin:0 0 .5rem}
+.empty .hint{color:#8b93a7;font-size:.85rem;line-height:1.7}
+.empty code{background:#1a212b;border:1px solid #262d3a;border-radius:4px;padding:.1rem .35rem;font-size:.85em}
+
 /* 쓰레드 원고 카드 */
 .th{border:1px solid #1c222c;border-radius:10px;padding:1rem 1.1rem;margin-bottom:1rem;background:#11151c}
 .th-head{display:flex;gap:.5rem;align-items:baseline;flex-wrap:wrap;margin-bottom:.2rem}
@@ -735,6 +760,73 @@ ${g.posts.slice().reverse().map(postCard).join("\n")}
 <nav class="pager" id="thPager" aria-label="주"></nav>`;
 }
 
+/* ---------- 방문 ----------
+
+   content/stats.json 을 읽어 그립니다. 여기서 API 를 부르지 않습니다.
+   관리 화면은 npm run dev 로 뜰 때마다 그려지는데 그때마다 남의 API 를 두드리면
+   느려지고, 인터넷이 없으면 관리 화면 자체가 안 뜹니다.
+   파일을 채우는 것은 npm run stats 와 워크플로가 따로 합니다.
+
+   숫자를 크게 보여주지 않는 이유가 있습니다. 무료 플랜은 표본 추정이라 10 단위로
+   반올림돼 나오고, 우리(대표님과 저)의 방문도 섞여 있습니다. 크게 띄우면 그걸 잊습니다.
+   그래서 맨 위에 그 사실을 먼저 적고 숫자는 그 아래에 둡니다. */
+function statsView(stats) {
+  if (!stats) {
+    return `<div class="empty">
+  <p>아직 방문 기록을 가져온 적이 없습니다.</p>
+  <p class="hint">터미널에서 <code>npm run stats</code> 를 돌리면 <code>content/stats.json</code> 이 생기고 여기에 표시됩니다.
+  자격 증명은 <code>.env.analytics</code> 에 있습니다(저장소에 안 올라갑니다).</p>
+</div>`;
+  }
+
+  const nf = (v) => String(v).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  const days = stats.byDay || [];
+  const peak = days.reduce((m, d) => Math.max(m, d.views), 0) || 1;
+
+  /* 막대는 그림이 아니라 눈금입니다. 값이 10 단위로 뭉쳐 있어서 곡선을 그리면
+     있지도 않은 정밀도가 있는 것처럼 보입니다. */
+  const bars = days.map((d) => {
+    const h = Math.max(2, Math.round((d.views / peak) * 46));
+    return `<span class="sbar" title="${esc(d.date)}  조회 ${d.views} · 방문 ${d.visits}"><i style="height:${h}px"></i><em>${esc(d.date.slice(5))}</em></span>`;
+  }).join("");
+
+  const list = (rows, keyName, title, note) => {
+    if (!rows || !rows.length) return "";
+    const max = rows.reduce((m, r) => Math.max(m, r.views), 0) || 1;
+    const body = rows.slice(0, 12).map((r) => {
+      const label = r[keyName] === "" ? "(직접 들어옴)" : r[keyName];
+      const pct = Math.round((r.views / max) * 100);
+      return `<tr><td class="n">${nf(r.views)}</td><td><span class="sfill" style="width:${pct}%"></span><span class="slabel">${esc(label)}</span></td></tr>`;
+    }).join("");
+    return `<div class="scard"><h3>${esc(title)}${note ? `<small>${esc(note)}</small>` : ""}</h3><table class="stbl"><tbody>${body}</tbody></table></div>`;
+  };
+
+  /* 사이트 안에서 이동한 것을 따로 짚어 줍니다.
+     걸러내지는 않습니다. Web Analytics 는 사람을 구별하지 않고 무료 플랜에는 IP 제외가
+     없어서, 우리 방문을 빼는 것이 애초에 불가능합니다. 걸러낸 척하면 그 숫자를 믿게 됩니다. */
+  const internal = (stats.byReferrer || []).find((r) => r.host && r.host.indexOf("choworks.dev") >= 0);
+
+  return `<div class="snote">
+  <b>이 숫자는 추정치입니다.</b> ${esc(stats.caveat || "")}
+  ${internal ? `이 기간에 <b>사이트 안에서 이동한 조회가 ${nf(internal.views)}</b> 건입니다. 대표님과 제가 확인하며 만든 것이 여기 섞여 있습니다.` : ""}
+</div>
+
+<div class="bar">
+  <span class="count">${esc(stats.range.from)} ~ ${esc(stats.range.to)} · ${stats.range.days}일</span>
+  <span class="count">조회 <b>${nf(stats.totals.views)}</b> · 방문 <b>${nf(stats.totals.visits)}</b></span>
+  <span class="count">가져온 때 ${esc(new Date(stats.updated).toLocaleString("ko-KR"))}</span>
+</div>
+
+<div class="scard"><h3>날마다<small>막대는 조회 수</small></h3><div class="sdays">${bars}</div></div>
+
+<div class="sgrid">
+  ${list(stats.byPath, "path", "많이 본 주소")}
+  ${list(stats.byReferrer, "host", "어디서 왔나", "빈칸은 주소를 직접 치거나 북마크")}
+  ${list(stats.byCountry, "country", "나라")}
+  ${list(stats.byDevice, "device", "기기")}
+</div>`;
+}
+
 /* 한 글을 표의 한 줄로. */
 function row(p) {
   const tags = (p.tags || []).map((t) => `<span class="tag">${esc(t)}</span>`).join("");
@@ -824,6 +916,16 @@ function buildAdmin({ koAll, enAll, issuesBySlug, contentDir, builtAt, editor })
   }));
   const stats = queueStats(queue);
 
+  /* 방문 기록. 없으면 없는 대로 그립니다.
+     파일이 깨졌다고 관리 화면 전체가 안 뜨면 안 되므로 조용히 넘어갑니다. */
+  let visits = null;
+  try {
+    const p = path.join(contentDir, "stats.json");
+    if (require("fs").existsSync(p)) visits = JSON.parse(require("fs").readFileSync(p, "utf8"));
+  } catch (e) {
+    console.warn("  [방문] content/stats.json 을 읽지 못했습니다: " + e.message);
+  }
+
   // 글 목록에 "이 글에서 몇 편 뽑았고 몇 편이 남았나"를 달기 위한 집계
   const perSource = new Map();
   queue.forEach((p) => {
@@ -888,6 +990,7 @@ function buildAdmin({ koAll, enAll, issuesBySlug, contentDir, builtAt, editor })
   <nav class="tabs">
     <button type="button" data-view="posts" aria-current="page">글<span class="n">${total}</span></button>
     <button type="button" data-view="threads">쓰레드<span class="n">${stats.left} 대기${threadTodo ? ` / 안 쓴 글 ${threadTodo}` : ""}</span></button>
+    <button type="button" data-view="visits">방문<span class="n">${visits ? `${visits.range.days}일 ${visits.totals.views}` : "없음"}</span></button>
   </nav>
 
   <section id="view-posts">
@@ -906,6 +1009,10 @@ function buildAdmin({ koAll, enAll, issuesBySlug, contentDir, builtAt, editor })
 
   <section id="view-threads" style="display:none">
   ${threadsView(queue, stats, contentDir, batches)}
+  </section>
+
+  <section id="view-visits" style="display:none">
+  ${statsView(visits)}
   </section>
 
   <footer>

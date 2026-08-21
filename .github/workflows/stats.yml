@@ -1,0 +1,77 @@
+name: 방문 기록 수집
+
+# 하루 한 번 Cloudflare 에서 방문 기록을 긁어 content/stats.json 으로 커밋합니다.
+# 관리 화면의 방문 탭이 그 파일을 읽어 그립니다.
+#
+# 왜 관리 화면에서 직접 API 를 안 부르는가.
+# 관리 화면은 npm run dev 로 뜰 때마다 다시 그려집니다. 그때마다 남의 API 를 두드리면
+# 느려지고, 인터넷이 없거나 토큰이 만료되면 관리 화면 자체가 안 뜹니다.
+# 파일로 떨궈두면 화면은 파일만 읽으면 되고, 데이터가 우리 저장소에 남아
+# 나중에 "그때 얼마였지" 를 깃 히스토리에서 볼 수 있습니다.
+#
+# 새벽에 도는 이유는 전날치가 다 모인 뒤에 긁기 위해서입니다.
+# 한국 시간 기준 새벽 4시(UTC 19시). 깃허브 예약은 시각을 안 지키므로 몇십 분 밀려도
+# 상관없게 잡았습니다. 하루 한 번짜리라 밀려도 잃는 것이 없습니다.
+on:
+  schedule:
+    - cron: "0 19 * * *"
+  workflow_dispatch:
+
+# stats.json 을 저장소에 다시 적어야 하므로 쓰기 권한이 필요합니다.
+permissions:
+  contents: write
+
+concurrency:
+  group: stats
+  cancel-in-progress: false
+
+jobs:
+  fetch:
+    # 시크릿이 없으면 아예 돌지 않습니다. 없는 채로 켜두면 매일 실패 알림만 쌓입니다.
+    # (쓰레드 알림에서 실제로 그렇게 됐던 적이 있습니다)
+    if: ${{ vars.STATS_ENABLED == '1' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    env:
+      CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+      CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+      CF_SITE_TAG: ${{ secrets.CF_SITE_TAG }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      # stats-fetch.js 자체는 의존성이 없지만, 실패 알림에 쓰는 notify.js 가
+      # 다른 스크립트를 부를 수 있어 맞춰 둡니다.
+      - run: npm ci
+
+      - name: 방문 기록 가져오기
+        run: node scripts/stats-fetch.js --days=90
+
+      - name: 커밋
+        run: |
+          if [ -z "$(git status --porcelain content/stats.json)" ]; then
+            echo "바뀐 것이 없습니다."
+            exit 0
+          fi
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add content/stats.json
+          git commit -m "방문 기록 갱신 [skip ci]"
+          # 사람이 그사이 커밋했을 수 있으므로 한 번 당겨서 얹습니다.
+          git pull --rebase origin main
+          git push origin HEAD:main
+
+      # 조용히 안 도는 것이 제일 위험합니다.
+      # 방문 숫자가 며칠째 그대로인 것과 수집이 죽은 것은 화면에서 똑같아 보입니다.
+      # 세 번째 인자는 설명이 아니라 열어볼 주소입니다(scripts/notify.js).
+      - name: 실패 알리기
+        if: failure()
+        run: |
+          node scripts/notify.js fail "방문 기록 수집" \
+            "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID"
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
