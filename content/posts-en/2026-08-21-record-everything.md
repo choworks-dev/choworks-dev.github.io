@@ -32,6 +32,8 @@ When a company folds, you sell what has value. Aircraft. Office furniture. The b
 
 If someone had told me a few years back that a bankrupt airline's internal small talk would fetch eight figures, I would not have believed them.
 
+{{svg: data-value-flip-en}}
+
 ## Why dead companies specifically
 
 The simple reason: **the public internet is already scraped.** That job finished sometime around late 2024. Wikipedia, news, blogs, public GitHub, all of it went in. What is left is what was never public.

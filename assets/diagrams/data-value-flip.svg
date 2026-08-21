@@ -1,0 +1,90 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 360" width="900" height="360" role="img" aria-labelledby="vfTitle vfDesc" style="font-family:system-ui,'Apple SD Gothic Neo','Malgun Gothic',sans-serif">
+  <title id="vfTitle">같은 기록, 달라진 값</title>
+  <desc id="vfDesc">회사가 굴러가는 동안 쌓인 사내 이메일과 메신저 대화와 소스코드는 몇 년 전이라면 폐기 대상이었지만, 2026년 8월에는 같은 데이터가 구글에 1000만 달러에 팔렸습니다. 데이터는 그대로이고 값을 매기는 쪽이 달라졌습니다.</desc>
+
+  <!-- data-standalone 이 붙은 둘은 이 파일을 그냥 열어봤을 때만 씁니다.
+       글에 펴 넣을 때는 빠지고, 색은 사이트의 --card, --text 를 그대로 받습니다.
+       아이콘 id 에 vfw- 를 붙인 이유는 가로와 세로가 한 페이지에 같이 들어가기 때문입니다.
+       id 가 겹치면 뒤에 온 쪽이 앞의 것을 가리켜 엉뚱한 그림이 나옵니다.
+       왼쪽과 오른쪽 카드의 내용은 일부러 똑같습니다. 그게 이 그림의 전부입니다. -->
+  <style data-standalone>
+    svg { --card:#ffffff; --border:#e2e8f0; --text:#16202e; --muted:#5a6b83; --accent:#0f9d76; --bg:#ffffff; }
+    @media (prefers-color-scheme: dark) {
+      svg { --card:#161c26; --border:#232b38; --text:#e6ebf3; --muted:#9aa7bd; --accent:#6ee7b7; --bg:#0e1116; }
+    }
+  </style>
+  <rect data-standalone x="0" y="0" width="900" height="360" fill="var(--bg,#ffffff)"/>
+
+  <defs>
+    <marker id="vfw-a" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="var(--muted,#9aa7bd)"/>
+    </marker>
+    <symbol id="vfw-mail" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <rect x="2.5" y="5" width="19" height="14" rx="2.2"/>
+      <path d="M3.4 6.6 12 13l8.6-6.4"/>
+    </symbol>
+    <symbol id="vfw-msg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4.6 4.5h14.8a1.6 1.6 0 0 1 1.6 1.6v8a1.6 1.6 0 0 1-1.6 1.6H10.4L6 19.4v-3.7H4.6A1.6 1.6 0 0 1 3 14.1v-8a1.6 1.6 0 0 1 1.6-1.6z"/>
+    </symbol>
+    <symbol id="vfw-code" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M8.4 7.4 3.8 12l4.6 4.6"/>
+      <path d="M15.6 7.4 20.2 12l-4.6 4.6"/>
+    </symbol>
+    <symbol id="vfw-trash" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M4 6.6h16"/>
+      <path d="M9.2 6.6V4.4h5.6v2.2"/>
+      <path d="M6.4 6.6 7.5 20h9l1.1-13.4"/>
+    </symbol>
+    <symbol id="vfw-tag" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M20.6 12.6 12.4 20.8 3.4 11.8V3.4h8.4z"/>
+      <circle cx="8.2" cy="8.2" r="1.5"/>
+    </symbol>
+  </defs>
+
+  <g fill="var(--muted,#9aa7bd)" font-size="13" font-weight="600" text-anchor="middle">
+    <text x="185" y="58">몇 년 전</text>
+  </g>
+  <text x="715" y="58" fill="var(--accent,#6ee7b7)" font-size="13" font-weight="600" text-anchor="middle">2026년 8월</text>
+
+  <rect x="40"  y="84" width="290" height="170" rx="10" fill="var(--card,#161c26)" stroke="var(--border,#232b38)" stroke-width="1.5"/>
+  <rect x="570" y="84" width="290" height="170" rx="10" fill="var(--card,#161c26)" stroke="var(--accent,#6ee7b7)" stroke-width="2"/>
+
+  <!-- 아이콘은 사각형 위변 한가운데에 배지로 얹습니다. 왼쪽은 폐기, 오른쪽은 값이 붙었다는 표시입니다. -->
+  <circle cx="185" cy="84" r="15" fill="var(--card,#161c26)" stroke="var(--border,#232b38)" stroke-width="1.5"/>
+  <circle cx="715" cy="84" r="15" fill="var(--card,#161c26)" stroke="var(--accent,#6ee7b7)" stroke-width="2"/>
+  <use href="#vfw-trash" x="176" y="75" width="18" height="18" style="color:var(--muted,#9aa7bd)"/>
+  <use href="#vfw-tag"   x="706" y="75" width="18" height="18" style="color:var(--accent,#6ee7b7)"/>
+
+  <g style="color:var(--muted,#9aa7bd)">
+    <use href="#vfw-mail" x="68"  y="121" width="17" height="17"/>
+    <use href="#vfw-msg"  x="68"  y="161" width="17" height="17"/>
+    <use href="#vfw-code" x="68"  y="201" width="17" height="17"/>
+    <use href="#vfw-mail" x="598" y="121" width="17" height="17"/>
+    <use href="#vfw-msg"  x="598" y="161" width="17" height="17"/>
+    <use href="#vfw-code" x="598" y="201" width="17" height="17"/>
+  </g>
+
+  <g fill="var(--text,#e6ebf3)" font-size="14.5" text-anchor="start">
+    <text x="96"  y="134">사내 이메일 1억 통</text>
+    <text x="96"  y="174">메신저 대화 5억 건</text>
+    <text x="96"  y="214">소스코드 3000만 줄</text>
+    <text x="626" y="134">사내 이메일 1억 통</text>
+    <text x="626" y="174">메신저 대화 5억 건</text>
+    <text x="626" y="214">소스코드 3000만 줄</text>
+  </g>
+
+  <path d="M346,169 H548" stroke="var(--muted,#9aa7bd)" stroke-width="1.8" fill="none" marker-end="url(#vfw-a)"/>
+  <g fill="var(--muted,#9aa7bd)" font-size="12.5" text-anchor="middle">
+    <text x="451" y="150">시간이 지났을 뿐</text>
+    <text x="451" y="192">데이터는 그대로다</text>
+  </g>
+
+  <text x="185" y="294" fill="var(--muted,#9aa7bd)" font-size="21" font-weight="700" text-anchor="middle">폐기 대상</text>
+  <text x="715" y="294" fill="var(--accent,#6ee7b7)" font-size="21" font-weight="700" text-anchor="middle">1000만 달러</text>
+  <g fill="var(--muted,#9aa7bd)" font-size="12.5" text-anchor="middle">
+    <text x="185" y="317">보관비만 나가는 짐이었다</text>
+    <text x="715" y="317">구글이 파산 경매에서 낙찰</text>
+  </g>
+
+  <text x="450" y="347" fill="var(--text,#e6ebf3)" font-size="13" font-weight="600" text-anchor="middle">바뀐 것은 기록이 아니라, 값을 매기는 쪽이었다.</text>
+</svg>
