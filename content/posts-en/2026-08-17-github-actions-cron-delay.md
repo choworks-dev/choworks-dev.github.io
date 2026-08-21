@@ -5,6 +5,8 @@ description: A free scheduled job stopped keeping time. Counting the runs showed
 tags: [GitHub Actions, automation, scheduling, infrastructure, solo business]
 ---
 
+{{svg: hero-github-actions-cron-delay-en}}
+
 I built a small automation that sends me a draft at a set time. No server, no monthly bill. Then one day the draft didn't arrive. The code was fine. There were no errors. When I counted the actual runs, it had fired 17 times over 21 hours where it should have fired 128.
 
 ## What I built

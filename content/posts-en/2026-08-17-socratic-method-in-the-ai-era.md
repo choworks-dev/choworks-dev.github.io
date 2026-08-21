@@ -5,6 +5,8 @@ description: The most effective way to learn anything was invented in Athens. Th
 tags: [AI learning, Socratic method, Claude, prompting, solo business]
 ---
 
+{{svg: hero-socratic-method-in-the-ai-era-en}}
+
 The way I learn things now has almost nothing in common with the way I was taught in school. I don't sit through courses. I don't read books front to back. I just keep asking. At some point I realized this isn't a new method. It's the one they used in Athens 2400 years ago.
 
 ## Socrates never taught anything

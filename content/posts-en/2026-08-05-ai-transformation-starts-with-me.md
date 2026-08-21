@@ -5,6 +5,8 @@ description: The scene in The Matrix where flying a helicopter downloads into Ne
 tags: [AI transformation, AI automation, Claude Code, solo business, reflection]
 ---
 
+{{svg: hero-ai-transformation-starts-with-me-en}}
+
 When I started this AI transformation, I assumed the thing being transformed was the work. Quotes, the website, notifications. A few months in, I know better. The first thing that changed was not the work. It was me.
 
 ## That scene in The Matrix

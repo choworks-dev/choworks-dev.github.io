@@ -5,6 +5,8 @@ description: 이 블로그의 첫 글. 왜 AI로의 전환을 결심했고, 왜 
 tags: [AI 트랜스포메이션, AI 자동화, 시작, 회고]
 ---
 
+{{svg: hero-why-ai-transform}}
+
 첫 글은 결심에 대한 이야기로 시작하려고 합니다.
 
 ## 왜 AI였나

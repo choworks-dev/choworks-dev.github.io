@@ -5,6 +5,8 @@ description: USD list prices, per-product discounts, and volume tiers kept us wr
 tags: [AI automation, AI transformation, Claude, Google Apps Script, Google Workspace]
 ---
 
+{{svg: hero-google-apps-script-quote-automation-en}}
+
 After moving our two company websites [over to Cloudflare](/en/posts/wix-to-cloudflare/), I opened the list of postponed work again. The most urgent item on it was automating quote delivery.
 
 ## We were using Google Workspace as a mailbox

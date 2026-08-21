@@ -5,6 +5,8 @@ description: The first post. Why I decided to move into AI, and why I chose to d
 tags: [AI transformation, AI automation, getting started, reflection]
 ---
 
+{{svg: hero-why-ai-transform-en}}
+
 Let me start with the decision.
 
 ## Why AI

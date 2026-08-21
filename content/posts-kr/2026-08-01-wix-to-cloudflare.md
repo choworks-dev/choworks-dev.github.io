@@ -5,6 +5,8 @@ description: 몇 년째 미루던 웹사이트 두 개의 호스팅 이전을 �
 tags: [AI 트랜스포메이션, 클로드, 커서, 홈페이지 마이그레이션, Cloudflare, 비용절감]
 ---
 
+{{svg: hero-wix-to-cloudflare}}
+
 [첫 글](/posts/why-ai-transform/)에서 일하는 방식을 AI로 바꾸겠다고 썼습니다. 그러면 무엇부터 바꿔야 할까요.
 
 ## 작은 회사가 AI로 가장 먼저 챙길 수 있는 것

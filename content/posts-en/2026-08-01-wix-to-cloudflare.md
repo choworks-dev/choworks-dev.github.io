@@ -5,6 +5,8 @@ description: Two company websites, two days with Claude and Cursor. How I moved 
 tags: [AI transformation, Claude, Cursor, website migration, Cloudflare, cost]
 ---
 
+{{svg: hero-wix-to-cloudflare-en}}
+
 In [the first post](/en/posts/why-ai-transform/) I said I'd change how I work, using AI. So where do you start?
 
 ## The first thing a small company can actually cash in

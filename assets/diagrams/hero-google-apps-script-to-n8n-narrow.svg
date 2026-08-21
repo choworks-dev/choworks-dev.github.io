@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 320" width="360" height="320" role="img" aria-label="왼쪽 문에는 손잡이가 없고 오른쪽 문에는 있습니다. 같은 자동화인데 만든 사람 말고 누가 열 수 있느냐가 다릅니다." style="font-family:system-ui,'Apple SD Gothic Neo','Malgun Gothic',sans-serif">
+  <!-- scripts/make-hero.js 가 만든 파일입니다. 손으로 고치지 마세요. 다음 실행 때 덮어씁니다.
+       고칠 곳은 scripts/hero-specs.js 의 "n8n" 항목입니다.
+       폰용 세로 배치입니다. 가로를 그대로 줄이면 아래 한 줄이 5px 로 찍힙니다.
+       짝은 가로 파일이고 둘 다 같은 항목에서 나옵니다.
+       data-standalone 이 붙은 것은 이 파일을 그냥 열어봤을 때만 씁니다. 펴 넣을 때 빠지고,
+       색은 사이트의 --card, --accent 를 그대로 받아 테마 토글을 따라옵니다. -->
+  <style data-standalone>
+    svg { --card:#ffffff; --bg-soft:#f5f7fa; --border:#e2e8f0; --text:#16202e; --muted:#5a6b83; --accent:#0f9d76; --bg:#ffffff; }
+    @media (prefers-color-scheme: dark) {
+      svg { --card:#161c26; --bg-soft:#141922; --border:#232b38; --text:#e6ebf3; --muted:#9aa7bd; --accent:#6ee7b7; --bg:#0e1116; }
+    }
+  </style>
+  <rect data-standalone x="0" y="0" width="360" height="320" fill="var(--bg,#ffffff)"/>
+  <defs>
+    <linearGradient id="hero-n8n-n-panel" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="var(--bg-soft,#141922)"/>
+      <stop offset="0.55" stop-color="var(--bg-soft,#141922)"/>
+      <stop offset="1" stop-color="var(--bg,#0e1116)"/>
+    </linearGradient>
+    <radialGradient id="hero-n8n-n-glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="var(--accent,#6ee7b7)" stop-opacity="0.20"/>
+      <stop offset="1" stop-color="var(--accent,#6ee7b7)" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="hero-n8n-n-dots" x="0" y="0" width="24" height="24" patternUnits="userSpaceOnUse">
+      <circle cx="1.2" cy="1.2" r="1.2" fill="var(--muted,#9aa7bd)" opacity="0.16"/>
+    </pattern>
+    <clipPath id="hero-n8n-n-clip"><rect x="0" y="0" width="360" height="320" rx="14"/></clipPath>
+    <marker id="hero-n8n-n-am" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="var(--muted,#9aa7bd)"/>
+    </marker>
+    <marker id="hero-n8n-n-aa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="var(--accent,#6ee7b7)"/>
+    </marker>
+  </defs>
+  <g clip-path="url(#hero-n8n-n-clip)">
+    <rect x="0" y="0" width="360" height="320" fill="url(#hero-n8n-n-panel)"/>
+    <rect x="0" y="0" width="360" height="320" fill="url(#hero-n8n-n-dots)"/>
+    <ellipse cx="244" cy="130" rx="190" ry="140" fill="url(#hero-n8n-n-glow)"/>
+  </g>
+  <rect x="0.75" y="0.75" width="358.5" height="318.5" rx="14" fill="none" stroke="var(--border,#232b38)" stroke-width="1.5"/>
+  <g opacity="0.4"><rect x="24" y="78" width="70" height="3.6" rx="1.8" fill="var(--muted,#9aa7bd)"/><rect x="24" y="92" width="50" height="3.6" rx="1.8" fill="var(--muted,#9aa7bd)"/></g><g transform="translate(38,40) scale(0.66)"><path d="M8,12 H92 V152 H8 Z" fill="var(--card,#161c26)" stroke="var(--muted,#9aa7bd)" stroke-width="2" stroke-linejoin="round"/><path d="M20,26 H80 V138 H20 Z" fill="none" stroke="var(--muted,#9aa7bd)" stroke-width="1.4" stroke-linejoin="round" opacity="0.6"/><path d="M64,80 L82,88" fill="none" stroke="var(--muted,#9aa7bd)" stroke-width="1.6" stroke-linecap="round" stroke-dasharray="3 5" opacity="0.35"/></g><path d="M128,96 H196" fill="none" stroke="var(--accent,#6ee7b7)" stroke-width="2" stroke-linecap="round" marker-end="url(#hero-n8n-n-aa)"/><g transform="translate(212,40) scale(0.66)"><path d="M8,12 H92 V152 H8 Z" fill="var(--card,#161c26)" stroke="var(--accent,#6ee7b7)" stroke-width="2.2" stroke-linejoin="round"/><path d="M20,26 H80 V138 H20 Z" fill="none" stroke="var(--accent,#6ee7b7)" stroke-width="1.6" stroke-linejoin="round" opacity="0.6"/><circle cx="74" cy="84" r="5.5" fill="var(--card,#161c26)" stroke="var(--accent,#6ee7b7)" stroke-width="2.2"/><path d="M66,84 H70" fill="none" stroke="var(--accent,#6ee7b7)" stroke-width="2" stroke-linecap="round"/></g><g opacity="0.8"><circle cx="96" cy="216" r="11" fill="var(--card,#161c26)" stroke="var(--accent,#6ee7b7)" stroke-width="1.8"/><circle cx="148" cy="240" r="11" fill="var(--card,#161c26)" stroke="var(--accent,#6ee7b7)" stroke-width="1.8"/><circle cx="200" cy="216" r="11" fill="var(--card,#161c26)" stroke="var(--accent,#6ee7b7)" stroke-width="1.8"/><path d="M105,222 L139,235" fill="none" stroke="var(--accent,#6ee7b7)" stroke-width="1.6" stroke-linecap="round" opacity="0.6"/><path d="M157,235 L191,222" fill="none" stroke="var(--accent,#6ee7b7)" stroke-width="1.6" stroke-linecap="round" opacity="0.6"/></g>
+  <rect x="251" y="22" width="87" height="24" rx="12" fill="none" stroke="var(--border,#232b38)" stroke-width="1.4"/>
+  <text x="294.5" y="38.5" fill="var(--muted,#9aa7bd)" font-size="11.5" font-weight="600" text-anchor="middle" style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:0.08em">Handover</text>
+  <g fill="var(--muted,#9aa7bd)" font-size="12" text-anchor="middle" style="letter-spacing:0.05em"><text x="180" y="280">잘 돌아가는가</text><text x="180" y="299">내가 없어도 돌아가는가</text></g>
+</svg>

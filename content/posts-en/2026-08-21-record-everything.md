@@ -5,7 +5,7 @@ description: Google paid $10 million for a bankrupt airline's internal email. A 
 tags: [AI training data, record keeping, data as asset, solo business, Google]
 ---
 
-{{svg: record-hero-en}}
+{{svg: hero-record-everything-en}}
 
 A story from last week has been sitting in my head for days. Google bought a dead airline's internal email, all of it. Ten million dollars.
 

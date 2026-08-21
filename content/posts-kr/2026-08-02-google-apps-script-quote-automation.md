@@ -5,6 +5,8 @@ description: USD 고시가와 제품별 할인율 때문에 계속 미뤄두던 
 tags: [AI 자동화, AI 트랜스포메이션, 클로드, 구글 앱스 스크립트, 구글 워크스페이스]
 ---
 
+{{svg: hero-google-apps-script-quote-automation}}
+
 회사 홈페이지 두 개를 [Cloudflare로 옮기고](/posts/wix-to-cloudflare/) 나서, 미뤄둔 업무 목록을 다시 펼쳤습니다. 가장 시급한 것은 견적서 발송 자동화였습니다.
 
 ## 우리는 구글 워크스페이스를 메일함으로만 쓰고 있었습니다

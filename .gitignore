@@ -29,3 +29,6 @@ Thumbs.db
 CLAUDE.md
 README.local.md
 NAVER.local.md
+
+# 그림 미리보기(로컬 전용)
+.preview/

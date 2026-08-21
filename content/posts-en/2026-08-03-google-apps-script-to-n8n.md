@@ -5,6 +5,8 @@ description: My quote automation already worked in Google Apps Script. I brought
 tags: [AI automation, AI transformation, n8n, Google Apps Script, workflow automation]
 ---
 
+{{svg: hero-google-apps-script-to-n8n-en}}
+
 In the last post I wrote that I'd finished [quote automation](/en/posts/google-apps-script-quote-automation/) in Google Apps Script. Then I went and added n8n on top. This post is about why.
 
 ## A successful quote automation, built with Claude Code

@@ -5,6 +5,8 @@ description: 구글 앱스 스크립트로 견적 발송 자동화를 이미 끝
 tags: [AI 자동화, AI 트랜스포메이션, n8n, 구글 앱스 스크립트, 업무 자동화]
 ---
 
+{{svg: hero-google-apps-script-to-n8n}}
+
 지난 글에서 [견적 발송 자동화](/posts/google-apps-script-quote-automation/)를 구글 앱스 스크립트로 끝냈다고 썼습니다. 그런데 저는 그 뒤에 n8n을 하나 더 들였습니다. 이 글은 그 이야기입니다.
 
 ## 클로드 코드와의 협업, 성공적인 견적 발송 자동화 진행

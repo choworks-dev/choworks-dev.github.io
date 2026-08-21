@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 320" width="360" height="320" role="img" aria-label="소크라테스 흉상 앞에서 말풍선이 좌우로 엇갈립니다. 뒤로 갈수록 또렷해지는 것은 되물을수록 알게 되기 때문입니다." style="font-family:system-ui,'Apple SD Gothic Neo','Malgun Gothic',sans-serif">
+  <!-- scripts/make-hero.js 가 만든 파일입니다. 손으로 고치지 마세요. 다음 실행 때 덮어씁니다.
+       고칠 곳은 scripts/hero-specs.js 의 "socratic" 항목입니다.
+       폰용 세로 배치입니다. 가로를 그대로 줄이면 아래 한 줄이 5px 로 찍힙니다.
+       짝은 가로 파일이고 둘 다 같은 항목에서 나옵니다.
+       data-standalone 이 붙은 것은 이 파일을 그냥 열어봤을 때만 씁니다. 펴 넣을 때 빠지고,
+       색은 사이트의 --card, --accent 를 그대로 받아 테마 토글을 따라옵니다. -->
+  <style data-standalone>
+    svg { --card:#ffffff; --bg-soft:#f5f7fa; --border:#e2e8f0; --text:#16202e; --muted:#5a6b83; --accent:#0f9d76; --bg:#ffffff; }
+    @media (prefers-color-scheme: dark) {
+      svg { --card:#161c26; --bg-soft:#141922; --border:#232b38; --text:#e6ebf3; --muted:#9aa7bd; --accent:#6ee7b7; --bg:#0e1116; }
+    }
+  </style>
+  <rect data-standalone x="0" y="0" width="360" height="320" fill="var(--bg,#ffffff)"/>
+  <defs>
+    <linearGradient id="hero-socratic-n-panel" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="var(--bg-soft,#141922)"/>
+      <stop offset="0.55" stop-color="var(--bg-soft,#141922)"/>
+      <stop offset="1" stop-color="var(--bg,#0e1116)"/>
+    </linearGradient>
+    <radialGradient id="hero-socratic-n-glow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="var(--accent,#6ee7b7)" stop-opacity="0.20"/>
+      <stop offset="1" stop-color="var(--accent,#6ee7b7)" stop-opacity="0"/>
+    </radialGradient>
+    <pattern id="hero-socratic-n-dots" x="0" y="0" width="24" height="24" patternUnits="userSpaceOnUse">
+      <circle cx="1.2" cy="1.2" r="1.2" fill="var(--muted,#9aa7bd)" opacity="0.16"/>
+    </pattern>
+    <clipPath id="hero-socratic-n-clip"><rect x="0" y="0" width="360" height="320" rx="14"/></clipPath>
+    <marker id="hero-socratic-n-am" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="var(--muted,#9aa7bd)"/>
+    </marker>
+    <marker id="hero-socratic-n-aa" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0,0 L10,5 L0,10 z" fill="var(--accent,#6ee7b7)"/>
+    </marker>
+  </defs>
+  <g clip-path="url(#hero-socratic-n-clip)">
+    <rect x="0" y="0" width="360" height="320" fill="url(#hero-socratic-n-panel)"/>
+    <rect x="0" y="0" width="360" height="320" fill="url(#hero-socratic-n-dots)"/>
+    <ellipse cx="180" cy="130" rx="190" ry="150" fill="url(#hero-socratic-n-glow)"/>
+  </g>
+  <rect x="0.75" y="0.75" width="358.5" height="318.5" rx="14" fill="none" stroke="var(--border,#232b38)" stroke-width="1.5"/>
+  <g transform="translate(16,96) scale(0.44)"><path d="M94,20 C136,20 162,48 161,90 C161,100 151,105 145,107 L157,115 C181,122 180,144 150,139 L140,135 C153,143 151,153 139,157 C170,169 178,200 162,223 C156,234 148,238 140,235 C133,246 119,248 111,240 C101,249 87,246 79,236 C70,241 58,229 56,213 L53,150 C39,130 34,84 46,55 C56,32 72,20 94,20 Z" fill="var(--card,#161c26)" stroke="var(--muted,#9aa7bd)" stroke-width="2" stroke-linejoin="round"/><path d="M50,72 C52,60 57,50 65,44 M48,96 C46,80 47,66 52,56 M54,120 C48,108 46,92 48,78 M58,50 C63,42 70,38 77,38 M66,40 C73,33 82,30 90,31" fill="none" stroke="var(--muted,#9aa7bd)" stroke-width="1.6" stroke-linecap="round" opacity="0.5"/><path d="M116,92 C128,84 143,86 152,95" fill="none" stroke="var(--muted,#9aa7bd)" stroke-width="1.8" stroke-linecap="round" opacity="0.5"/><path d="M121,105 C129,99 140,100 147,106" fill="none" stroke="var(--muted,#9aa7bd)" stroke-width="2" stroke-linecap="round" opacity="0.85"/><path d="M126,105 C132,101 140,102 145,106 C139,108 131,108 126,105 Z" fill="var(--muted,#9aa7bd)" stroke="none" stroke-width="0" stroke-linejoin="round" opacity="0.45"/><path d="M150,133 C145,136 141,136 138,134" fill="none" stroke="var(--muted,#9aa7bd)" stroke-width="1.5" stroke-linecap="round" opacity="0.4"/><path d="M134,146 C147,149 149,157 140,161" fill="none" stroke="var(--muted,#9aa7bd)" stroke-width="1.6" stroke-linecap="round" opacity="0.42"/><path d="M71,113 C81,107 89,117 85,129 C82,137 75,137 72,131" fill="none" stroke="var(--muted,#9aa7bd)" stroke-width="1.6" stroke-linecap="round" opacity="0.5"/><path d="M142,152 C154,170 154,198 141,216 M124,164 C131,187 128,210 118,224 M104,166 C107,191 102,214 92,228" fill="none" stroke="var(--muted,#9aa7bd)" stroke-width="1.5" stroke-linecap="round" opacity="0.42"/><path d="M76,242 H142 L152,266 H64 Z" fill="var(--card,#161c26)" stroke="var(--muted,#9aa7bd)" stroke-width="1.8" stroke-linejoin="round"/><path d="M54,266 H162 V282 H54 Z" fill="var(--card,#161c26)" stroke="var(--muted,#9aa7bd)" stroke-width="1.8" stroke-linejoin="round"/></g><g opacity="0.5"><rect x="112" y="40" width="220" height="36" rx="18" fill="var(--card,#161c26)" stroke="var(--border,#232b38)" stroke-width="1.4"/><path d="M146,68 L126,93 L176,68 Z" fill="var(--card,#161c26)" stroke="none"/><path d="M146,68 L126,93 L176,68" fill="none" stroke="var(--border,#232b38)" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/><circle cx="132" cy="58" r="3.3" fill="var(--muted,#9aa7bd)" opacity="0.9"/><rect x="145" y="52.4" width="99.2" height="3.6" rx="1.8" fill="var(--muted,#9aa7bd)"/><rect x="145" y="60.4" width="60.8" height="3.6" rx="1.8" fill="var(--muted,#9aa7bd)"/></g><g opacity="0.72"><rect x="58" y="100" width="252" height="36" rx="18" fill="var(--card,#161c26)" stroke="var(--border,#232b38)" stroke-width="1.4"/><path d="M246,128 L296,153 L276,128 Z" fill="var(--card,#161c26)" stroke="none"/><path d="M246,128 L296,153 L276,128" fill="none" stroke="var(--border,#232b38)" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/><circle cx="78" cy="118" r="3.3" fill="var(--muted,#9aa7bd)" opacity="0.9"/><rect x="91" y="112.4" width="134.4" height="3.6" rx="1.8" fill="var(--muted,#9aa7bd)"/><rect x="91" y="120.4" width="84.48" height="3.6" rx="1.8" fill="var(--muted,#9aa7bd)"/></g><g opacity="1"><rect x="96" y="160" width="248" height="36" rx="18" fill="var(--card,#161c26)" stroke="var(--accent,#6ee7b7)" stroke-width="2"/><path d="M130,188 L110,213 L160,188 Z" fill="var(--card,#161c26)" stroke="none"/><path d="M130,188 L110,213 L160,188" fill="none" stroke="var(--accent,#6ee7b7)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/><circle cx="116" cy="178" r="3.3" fill="var(--muted,#9aa7bd)" opacity="0.9"/><rect x="129" y="172.4" width="124.08" height="3.6" rx="1.8" fill="var(--muted,#9aa7bd)"/><rect x="129" y="180.4" width="67.68" height="3.6" rx="1.8" fill="var(--muted,#9aa7bd)"/></g>
+  <rect x="251" y="22" width="87" height="24" rx="12" fill="none" stroke="var(--border,#232b38)" stroke-width="1.4"/>
+  <text x="294.5" y="38.5" fill="var(--muted,#9aa7bd)" font-size="11.5" font-weight="600" text-anchor="middle" style="font-family:ui-monospace,SFMono-Regular,Menlo,monospace;letter-spacing:0.08em">Dialogue</text>
+  <g fill="var(--muted,#9aa7bd)" font-size="12" text-anchor="middle" style="letter-spacing:0.05em"><text x="180" y="280">한 번 물으면 검색이고</text><text x="180" y="299">되물어야 문답이다</text></g>
+</svg>
