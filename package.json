@@ -22,8 +22,5 @@
   "dependencies": {
     "front-matter": "^4.0.2",
     "marked": "^18.0.7"
-  },
-  "devDependencies": {
-    "roughjs": "^4.6.6"
   }
 }
