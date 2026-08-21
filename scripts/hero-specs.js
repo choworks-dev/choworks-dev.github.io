@@ -626,17 +626,17 @@ const SPECS = [
   },
   {
     key: "quotepaper", slug: "before-outsourcing-your-website", motif: MOTIF.quotepaper,
-    chip: "Buy vs Build",
+    chip: "Build vs Decide",
     glow: { w: [420, 140, 320, 150], n: [180, 150, 190, 150] },
     ko: {
-      title: "견적서가 두 갈래로 갈린다",
-      desc: "견적서 한 장에서 두 갈래가 갈려 나갑니다. 위는 직접 할 수 있는 일이고 아래는 사람에게 맡길 일입니다.",
-      caption: ["옮기는 일과 만드는 일", "값이 붙는 자리가 다르다"],
+      title: "견적서에서 값이 갈리는 자리",
+      desc: "견적서 한 장에서 두 갈래가 갈려 나갑니다. 위는 값이 내려간 자리이고 아래는 그대로인 자리입니다.",
+      caption: ["만드는 값은 내려갔다", "정하는 값은 그대로다"],
     },
     en: {
-      title: "One quote, two kinds of work",
-      desc: "Two branches split out of a single quote. The upper one is work you can now do yourself; the lower one is work to hire out.",
-      caption: ["Moving and making", "are priced differently"],
+      title: "Where a quote splits",
+      desc: "Two branches split out of a single quote. The upper one is where the price dropped and the lower one is where it did not.",
+      caption: ["Building got cheaper", "Deciding did not"],
     },
   },
   {
