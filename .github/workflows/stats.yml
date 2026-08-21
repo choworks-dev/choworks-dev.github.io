@@ -50,16 +50,24 @@ jobs:
       - name: 방문 기록 가져오기
         run: node scripts/stats-fetch.js --days=90
 
+      # 서치 콘솔은 따로 붙습니다. 한쪽이 실패해도 다른 쪽은 남게 continue-on-error 를 뒀습니다.
+      # 방문은 Cloudflare, 검색은 구글이라 같이 죽을 이유가 없습니다.
+      - name: 검색 기록 가져오기
+        continue-on-error: true
+        run: node scripts/gsc-fetch.js --days=90
+        env:
+          GCP_SA_KEY: ${{ secrets.GCP_SA_KEY }}
+
       - name: 커밋
         run: |
-          if [ -z "$(git status --porcelain content/stats.json)" ]; then
+          if [ -z "$(git status --porcelain content/stats.json content/search.json)" ]; then
             echo "바뀐 것이 없습니다."
             exit 0
           fi
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add content/stats.json
-          git commit -m "방문 기록 갱신 [skip ci]"
+          git add content/stats.json content/search.json
+          git commit -m "방문·검색 기록 갱신 [skip ci]"
           # 사람이 그사이 커밋했을 수 있으므로 한 번 당겨서 얹습니다.
           git pull --rebase origin main
           git push origin HEAD:main

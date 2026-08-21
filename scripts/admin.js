@@ -115,6 +115,15 @@ footer a{color:#7aa2ff}
 .empty p{margin:0 0 .5rem}
 .empty .hint{color:#8b93a7;font-size:.85rem;line-height:1.7}
 .empty code{background:#1a212b;border:1px solid #262d3a;border-radius:4px;padding:.1rem .35rem;font-size:.85em}
+.stbl thead th{color:#5c6478;font-size:.72rem;font-weight:500;text-align:left;padding:0 0 .3rem;border-bottom:1px solid #1c222c}
+.stbl thead th.n{text-align:right;padding-right:.7rem}
+/* 색인 상태는 사유별로 묶습니다. 주소만 늘어놓으면 무엇이 문제인지 안 보입니다. */
+.ixgrp{border-left:3px solid #4a3b2a;background:#161b23;border-radius:0 8px 8px 0;padding:.55rem .8rem;margin-bottom:.5rem}
+.ixgrp.ok{border-left-color:#2f6d5b}
+.ixhead{display:flex;align-items:baseline;gap:.6rem;margin-bottom:.35rem}
+.ixhead b{color:#e6e9ef;font-size:.83rem;font-weight:600}
+.ixrow{display:flex;align-items:baseline;gap:.6rem;padding:.12rem 0}
+.ixrow .slabel{font-size:.8rem}
 
 /* 쓰레드 원고 카드 */
 .th{border:1px solid #1c222c;border-radius:10px;padding:1rem 1.1rem;margin-bottom:1rem;background:#11151c}
@@ -827,6 +836,79 @@ function statsView(stats) {
 </div>`;
 }
 
+/* ---------- 검색 ----------
+
+   content/search.json 을 읽어 그립니다. 방문 탭과 같은 이유로 여기서 API 를 부르지 않습니다.
+
+   방문과 탭을 나눈 이유가 있습니다. 묻는 질문이 다릅니다.
+   방문은 "온 사람이 뭘 봤나" 이고 검색은 "안 온 사람에게 어떻게 보였나" 입니다.
+   지금처럼 방문이 거의 없는 단계에서는 뒤엣것이 훨씬 쓸모 있습니다. */
+function searchView(s) {
+  if (!s) {
+    return `<div class="empty">
+  <p>아직 검색 기록을 가져온 적이 없습니다.</p>
+  <p class="hint">터미널에서 <code>npm run search</code> 를 돌리면 <code>content/search.json</code> 이 생깁니다.
+  서비스 계정 키는 <code>.gcp-searchconsole.json</code> 에 있습니다(저장소에 안 올라갑니다).
+  목록이 비어 나오면 서치 콘솔 → 설정 → 사용자 및 권한에 그 계정이 들어 있는지 보세요.</p>
+</div>`;
+  }
+  const nf = (v) => String(v).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  const short = (u) => String(u).replace(/^https?:\/\/choworks\.dev/, "") || "/";
+
+  const perf = (rows, title, note) => {
+    if (!rows || !rows.length) return `<div class="scard"><h3>${esc(title)}</h3><p class="hint">아직 없습니다.</p></div>`;
+    const body = rows.slice(0, 15).map((r) => `<tr>
+      <td class="n">${nf(r.impressions)}</td><td class="n">${nf(r.clicks)}</td>
+      <td class="n">${r.position ? r.position.toFixed(1) : "-"}</td>
+      <td><span class="slabel">${esc(short(r.key))}</span></td></tr>`).join("");
+    return `<div class="scard"><h3>${esc(title)}${note ? `<small>${esc(note)}</small>` : ""}</h3>
+    <table class="stbl"><thead><tr><th class="n">노출</th><th class="n">클릭</th><th class="n">순위</th><th></th></tr></thead>
+    <tbody>${body}</tbody></table></div>`;
+  };
+
+  /* 색인 상태는 사유별로 묶습니다. 주소를 죽 늘어놓으면 무엇이 문제인지 안 보입니다.
+     서치 콘솔 화면에서는 숫자만 보이고 사유마다 눌러 들어가야 주소가 나옵니다.
+     여기서는 한 화면에 다 보이게 두는 것이 이 탭을 만든 이유의 절반입니다. */
+  let idx = "";
+  if (s.index && s.index.length) {
+    const groups = new Map();
+    s.index.forEach((x) => {
+      const k = x.state || "(사유 없음)";
+      if (!groups.has(k)) groups.set(k, []);
+      groups.get(k).push(x);
+    });
+    const ok = s.indexSummary || { indexed: 0, total: s.index.length };
+    const rows = [...groups.entries()]
+      .sort((a, b) => b[1].length - a[1].length)
+      .map(([state, list]) => {
+        const pass = list[0].verdict === "PASS";
+        return `<div class="ixgrp${pass ? " ok" : ""}">
+      <div class="ixhead"><b>${esc(state)}</b><span class="th-meta">${list.length}개</span></div>
+      ${list.map((x) => `<div class="ixrow"><span class="slabel">${esc(short(x.url))}</span>${x.lastCrawl ? `<span class="th-meta">크롤 ${esc(x.lastCrawl)}</span>` : ""}</div>`).join("")}
+    </div>`;
+      }).join("");
+    idx = `<div class="scard" style="margin-top:.9rem">
+    <h3>색인 상태<small>사이트맵 ${ok.total}개 중 ${ok.indexed}개 색인됨</small></h3>${rows}</div>`;
+  }
+
+  return `<div class="snote">
+  <b>노출은 검색 결과에 보인 횟수입니다.</b> ${esc(s.caveat || "")}
+  방문 수와 달리 이 숫자는 <b>아직 안 온 사람</b>에게 우리가 어떻게 보였는지를 말해 줍니다.
+</div>
+
+<div class="bar">
+  <span class="count">${esc(s.range.from)} ~ ${esc(s.range.to)} · ${s.range.days}일</span>
+  <span class="count">노출 <b>${nf(s.totals.impressions)}</b> · 클릭 <b>${nf(s.totals.clicks)}</b> · 평균순위 <b>${s.totals.position || "-"}</b></span>
+  <span class="count">가져온 때 ${esc(new Date(s.updated).toLocaleString("ko-KR"))}</span>
+</div>
+
+<div class="sgrid">
+  ${perf(s.byQuery, "검색어", "이 말로 검색했을 때 우리가 보였습니다")}
+  ${perf(s.byPage, "어느 글이 보였나")}
+</div>
+${idx}`;
+}
+
 /* 한 글을 표의 한 줄로. */
 function row(p) {
   const tags = (p.tags || []).map((t) => `<span class="tag">${esc(t)}</span>`).join("");
@@ -918,12 +1000,17 @@ function buildAdmin({ koAll, enAll, issuesBySlug, contentDir, builtAt, editor })
 
   /* 방문 기록. 없으면 없는 대로 그립니다.
      파일이 깨졌다고 관리 화면 전체가 안 뜨면 안 되므로 조용히 넘어갑니다. */
-  let visits = null;
-  try {
-    const p = path.join(contentDir, "stats.json");
-    if (require("fs").existsSync(p)) visits = JSON.parse(require("fs").readFileSync(p, "utf8"));
-  } catch (e) {
-    console.warn("  [방문] content/stats.json 을 읽지 못했습니다: " + e.message);
+  let visits = null, search = null;
+  for (const [file, set, label] of [
+    ["stats.json", (v) => (visits = v), "방문"],
+    ["search.json", (v) => (search = v), "검색"],
+  ]) {
+    try {
+      const f = path.join(contentDir, file);
+      if (require("fs").existsSync(f)) set(JSON.parse(require("fs").readFileSync(f, "utf8")));
+    } catch (e) {
+      console.warn(`  [${label}] content/${file} 을 읽지 못했습니다: ` + e.message);
+    }
   }
 
   // 글 목록에 "이 글에서 몇 편 뽑았고 몇 편이 남았나"를 달기 위한 집계
@@ -991,6 +1078,7 @@ function buildAdmin({ koAll, enAll, issuesBySlug, contentDir, builtAt, editor })
     <button type="button" data-view="posts" aria-current="page">글<span class="n">${total}</span></button>
     <button type="button" data-view="threads">쓰레드<span class="n">${stats.left} 대기${threadTodo ? ` / 안 쓴 글 ${threadTodo}` : ""}</span></button>
     <button type="button" data-view="visits">방문<span class="n">${visits ? `${visits.range.days}일 ${visits.totals.views}` : "없음"}</span></button>
+    <button type="button" data-view="search">검색<span class="n">${search ? `노출 ${search.totals.impressions}${search.indexSummary ? ` / 색인 ${search.indexSummary.indexed}·${search.indexSummary.total}` : ""}` : "없음"}</span></button>
   </nav>
 
   <section id="view-posts">
@@ -1013,6 +1101,10 @@ function buildAdmin({ koAll, enAll, issuesBySlug, contentDir, builtAt, editor })
 
   <section id="view-visits" style="display:none">
   ${statsView(visits)}
+  </section>
+
+  <section id="view-search" style="display:none">
+  ${searchView(search)}
   </section>
 
   <footer>
