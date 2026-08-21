@@ -72,10 +72,13 @@ if (!chrome) {
   process.exit(1);
 }
 
-const cols = narrow ? 3 : 2;
-const cellW = narrow ? 380 : 920;
+/* 한 장만 볼 때는 한 칸으로 크게 봅니다. 사람 얼굴 같은 것은 작게 보면 뭐가 틀렸는지 안 보입니다. */
+const cols = narrow ? (files.length === 1 ? 1 : 3) : (files.length === 1 ? 1 : 2);
+/* 한 장만 볼 때는 칸을 크게 잡습니다. 작게 보면 무엇이 틀렸는지 안 보입니다. */
+const single = files.length === 1;
+const cellW = narrow ? (single ? 700 : 380) : (single ? 1500 : 920);
 const rows = Math.ceil(files.length / cols);
-const cellH = narrow ? 400 : 380;
+const cellH = narrow ? (single ? 660 : 400) : (single ? 560 : 380);
 
 const cards = files.map((f) => {
   const svg = stripStandalone(fs.readFileSync(path.join(DIR, f), "utf8"))

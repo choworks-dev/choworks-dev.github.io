@@ -39,6 +39,8 @@
    ============================================================ */
 const fs = require("fs");
 const path = require("path");
+const rough = require("roughjs");
+const RG = rough.generator();
 
 const OUT = path.join(__dirname, "..", "assets", "diagrams");
 
@@ -86,6 +88,32 @@ function ring(cx, cy, r, o = {}) {
   const fill = o.fill || "none";
   return `<circle cx="${n(cx)}" cy="${n(cy)}" r="${n(r)}" fill="${fill}" stroke="${st}" stroke-width="${sw}"${dash}${op}/>`;
 }
+/* 손으로 그린 것처럼 선을 흔듭니다.
+
+   그림이 도면처럼 보이는 이유의 절반은 선이 너무 반듯해서입니다.
+   특히 사람이나 물건은 자로 그은 선으로는 살아나지 않습니다.
+
+   seed 를 반드시 넘깁니다. rough.js 는 매번 다른 난수로 흔들기 때문에, 안 넘기면
+   npm run hero 를 돌릴 때마다 서른두 파일이 전부 바뀐 것으로 잡혀 diff 가 못 쓰게 됩니다.
+   같은 그림 안에서는 조각마다 다른 seed 를 줘야 합니다. 같은 값을 주면 같은 방향으로
+   똑같이 휘어서 흔든 티가 안 납니다.
+
+   채우는 도형은 매끈한 원본으로 채우고 흔든 선으로 테두리만 긋습니다.
+   흔든 경로로 채우면 가장자리가 들쭉날쭉해져서 배경의 점 무늬가 삐져나옵니다. */
+function sketch(d, o = {}) {
+  const parts = RG.toPaths(RG.path(d, {
+    seed: o.seed || 1,
+    roughness: o.roughness === undefined ? 1.15 : o.roughness,
+    bowing: o.bowing === undefined ? 1.4 : o.bowing,
+    preserveVertices: o.preserveVertices !== false,
+  }));
+  const op = o.op === undefined ? "" : ` opacity="${o.op}"`;
+  const fill = o.fill ? `<path d="${d}" fill="${o.fill}" stroke="none"/>` : "";
+  return fill +
+    `<g fill="none" stroke="${o.stroke || M}" stroke-width="${o.sw === undefined ? 1.8 : o.sw}" stroke-linecap="round" stroke-linejoin="round"${op}>` +
+    parts.map((p) => `<path d="${p.d}"/>`).join("") + `</g>`;
+}
+
 /* 채워지는 도형. 사람 옆얼굴이나 물건처럼 덩어리로 보여야 하는 것에 씁니다.
    선만으로 그리면 배경의 점 무늬가 비쳐서 형태가 안 잡힙니다. */
 function shape(d, o = {}) {
@@ -183,4 +211,4 @@ function chrome(spec, box, lang) {
 `;
 }
 
-module.exports = { chrome, shape, card, bar, dot, ring, line, cardLines, n, C, B, M, A, WIDE, NARROW, OUT };
+module.exports = { chrome, sketch, shape, card, bar, dot, ring, line, cardLines, n, C, B, M, A, WIDE, NARROW, OUT };
