@@ -1,5 +1,5 @@
 {
-  "updated": "2026-08-21T16:45:29.634Z",
+  "updated": "2026-08-21T19:50:21.152Z",
   "source": "google-search-console",
   "site": "sc-domain:choworks.dev",
   "caveat": "서치 콘솔은 집계가 이틀쯤 늦습니다. 어제까지의 값입니다.",
@@ -149,7 +149,7 @@
       "url": "https://choworks.dev/",
       "verdict": "PASS",
       "state": "제출되고 색인이 생성되었습니다.",
-      "lastCrawl": "2026-08-20",
+      "lastCrawl": "2026-08-21",
       "robots": "ALLOWED",
       "canonical": "https://choworks.dev/"
     },
@@ -213,7 +213,7 @@
       "url": "https://choworks.dev/posts/wix-to-cloudflare/",
       "verdict": "PASS",
       "state": "제출되고 색인이 생성되었습니다.",
-      "lastCrawl": "2026-08-15",
+      "lastCrawl": "2026-08-21",
       "robots": "ALLOWED",
       "canonical": "https://choworks.dev/posts/wix-to-cloudflare/"
     },
@@ -276,7 +276,7 @@
     {
       "url": "https://choworks.dev/en/posts/google-apps-script-to-n8n/",
       "verdict": "NEUTRAL",
-      "state": "Google에는 아직 알려지지 않은 URL입니다.",
+      "state": "발견됨 - 현재 색인이 생성되지 않음",
       "lastCrawl": "",
       "robots": "ROBOTS_TXT_STATE_UNSPECIFIED",
       "canonical": ""
