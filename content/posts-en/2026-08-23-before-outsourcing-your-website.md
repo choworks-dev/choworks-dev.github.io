@@ -1,8 +1,8 @@
 ---
 title: Website Quotes in the AI Era, From Both Sides
 date: 2026-08-23
-description: Build prices really did drop. What dropped is the time to build, not the time to decide. Here is what I look at before quoting, and how the number is set.
-tags: [website migration, outsourcing, quoting, solo business, AI transformation]
+description: Building got cheaper. Deciding did not. Here is why I now bundle training into every quote, so the owner can maintain the site without me.
+tags: [website migration, outsourcing, quoting, AI training, solo business]
 draft: true
 publishAt: 2026-08-23 18:00
 ---
@@ -62,7 +62,7 @@ I split it like this.
 |---|---|---|
 | Building | **Down a lot** | Fewer hours |
 | Deciding | **Unchanged** | It is human decision time |
-| Maintaining | **Nearly gone** | If you can edit it yourself |
+| Maintaining | **Handed over** | I teach the owner how to make changes |
 
 And I write **a revision count** into the quote. Something like "three rounds included after design sign-off, then a fixed fee per round."
 
@@ -86,19 +86,54 @@ Payments. Anywhere card details pass through, one mistake ends a business. Same 
 
 These did not get cheaper and should not. It is **not a question of whether someone can build it, but who is liable when it breaks.** A quote where these lines look unusually cheap may be one where nobody is carrying that liability.
 
-## Moving and maintaining, you can do yourself
+## So now I bundle training into the quote
 
-Apart from building, **moving** is now something you can handle. I [moved two sites off Wix in two days with Claude and Cursor](/en/posts/wix-to-cloudflare/). About $400 a year went to zero.
+This is where the way I actually work changed.
 
-Moving has correct answers, so asking when you get stuck produces one. **Maintaining is the same.** Emailing someone about a typo and waiting became: open the file, fix it, save.
+It used to end at delivery. Then a few months later the messages start. Can you change the price list. Can you swap this photo. Can you fix this line. Awkward to bill per item, and they pile up if you do not.
 
-So put these questions in your request.
+**Now the quote includes teaching the owner how to make those changes.**
 
-- After launch, can I edit text and images myself?
-- Is there a screen for that?
+- Where the text and images live and how to change them
+- What to ask AI, and how to ask it, to get the result you want
+- How to undo something you broke
+- Which parts not to touch
+
+**A few hours is enough.** I think this is the right shape for the work right now.
+
+## It is better for both sides
+
+**My side.** I stop absorbing small maintenance. That was the most draining part. A ten minute job turns into half a day once you count the message, the check, the fix, and the reply. It is awkward to price. **Without it I can spend my time building.**
+
+**The owner's side.** This matters most to people without much to spend. The friction of contacting a vendor to change one sentence disappears. So does the quote-wait-approve cycle. **You change it when you want to change it.**
+
+That friction is why most websites sit untouched for years. Not because there is nothing to fix, but because **fixing is procedurally heavy.**
+
+## "I am not a computer person"
+
+The most common sentence I hear. And once it is said, people usually stop listening to the training part. They have decided in advance that they could not do it anyway.
+
+**But they can.**
+
+That sentence used to be true. You needed HTML, you had to size images, and one wrong move broke the layout. Not anymore. **You say "change this sentence to that" in plain words.**
+
+I [moved a domain without understanding DNS](/en/posts/wix-to-cloudflare/). I still do not really understand it. I did not do it because I learned more. I did it because **there was finally something to ask.**
+
+Sit with someone for a few hours and they will make one change themselves that day. After that first one, the rest takes care of itself.
+
+## Automation in the AI era has to ship with training
+
+This is not only about websites.
+
+Whatever I automate for someone, **if the person who will use it does not know how to touch it, it is not finished.** Anything tied to its author stops when the author is busy and cannot be fixed when the author is gone. I once [rebuilt an automation that already worked](/en/posts/google-apps-script-to-n8n/) for exactly that reason.
+
+So I do not sell automation and training separately. **Building and handing over are one thing.** Which means these are worth asking any vendor.
+
+- After launch, can I make changes myself?
+- Will you show me how?
 - If I move to another vendor later, what exactly do I take with me?
 
-**If the third answer is vague, look at that quote again.** [A result nobody but its author can open gets abandoned in a few years.](/en/posts/google-apps-script-to-n8n/) Mine was.
+**If all three answers are vague, look at that quote again.**
 
 ## To summarize
 
@@ -107,10 +142,10 @@ AI did lower the price. But **not evenly.**
 ```
 Building        down a lot
 Deciding        unchanged.  the revision count is this number
-Maintaining     nearly gone
+Maintaining     handed to the owner.  this is the biggest change
 Liability       unchanged.  and it should stay that way
 ```
 
-Split any quote along those four lines and you can see where cutting is safe and where cutting costs more later.
+The third line is the point. **Maintenance did not disappear. It became transferable.** Transferring it requires teaching, and teaching takes a few hours.
 
-And **preparing beats negotiating.** Three reference sites and one decision maker move the total more than any line item in the quote does.
+So when you read a quote, do not only look at the price of building. Look at **whether you can take it over.** That is what separates a site that gets abandoned again from one that stays alive.
