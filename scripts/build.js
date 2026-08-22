@@ -312,6 +312,7 @@ ${THEME_TOGGLE_JS}
 ${LANG_REMEMBER_JS}
 ${NEWSLETTER_ENABLED ? SUBSCRIBE_JS : ""}
 ${webAnalytics()}
+${naverAnalytics()}
 </body>
 </html>`;
 }
@@ -345,6 +346,33 @@ function webAnalytics() {
   const token = String(site.cfAnalyticsToken || "").trim();
   if (!DEPLOY || !token) return "";
   return `<script type="module" src="https://static.cloudflareinsights.com/beacon.min.js" data-cf-beacon='${JSON.stringify({ token })}'></script>`;
+}
+
+/* 네이버 애널리틱스.
+   Cloudflare 비컨과 따로 둡니다. 재는 것이 겹치지만 보는 곳이 다릅니다.
+   네이버 쪽은 네이버 검색으로 들어온 사람이 어떤 검색어를 쳤는지를 서치어드바이저와
+   같은 자리에서 보여줍니다. Cloudflare 는 그걸 모릅니다.
+
+   아이디는 비밀값이 아닙니다. 모든 페이지의 HTML 에 그대로 실려 나가는 값이라
+   숨길 수가 없고 숨길 이유도 없습니다. 그래서 content/site.json 에 둡니다.
+
+   배포 빌드에만 넣습니다. 로컬에서 고치고 새로고침한 것까지 방문으로 세면 숫자를 못 믿게 됩니다.
+
+   스니펫은 네이버가 주는 그대로입니다. 손대지 마세요.
+   src 가 //wcs.pstatic.net 으로 시작하는 것도, if(!wcs_add) 가 선언 전의 변수를 보는 것도
+   원본 그대로입니다. 후자는 var 호이스팅에 기대는 옛날 코드라 얌전히 고치고 싶어지는데,
+   고치면 네이버가 스니펫을 바꿨을 때 무엇이 원본이었는지 알 수 없게 됩니다. */
+function naverAnalytics() {
+  const id = String(site.naverAnalyticsId || "").trim();
+  if (!DEPLOY || !id) return "";
+  return `<script type="text/javascript" src="//wcs.pstatic.net/wcslog.js"></script>
+<script type="text/javascript">
+if(!wcs_add) var wcs_add = {};
+wcs_add["wa"] = "${id}";
+if(window.wcs) {
+  wcs_do();
+}
+</script>`;
 }
 
 /* 뉴스레터 구독 노출 스위치.
@@ -793,6 +821,9 @@ if (solo.length) {
 if (DEPLOY && !String(site.cfAnalyticsToken || "").trim()) {
   console.warn("  [경고] content/site.json 의 cfAnalyticsToken 이 비어 있어 방문 측정 스크립트를 넣지 않았습니다.");
   console.warn("         Cloudflare → Analytics → Web Analytics 에서 choworks.dev 를 추가하고 받은 토큰을 채우세요.\n");
+}
+if (DEPLOY && !String(site.naverAnalyticsId || "").trim()) {
+  console.warn("  [경고] content/site.json 의 naverAnalyticsId 가 비어 있어 네이버 애널리틱스를 넣지 않았습니다.");
 }
 
 const draftCount = (koAll.length - koPosts.length) + (enAll.length - enPosts.length);
