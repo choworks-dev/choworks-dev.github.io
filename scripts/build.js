@@ -741,6 +741,13 @@ write(".nojekyll", "");
 if (site.customDomain) write("CNAME", site.customDomain + "\n");
 write("robots.txt", `User-agent: *\nAllow: /\nSitemap: ${site.url}/sitemap.xml\n`);
 
+/* IndexNow 소유확인 파일. 루트에 <키>.txt 가 있고 그 안에 같은 키가 들어 있어야
+   검색엔진이 우리를 소유자로 인정합니다.
+
+   키를 site.json 한 곳에만 둡니다. 파일 두 곳에 같은 값을 적어 두면 언젠가 한쪽만
+   바뀝니다. 그때 조용히 403 이 나고, 색인 요청이 안 갔다는 것을 한참 뒤에 압니다. */
+if (site.indexNowKey) write(`${site.indexNowKey}.txt`, site.indexNowKey + "\n");
+
 /* ---------- 로컬 전용 콘텐츠 관리 페이지 ----------
    기본은 "만든다" 입니다. 배포 빌드일 때만 만들지 않고, 남아 있던 것도 지웁니다.
 
