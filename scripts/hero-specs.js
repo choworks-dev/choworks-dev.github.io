@@ -377,21 +377,28 @@ MOTIF.socratic = (box) => {
   return s;
 };
 
-/* 견적서 한 장이 두 갈래로 갈립니다. 위는 직접 할 것, 아래는 맡길 것.
-   견적서가 안 알려주는 것이 바로 이 갈림이라는 게 글의 요지입니다. */
-MOTIF.quotepaper = (box, P) => {
-  const w = box.mode === "w";
-  if (w) {
-    return put(96, 34, 0.92, invoice()) +
-      line("M290,110 C350,110 360,104 400,104", { stroke: A, sw: 2, arrow: P + "aa" }) +
-      line("M290,166 C350,166 360,186 400,186", { op: 0.55, sw: 1.8, arrow: P + "am" }) +
-      card(410, 78, 330, 54, { accent: true }) + cardLines(410, 105, 280, 0) +
-      `<g opacity="0.5">${card(410, 160, 330, 54)}${cardLines(410, 187, 280, 3)}</g>`;
+/* 홈페이지 시안 넷이 나란히 있고 그중 하나만 골라져 있습니다.
+
+   만드는 값이 내려가니 시안이 많아지고, 많아지니 고르는 일이 오래 걸립니다.
+   그게 이 글의 요지라서 그림도 "여러 안 중 하나를 고르는 장면" 이어야 합니다.
+   처음에는 견적서가 두 갈래로 갈리는 그림이었는데, 그건 값의 구조는 보여줘도
+   왜 정하는 데 값이 붙는지는 안 보여줬습니다. */
+MOTIF.quotepaper = (box) => {
+  if (box.mode === "w") {
+    /* 넷을 한 줄로. 셋이 흐리고 하나가 또렷한 것이 이 그림의 전부입니다 */
+    return [56, 262, 468, 674]
+      .map((x, i) => put(x, 88, 1, wireframe(i, { accent: i === 2 })))
+      .join("");
   }
-  return put(112, 18, 0.56, invoice()) +
-    line("M180,158 V186", { stroke: A, sw: 2, arrow: P + "aa" }) +
-    card(38, 194, 284, 40, { accent: true }) + cardLines(38, 214, 236, 0) +
-    `<g opacity="0.5">${card(38, 242, 284, 34)}${cardLines(38, 259, 236, 3)}</g>`;
+  /* 폰에서는 넷을 한 줄로 두면 한 벌이 80px 이 되어 레이아웃이 구별이 안 됩니다. 두 줄로 접습니다.
+
+     세로판의 여유 높이는 위아래로 좁습니다. 위는 칩(y 22~46), 아래는 캡션 두 줄(y 272 부터)이
+     이미 자리를 잡고 있어서 그림이 쓸 수 있는 것은 대략 56~262 입니다.
+     처음에 0.82 배로 두 줄을 놓았다가 위에서 칩과, 아래에서 캡션과 차례로 물렸습니다.
+     한 벌 높이 140 * 0.7 = 98 이므로 두 줄이 56 + 98 + 8 + 98 = 260 에 들어옵니다. */
+  return [[36, 58, 0], [190, 58, 1], [36, 164, 2], [190, 164, 3]]
+    .map(([x, y, i]) => put(x, y, 0.7, wireframe(i, { accent: i === 2 })))
+    .join("");
 };
 
 /* 돋보기 옆에 주소 목록. 동그라미가 찬 것이 색인된 것, 빈 것이 안 된 것입니다.
@@ -477,18 +484,46 @@ MOTIF.record = (box, P) => {
     `<use href="#${P}tag" x="${n(bx - br * 0.59)}" y="${n(by - br * 0.59)}" width="${n(br * 1.18)}" height="${n(br * 1.18)}" style="color:${A}"/>`;
 };
 
-/* 견적서 한 장. 모서리가 접혀 있어야 종이로 읽힙니다. 200x240 */
-function invoice() {
-  let s = shape("M4,4 H158 L186,32 V236 H4 Z", { fill: C, stroke: M, sw: 2 }) +
-    line("M158,4 V32 H186", { op: 0.6, sw: 1.6 });
-  [72, 102, 132, 162].forEach((y, i) => {
-    s += dot(30, y, 3.2, { op: 0.7 }) +
-      bar(44, y - 2, [72, 58, 84, 64][i], { op: 0.45 }) +
-      bar(130, y - 2, 40, { op: 0.45 });
-  });
-  /* 합계 줄만 또렷합니다. 견적서에서 사람이 실제로 읽는 것은 이 한 줄뿐입니다. */
-  return s + line("M28,188 H172", { op: 0.5, sw: 1.4 }) +
-    bar(108, 200, 62, { fill: A, op: 0.9, h: 5 });
+/* 홈페이지 시안 한 벌. 170x140
+
+   레이아웃을 네 가지로 둡니다. 히어로형, 좌우 분할, 카드 그리드, 목록형.
+   무엇을 그렸는지가 아니라 "서로 다른 안이 여럿 있다" 가 읽혀야 하는 그림이라
+   안끼리 확실히 달라 보이는 것이 중요합니다. 비슷한 넷을 그리면 시안이 아니라 반복입니다.
+
+   위쪽 점 세 개는 브라우저 창 표시입니다. 이게 있어야 종이가 아니라 홈페이지로 읽힙니다. */
+function wireframe(kind, o = {}) {
+  const st = o.accent ? A : M;
+  const op = o.accent ? 1 : 0.55;
+  let s = shape("M2,2 H168 V138 H2 Z", { fill: C, stroke: st, sw: o.accent ? 2.2 : 1.6 }) +
+    line("M2,24 H168", { stroke: st, sw: 1.2, op: o.accent ? 0.7 : 0.4 });
+  s += [12, 22, 32].map((x) => dot(x, 13, 2.4, { fill: st, op: o.accent ? 0.8 : 0.45 })).join("");
+
+  const f = { fill: o.accent ? A : M, op };
+  const box = (x, y, w, h) =>
+    `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="3" fill="${o.accent ? A : M}" opacity="${o.accent ? 0.26 : 0.16}"/>`;
+
+  if (kind === 0) {
+    /* 히어로형. 큰 그림 하나 위에 글이 얹힙니다 */
+    s += box(12, 32, 146, 50) + bar(12, 90, 104, f) + bar(12, 102, 76, f) + bar(12, 114, 58, f);
+  } else if (kind === 1) {
+    /* 좌우 분할. 왼쪽에 글, 오른쪽에 그림 */
+    s += bar(12, 40, 62, f) + bar(12, 52, 50, f) + bar(12, 64, 58, f) + bar(12, 82, 36, f) +
+      box(92, 34, 66, 84);
+  } else if (kind === 2) {
+    /* 카드 그리드. 제품이나 서비스를 늘어놓는 모양 */
+    s += bar(12, 34, 70, f) +
+      [12, 63, 114].map((x) => box(x, 48, 44, 44) + bar(x, 98, 34, f) + bar(x, 108, 24, f)).join("");
+  } else {
+    /* 목록형. 글이 많은 사이트 */
+    s += [36, 60, 84, 108].map((y) => box(12, y, 20, 18) + bar(38, y + 2, 92, f) + bar(38, y + 12, 62, f)).join("");
+  }
+
+  /* 고른 안에만 표시를 답니다. 이 그림의 요지는 여럿 중 하나를 고르는 일입니다 */
+  if (o.accent) {
+    s += ring(154, 14, 8, { stroke: A, sw: 1.8, fill: C }) +
+      line("M150,14 L153,17.5 L158.5,11", { stroke: A, sw: 2 });
+  }
+  return s;
 }
 
 /* 돋보기. 128x128 */
@@ -626,16 +661,16 @@ const SPECS = [
   },
   {
     key: "quotepaper", slug: "before-outsourcing-your-website", motif: MOTIF.quotepaper,
-    chip: "Build vs Decide",
+    chip: "Which One",
     glow: { w: [420, 140, 320, 150], n: [180, 150, 190, 150] },
     ko: {
-      title: "견적서에서 값이 갈리는 자리",
-      desc: "견적서 한 장에서 두 갈래가 갈려 나갑니다. 위는 값이 내려간 자리이고 아래는 그대로인 자리입니다.",
+      title: "시안 네 벌 중 하나를 고른다",
+      desc: "홈페이지 시안 네 벌이 나란히 있고 그중 하나에만 고름 표시가 붙어 있습니다. 레이아웃이 서로 다릅니다.",
       caption: ["만드는 값은 내려갔다", "정하는 값은 그대로다"],
     },
     en: {
-      title: "Where a quote splits",
-      desc: "Two branches split out of a single quote. The upper one is where the price dropped and the lower one is where it did not.",
+      title: "Four drafts, one picked",
+      desc: "Four website drafts side by side with different layouts, and a check mark on the one that was chosen.",
       caption: ["Building got cheaper", "Deciding did not"],
     },
   },

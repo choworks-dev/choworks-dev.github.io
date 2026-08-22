@@ -56,7 +56,7 @@ If it is not, both sides get hurt. The client thinks a change is obviously inclu
 
 I split it like this.
 
-| | Now | |
+| Kind of cost | Now | Why |
 |---|---|---|
 | Building | **Down a lot** | Fewer hours |
 | Deciding | **Unchanged** | It is human decision time |
