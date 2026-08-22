@@ -27,11 +27,11 @@ But I never got to it. Two reasons. There weren't many examples to work from, an
 
 Our quote flow looked like this.
 
-1. The customer requests a quote through a **Google Form**
-2. The request lands in a **Google Sheet**
-3. A notification **email** arrives
+1. The customer requests a quote through a Google Form
+2. The request lands in a Google Sheet
+3. A notification email arrives
 4. A person opens the mail and reads through the request
-5. A person **writes the quote by hand**
+5. A person writes the quote by hand
 6. A person sends it
 
 Steps 1 through 3 run themselves. Steps 4 through 6, the ones that actually cost time, are all human. The automation tells you a request arrived and leaves the work exactly where it was.
@@ -42,9 +42,9 @@ If you're not paying for an external quoting service and don't have automation s
 
 "No time" is only half true. The real reason is that our quotes are more complicated than they look.
 
-- Our company **lists product prices in USD**. The quote that goes to the customer is in Korean won, so it has to reflect the exchange rate at the time of the request
-- **Every product has a different discount rate**
-- **Volume discounts differ per product** as quantities go up
+- Our company lists product prices in USD. The quote that goes to the customer is in Korean won, so it has to reflect the exchange rate at the time of the request
+- Every product has a different discount rate
+- Volume discounts differ per product as quantities go up
 
 Stack those three and the math on a single quote stops being simple. It isn't "look up the price list and multiply by quantity." It's genuinely awkward to automate, so a person kept doing it.
 
@@ -60,9 +60,9 @@ As it happened, the website had just become HTML, CSS, and JS files in my own ha
 
 ### Prices and discounts moved out of the code
 
-Here's how the complicated math got solved. I put the product price table and the discount rate table into **separate Google Sheets**, and had Apps Script read those sheets to calculate the quote.
+Here's how the complicated math got solved. I put the product price table and the discount rate table into separate Google Sheets, and had Apps Script read those sheets to calculate the quote.
 
-That structure matters. When a price changes or a discount policy changes, nobody has to touch code. You change a number in a sheet. The values that change most often now sit **somewhere a non-developer can manage them**.
+That structure matters. When a price changes or a discount policy changes, nobody has to touch code. You change a number in a sheet. The values that change most often now sit somewhere a non-developer can manage them.
 
 ### Live exchange rates, with three sources
 
@@ -74,7 +74,7 @@ This is the easy part to skip. Build only the path where everything works, and o
 
 ### PDF and out, inside 5 minutes
 
-Once the math is done, the quote is rendered to PDF and emailed to the customer. The whole chain is tuned so that **no more than five minutes** pass between the customer submitting a request and receiving the PDF.
+Once the math is done, the quote is rendered to PDF and emailed to the customer. The whole chain is tuned so that no more than five minutes pass between the customer submitting a request and receiving the PDF.
 
 ## A day became five minutes
 
@@ -89,20 +89,20 @@ If you sell products, you don't need me to explain how much the speed of a quote
 | Quote format | Varied by who wrote it | Standard PDF |
 | Time to reach the customer | Hours to a day | Under 5 minutes |
 
-When it was manual, the long part wasn't writing the quote. It was **the time it sat waiting behind other work**. Busy meant half a day gone. Busier meant tomorrow. Now there is no relationship at all between how busy I am and how fast a quote goes out.
+When it was manual, the long part wasn't writing the quote. It was the time it sat waiting behind other work. Busy meant half a day gone. Busier meant tomorrow. Now there is no relationship at all between how busy I am and how fast a quote goes out.
 
 ## If you're in the same spot
 
-- If you already pay for Google Workspace, **Apps Script is included**. There's nothing new to buy
-- Keep **frequently changing values like prices and discounts in a sheet, not in code**. Then nobody has to call a developer later
-- If you depend on an external API, **assume the day it goes down** and write a fallback path. Automations fail quietly
-- Put the quote request form **inside your own site** where you can. Fewer drop-offs, and the design holds
-- **"Our logic is too complicated to automate" is worth revisiting.** The more complicated the rules, the more mistakes a human makes repeating them. That's an argument for automating, not against
+- If you already pay for Google Workspace, Apps Script is included. There's nothing new to buy
+- Keep frequently changing values like prices and discounts in a sheet, not in code. Then nobody has to call a developer later
+- If you depend on an external API, assume the day it goes down and write a fallback path. Automations fail quietly
+- Put the quote request form inside your own site where you can. Fewer drop-offs, and the design holds
+- "Our logic is too complicated to automate" is worth revisiting. The more complicated the rules, the more mistakes a human makes repeating them. That's an argument for automating, not against
 - Response speed is a sales capability in itself. A quote that's a day late gives the customer a day to look elsewhere
 
 ## So
 
-Here's what struck me. We already had the tool. We'd been paying for Google Workspace for years, and Apps Script was sitting inside it the whole time. What was missing wasn't the tool. It was **the time to sit down and turn it into code**.
+Here's what struck me. We already had the tool. We'd been paying for Google Workspace for years, and Apps Script was sitting inside it the whole time. What was missing wasn't the tool. It was the time to sit down and turn it into code.
 
 That's exactly the part AI changed. Years of postponement became a few hours. The same thing that happened with the website migration, happening a second time.
 

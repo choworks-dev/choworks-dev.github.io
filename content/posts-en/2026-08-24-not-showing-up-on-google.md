@@ -17,11 +17,11 @@ You publish a post and it does not show up on Google. You search your own site n
 2  Google has it but ranks it nowhere         ->  a ranking problem
 ```
 
-**These are fixed in completely different ways.** On screen they look identical.
+These are fixed in completely different ways. On screen they look identical.
 
 Treat 1 as 2 and you will rewrite titles and lengthen posts and nothing will happen. Treat 2 as 1 and you will resubmit sitemaps and request indexing over and over and nothing will happen either.
 
-**So the first job is not fixing. It is telling the two apart.**
+So the first job is not fixing. It is telling the two apart.
 
 ## How to tell them apart
 
@@ -31,10 +31,10 @@ The answer splits like this.
 
 | What it says | What it means |
 |---|---|
-| **URL is on Google** | It is indexed. This is problem 2 |
-| **Discovered - currently not indexed** | Google knows the address but **has not even come to look** |
-| **Crawled - currently not indexed** | Google came, looked, and **decided not to keep it** |
-| **URL is unknown to Google** | It does not know the page exists |
+| URL is on Google | It is indexed. This is problem 2 |
+| Discovered - currently not indexed | Google knows the address but has not even come to look |
+| Crawled - currently not indexed | Google came, looked, and decided not to keep it |
+| URL is unknown to Google | It does not know the page exists |
 
 That alone tells you what to do next.
 
@@ -50,33 +50,33 @@ Not indexed       7
    looked, declined 1
 ```
 
-My first thought was that **the English versions were the problem.** They are translations of the Korean posts, so maybe Google saw duplicates. Then I counted, and the seven were spread evenly across both languages. **The theory was wrong.**
+My first thought was that the English versions were the problem. They are translations of the Korean posts, so maybe Google saw duplicates. Then I counted, and the seven were spread evenly across both languages. The theory was wrong.
 
-Then I looked at the last crawl date on the thirteen indexed pages. Yesterday and the day before. **Google was coming regularly.** The site was not dead.
+Then I looked at the last crawl date on the thirteen indexed pages. Yesterday and the day before. Google was coming regularly. The site was not dead.
 
 ## What to actually check when pages are not indexed
 
-**One. Are you blocking it.** Open `yoursite.com/robots.txt` in a browser. If there is a line saying `Disallow: /`, that is the whole story. That one line blocks the entire site.
+One. Are you blocking it. Open `yoursite.com/robots.txt` in a browser. If there is a line saying `Disallow: /`, that is the whole story. That one line blocks the entire site.
 
-**Two. Did you tell Google about the sitemap.** `yoursite.com/sitemap.xml` should open, and that address needs to be submitted under Sitemaps in Search Console. Having the file and having told Google are not the same thing.
+Two. Did you tell Google about the sitemap. `yoursite.com/sitemap.xml` should open, and that address needs to be submitted under Sitemaps in Search Console. Having the file and having told Google are not the same thing.
 
-**Three. Is the address really that address.** Look at `canonical` in the page source. If it points at an old address, that is where Google looks. This matters especially if you have changed domains.
+Three. Is the address really that address. Look at `canonical` in the page source. If it points at an old address, that is where Google looks. This matters especially if you have changed domains.
 
-**Four. And time.** New sites are slow. That is normal.
+Four. And time. New sites are slow. That is normal.
 
 ## The fourth one is the usual answer
 
-I moved this blog to its current domain on August 15. To Google this is **a one-week-old domain.** There are eight posts and effectively no links pointing here from anywhere else.
+I moved this blog to its current domain on August 15. To Google this is a one-week-old domain. There are eight posts and effectively no links pointing here from anywhere else.
 
-In that state, having just over half the pages indexed and almost no impressions is **not a fault. It is normal.** A new domain usually takes months to settle into search.
+In that state, having just over half the pages indexed and almost no impressions is not a fault. It is normal. A new domain usually takes months to settle into search.
 
-So if you check one through three and find nothing wrong, **that is good news.** It means there is nothing to fix. What is left is waiting and writing more.
+So if you check one through three and find nothing wrong, that is good news. It means there is nothing to fix. What is left is waiting and writing more.
 
 ## If it is indexed but still invisible
 
 That is a different story. In my case the thirteen indexed pages appeared in search results five times over ninety days. Four of those were English pages, and the only query was a misspelling of my brand name.
 
-**Being indexed means being eligible to appear, not appearing.** If nobody searches the words your post is about, a hundred indexed pages still produce zero impressions.
+Being indexed means being eligible to appear, not appearing. If nobody searches the words your post is about, a hundred indexed pages still produce zero impressions.
 
 From there it stops being an indexing problem and becomes a question of what you write. That deserves its own post, so I will stop here.
 
@@ -91,4 +91,4 @@ From there it stops being an indexing problem and becomes a question of what you
 6  "Indexed" but invisible is a ranking problem. More indexing work will not move it
 ```
 
-**Getting through step five takes ten minutes.** I did not know this order and spent days looking in the wrong place.
+Getting through step five takes ten minutes. I did not know this order and spent days looking in the wrong place.

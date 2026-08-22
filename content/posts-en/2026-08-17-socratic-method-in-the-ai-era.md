@@ -64,7 +64,7 @@ This is where people split. Most ask an AI one question, take the answer, and cl
 
 You question the answer. Why is that so. Then what happens in this case. Does that hold for my situation. You said A just now, but earlier you said B.
 
-And one more thing. **Restate what you understood in your own words and ask whether you've got it right.** That is the same seat as offering a definition to Socrates. It's where the feeling of understanding separates from understanding. Of everything I picked up, I think that single habit did the most.
+And one more thing. Restate what you understood in your own words and ask whether you've got it right. That is the same seat as offering a definition to Socrates. It's where the feeling of understanding separates from understanding. Of everything I picked up, I think that single habit did the most.
 
 Ask what you don't know, and when the answer comes, ask again. Do that and eventually you know. That is how learning works now.
 
@@ -74,7 +74,7 @@ I wrote earlier about [the scene in The Matrix where flying a helicopter downloa
 
 Moving what an AI knows into my own head and hands works the same way. You cannot produce a good question out of no purpose at all. What you want to build, which problem you want gone this week, who you're trying to become. Something has to be settled before a question can form. Without that intent, what comes out isn't a question, it's a search term. And search terms don't come back with answers attached.
 
-The answer isn't inside the AI. **It's inside the question your intent shaped.** The AI only responds to it. A blurry question gets a blurry response. This isn't a tip about writing better prompts. It's about knowing what you're trying to do.
+The answer isn't inside the AI. It's inside the question your intent shaped. The AI only responds to it. A blurry question gets a blurry response. This isn't a tip about writing better prompts. It's about knowing what you're trying to do.
 
 Socrates now sits beside you around the clock. He never gets tired and never asks how you could possibly not know that. One thing is left. Deciding what you want to know.
 

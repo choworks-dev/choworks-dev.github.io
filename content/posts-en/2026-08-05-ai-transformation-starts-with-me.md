@@ -27,11 +27,11 @@ Capability accumulates at a rate I would not have believed. Saying it feels like
 
 ## I had the order backwards
 
-In [the first post on this blog](/en/posts/why-ai-transform/), I wrote that the grammar of work itself was changing. A few months on, that sentence was only half right. What changed wasn't the grammar of the work. It was **the person doing it.**
+In [the first post on this blog](/en/posts/why-ai-transform/), I wrote that the grammar of work itself was changing. A few months on, that sentence was only half right. What changed wasn't the grammar of the work. It was the person doing it.
 
 Which led me somewhere I didn't expect.
 
-The first step of an AI transformation is not transforming something else. **It's transforming yourself.** You become someone with a different set of capabilities than the person you were. Only then can you run several directions of work at once, and that state is what we call automation. Being able to [add a second tool](/en/posts/google-apps-script-to-n8n/) on top of an automation that already worked fine was something that happened after that step, not before it.
+The first step of an AI transformation is not transforming something else. It's transforming yourself. You become someone with a different set of capabilities than the person you were. Only then can you run several directions of work at once, and that state is what we call automation. Being able to [add a second tool](/en/posts/google-apps-script-to-n8n/) on top of an automation that already worked fine was something that happened after that step, not before it.
 
 The order matters. Your ceiling moves first, and automation follows. It doesn't work in reverse. Handing AI a job you can't do and handing it a job you've become able to do are completely different transactions.
 

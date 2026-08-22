@@ -24,7 +24,7 @@ Here is the inventory.
 
 Bidding opened around $5 million. Mercor, an AI training data company, went to $7.5 million. A third anonymous bidder was in the room. Google took it at $10 million. Passenger profiles and loyalty records were excluded, and the terms require a third party to scrub personally identifiable information before Google receives anything.
 
-So here is where we are. **A few years of coworkers emailing each other about work turned into a ten million dollar asset once the company died.**
+So here is where we are. A few years of coworkers emailing each other about work turned into a ten million dollar asset once the company died.
 
 ## A few years ago this was garbage
 
@@ -38,9 +38,9 @@ If someone had told me a few years back that a bankrupt airline's internal small
 
 ## Why dead companies specifically
 
-The simple reason: **the public internet is already scraped.** That job finished sometime around late 2024. Wikipedia, news, blogs, public GitHub, all of it went in. What is left is what was never public.
+The simple reason: the public internet is already scraped. That job finished sometime around late 2024. Wikipedia, news, blogs, public GitHub, all of it went in. What is left is what was never public.
 
-But the more interesting reason is about the kind of data. Models have seen plenty of well written prose. What they have not seen is **how work actually happens.**
+But the more interesting reason is about the kind of data. Models have seen plenty of well written prose. What they have not seen is how work actually happens.
 
 - Who asked whom what, at 11pm, when something broke
 - Why a decision that was already made got reversed the next morning
@@ -57,7 +57,7 @@ Spirit made headlines because of the size. Buying and selling the data of dead c
 - Sunset does the same thing. Pricing depends on company size, age, and "data richness," a measure of how much the internal records connect to each other
 - Mercor goes after individuals. It has reportedly offered up to $300,000 for the work product someone produced at a previous job
 
-Read that last one again. Not companies. **Individuals.**
+Read that last one again. Not companies. Individuals.
 
 ## So I opened my own hard drive
 
@@ -65,9 +65,9 @@ I have run a small company for ten years. Things accumulate.
 
 Quotes, contracts, client email threads, invoices, work chat groups, notes scattered through project folders, one cell in a spreadsheet explaining why we priced that job the way we did. I have always treated this as a mess I should clean up someday. Storage I was wasting.
 
-Looking at it now, it is not a mess. **It is a complete record of what one person went through for ten years and how they decided things.** There is exactly one copy of it in the world.
+Looking at it now, it is not a mess. It is a complete record of what one person went through for ten years and how they decided things. There is exactly one copy of it in the world.
 
-To be honest about it, I do not think my archive is worth ten million dollars. That is not the argument. The argument is this. **I just watched something go from trash to asset,** and the price was not set by the people who created it. It was set by a buyer who showed up years later.
+To be honest about it, I do not think my archive is worth ten million dollars. That is not the argument. The argument is this. I just watched something go from trash to asset, and the price was not set by the people who created it. It was set by a buyer who showed up years later.
 
 ## The paradox of automation
 
@@ -75,7 +75,7 @@ I hand most of my work to AI now. [Moving my website](/en/posts/wix-to-cloudflar
 
 So what is left that is mine? I ask myself that a lot lately.
 
-An answer is coming into focus. What is left is not execution, it is context. AI can do my work for me. But **what I lived through over ten years and why I judged things the way I did does not exist anywhere unless I write it down.** You cannot search for it. I am the only one holding it.
+An answer is coming into focus. What is left is not execution, it is context. AI can do my work for me. But what I lived through over ten years and why I judged things the way I did does not exist anywhere unless I write it down. You cannot search for it. I am the only one holding it.
 
 And what is happening right now is that exact category, the stuff that only existed inside companies, is getting a price tag.
 
@@ -83,15 +83,15 @@ And what is happening right now is that exact category, the stuff that only exis
 
 Start with something grand and you quit in three days. I hold to about five things.
 
-**Stop deleting.** Archive instead of delete. Do not throw out old project folders in a tidying mood. Storage is one of the cheapest things in the world right now.
+Stop deleting. Archive instead of delete. Do not throw out old project folders in a tidying mood. Storage is one of the cheapest things in the world right now.
 
-**Pull it into one place.** Chat apps will export a conversation. Gmail comes out whole through Google Takeout. There is no guarantee the service you use today exists in ten years. A record that lives only on someone else's server is not yet yours.
+Pull it into one place. Chat apps will export a conversation. Gmail comes out whole through Google Takeout. There is no guarantee the service you use today exists in ten years. A record that lives only on someone else's server is not yet yours.
 
-**Write the reason, not the result.** This is the one that matters. "Moved to n8n" is worth nothing later. [Why I moved a perfectly working Apps Script over to n8n](/en/posts/google-apps-script-to-n8n/) is worth something. Results are available everywhere. Reasons are only known to the person who lived them.
+Write the reason, not the result. This is the one that matters. "Moved to n8n" is worth nothing later. [Why I moved a perfectly working Apps Script over to n8n](/en/posts/google-apps-script-to-n8n/) is worth something. Results are available everywhere. Reasons are only known to the person who lived them.
 
-**Keep the format boring.** I write markdown files and commit them to git. Not because it is clever, but because it will still open in ten years. A record locked inside a tool dies with the tool.
+Keep the format boring. I write markdown files and commit them to git. Not because it is clever, but because it will still open in ten years. A record locked inside a tool dies with the tool.
 
-**Your AI conversations are records too.** I learn by [interrogating Claude](/en/posts/socratic-method-in-the-ai-era/). Those transcripts contain exactly what I did not know and the order in which I figured it out. I keep those too.
+Your AI conversations are records too. I learn by [interrogating Claude](/en/posts/socratic-method-in-the-ai-era/). Those transcripts contain exactly what I did not know and the order in which I figured it out. I keep those too.
 
 This blog is that record. Some of it is written for other people. Half of it is written for me to read later.
 
@@ -103,6 +103,6 @@ Which means you can run the logic in reverse. What the small note I write today 
 
 Whether it ends up having value is not my call. Exactly one thing is my call.
 
-**Whether it still exists.**
+Whether it still exists.
 
 Write it down. Write it down again. Keep writing it down.
