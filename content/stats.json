@@ -1,14 +1,14 @@
 {
-  "updated": "2026-08-21T19:49:46.408Z",
+  "updated": "2026-08-22T19:46:48.961Z",
   "source": "cloudflare-web-analytics",
   "caveat": "무료 플랜은 표본 추정이라 10 단위로 반올림됩니다. 우리 방문도 섞여 있습니다.",
   "range": {
-    "from": "2026-05-23",
-    "to": "2026-08-21",
+    "from": "2026-05-24",
+    "to": "2026-08-22",
     "days": 90
   },
   "totals": {
-    "views": 130,
+    "views": 140,
     "visits": 80
   },
   "byDay": [
@@ -46,12 +46,21 @@
       "date": "2026-08-21",
       "views": 10,
       "visits": 0
+    },
+    {
+      "date": "2026-08-22",
+      "views": 10,
+      "visits": 0
     }
   ],
   "byPath": [
     {
       "path": "/",
       "views": 80
+    },
+    {
+      "path": "/en/",
+      "views": 20
     },
     {
       "path": "/posts/socratic-method-in-the-ai-era/",
@@ -68,10 +77,6 @@
     {
       "path": "/en/about/",
       "views": 10
-    },
-    {
-      "path": "/en/",
-      "views": 10
     }
   ],
   "byReferrer": [
@@ -81,13 +86,13 @@
     },
     {
       "host": "choworks.dev",
-      "views": 50
+      "views": 60
     }
   ],
   "byCountry": [
     {
       "country": "KR",
-      "views": 80
+      "views": 90
     },
     {
       "country": "US",
@@ -97,7 +102,7 @@
   "byDevice": [
     {
       "device": "desktop",
-      "views": 120
+      "views": 130
     },
     {
       "device": "mobile",

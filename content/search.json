@@ -1,18 +1,18 @@
 {
-  "updated": "2026-08-21T19:50:21.152Z",
+  "updated": "2026-08-22T19:47:28.007Z",
   "source": "google-search-console",
   "site": "sc-domain:choworks.dev",
   "caveat": "서치 콘솔은 집계가 이틀쯤 늦습니다. 어제까지의 값입니다.",
   "range": {
-    "from": "2026-05-23",
-    "to": "2026-08-20",
+    "from": "2026-05-24",
+    "to": "2026-08-21",
     "days": 90
   },
   "totals": {
     "clicks": 0,
-    "impressions": 5,
+    "impressions": 7,
     "ctr": 0,
-    "position": 5.4
+    "position": 27.7
   },
   "byDate": [
     {
@@ -64,6 +64,11 @@
       "date": "2026-08-19",
       "clicks": 0,
       "impressions": 2
+    },
+    {
+      "date": "2026-08-20",
+      "clicks": 0,
+      "impressions": 2
     }
   ],
   "byQuery": [
@@ -93,9 +98,9 @@
     {
       "key": "https://choworks.dev/en/posts/socratic-method-in-the-ai-era/",
       "clicks": 0,
-      "impressions": 2,
+      "impressions": 4,
       "ctr": 0,
-      "position": 7
+      "position": 45.3
     },
     {
       "key": "https://choworks.dev/en/posts/why-ai-transform/",
@@ -121,6 +126,13 @@
       "position": 4
     },
     {
+      "key": "mar",
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 74
+    },
+    {
       "key": "nld",
       "clicks": 0,
       "impressions": 1,
@@ -133,15 +145,22 @@
       "impressions": 2,
       "ctr": 0,
       "position": 4.5
+    },
+    {
+      "key": "tur",
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 93
     }
   ],
   "byDevice": [
     {
       "key": "DESKTOP",
       "clicks": 0,
-      "impressions": 5,
+      "impressions": 7,
       "ctr": 0,
-      "position": 5.4
+      "position": 27.7
     }
   ],
   "index": [
@@ -149,7 +168,7 @@
       "url": "https://choworks.dev/",
       "verdict": "PASS",
       "state": "제출되고 색인이 생성되었습니다.",
-      "lastCrawl": "2026-08-21",
+      "lastCrawl": "2026-08-22",
       "robots": "ALLOWED",
       "canonical": "https://choworks.dev/"
     },
@@ -160,6 +179,14 @@
       "lastCrawl": "2026-08-21",
       "robots": "ALLOWED",
       "canonical": "https://choworks.dev/about/"
+    },
+    {
+      "url": "https://choworks.dev/posts/before-outsourcing-your-website/",
+      "verdict": "NEUTRAL",
+      "state": "Google에는 아직 알려지지 않은 URL입니다.",
+      "lastCrawl": "",
+      "robots": "ROBOTS_TXT_STATE_UNSPECIFIED",
+      "canonical": ""
     },
     {
       "url": "https://choworks.dev/posts/record-everything/",
@@ -235,6 +262,14 @@
     },
     {
       "url": "https://choworks.dev/en/about/",
+      "verdict": "PASS",
+      "state": "제출되고 색인이 생성되었습니다.",
+      "lastCrawl": "2026-08-22",
+      "robots": "ALLOWED",
+      "canonical": "https://choworks.dev/en/about/"
+    },
+    {
+      "url": "https://choworks.dev/en/posts/before-outsourcing-your-website/",
       "verdict": "NEUTRAL",
       "state": "Google에는 아직 알려지지 않은 URL입니다.",
       "lastCrawl": "",
@@ -307,8 +342,8 @@
     }
   ],
   "indexSummary": {
-    "total": 20,
-    "indexed": 13,
-    "notIndexed": 7
+    "total": 22,
+    "indexed": 14,
+    "notIndexed": 8
   }
 }
