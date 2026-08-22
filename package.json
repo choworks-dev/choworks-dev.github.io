@@ -16,7 +16,9 @@
     "notify": "node scripts/notify-setup.js",
     "verify": "node scripts/verify-live.js",
     "stats": "node scripts/stats-fetch.js",
-    "search": "node scripts/gsc-fetch.js"
+    "search": "node scripts/gsc-fetch.js",
+    "index": "python scripts/request_indexing.py",
+    "naver": "python scripts/naver_browser.py"
   },
   "keywords": [],
   "author": "",

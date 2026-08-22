@@ -271,7 +271,8 @@ ${dims ? `<meta property="og:image:width" content="${dims.w}">
 <link rel="canonical" href="${site.url}${canonical}">
 ${noIndex ? `<meta name="robots" content="noindex, nofollow">
 ` : ""}
-<meta name="author" content="${esc(authorName(lang))}">
+${site.naverVerification ? `<meta name="naver-site-verification" content="${esc(site.naverVerification)}">
+` : ""}<meta name="author" content="${esc(authorName(lang))}">
 <meta property="og:type" content="${ogType || "website"}">
 <meta property="og:site_name" content="${esc(site.brand)}">
 <meta property="og:locale" content="${isEn ? "en_US" : "ko_KR"}">

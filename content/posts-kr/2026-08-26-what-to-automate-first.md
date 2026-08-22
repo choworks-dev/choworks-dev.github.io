@@ -4,7 +4,6 @@ date: 2026-08-26
 description: 한 달 동안 실제로 없앤 일들을 순서대로 적었습니다. 무엇부터 손대야 하는지에는 기준이 있습니다.
 tags: [AI 자동화, AI 트랜스포메이션, 1인 사업자, 업무 자동화, 클로드]
 draft: true
-publishAt: 2026-08-26 18:00
 ---
 
 {{svg: hero-what-to-automate-first}}

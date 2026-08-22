@@ -4,7 +4,6 @@ date: 2026-08-24
 description: 안 나온다는 말에는 뜻이 두 가지 있습니다. 색인이 안 된 것과 색인은 됐는데 안 보이는 것. 이걸 구별해야 엉뚱한 곳을 안 고칩니다.
 tags: [검색 최적화, 구글 서치콘솔, 색인, 1인 사업자, 블로그 운영]
 draft: true
-publishAt: 2026-08-24 18:00
 ---
 
 {{svg: hero-not-showing-up-on-google}}

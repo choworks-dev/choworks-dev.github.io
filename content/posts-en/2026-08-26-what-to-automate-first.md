@@ -4,7 +4,6 @@ date: 2026-08-26
 description: A month of actually removing work, in the order it happened. There is a way to decide what to touch first, and starting wrong wastes the momentum.
 tags: [AI automation, AI transformation, solo business, workflow automation, Claude]
 draft: true
-publishAt: 2026-08-26 18:00
 ---
 
 {{svg: hero-what-to-automate-first-en}}

@@ -38,3 +38,14 @@ NAVER.local.md
 
 # 구글 서비스 계정 키 (로컬 전용, 절대 커밋 금지)
 .gcp-*.json
+
+# 서치 콘솔 자동화용 브라우저 프로필 (로그인 세션. 로컬 전용)
+.gsc-profile/
+.gsc-shots/
+
+# 네이버 서치어드바이저 자동화용 브라우저 프로필 (로그인 세션. 로컬 전용)
+.naver-profile/
+.naver-shots/
+
+# 파이썬 캐시
+__pycache__/

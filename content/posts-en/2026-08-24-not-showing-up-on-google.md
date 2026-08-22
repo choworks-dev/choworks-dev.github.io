@@ -4,7 +4,6 @@ date: 2026-08-24
 description: Not showing up means two different things, and telling them apart first stops you from spending days fixing something that was never the problem.
 tags: [SEO, Google Search Console, indexing, solo business, running a blog]
 draft: true
-publishAt: 2026-08-24 18:00
 ---
 
 {{svg: hero-not-showing-up-on-google-en}}

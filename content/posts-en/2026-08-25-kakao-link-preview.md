@@ -4,7 +4,6 @@ date: 2026-08-25
 description: Getting a bare URL instead of a card means the page never declared og tags. Here is how I generate a preview image for every post automatically.
 tags: [og image, link preview, social sharing, running a blog, solo business]
 draft: true
-publishAt: 2026-08-25 18:00
 ---
 
 {{svg: hero-kakao-link-preview-en}}

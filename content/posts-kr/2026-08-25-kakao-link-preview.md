@@ -4,7 +4,6 @@ date: 2026-08-25
 description: 링크를 보냈는데 밋밋한 글자만 뜨는 이유는 og 태그가 없어서입니다. 카드 이미지를 자동으로 만들어 붙인 방법을 적었습니다.
 tags: [og 이미지, 링크 미리보기, 카카오톡, 블로그 운영, 1인 사업자]
 draft: true
-publishAt: 2026-08-25 18:00
 ---
 
 {{svg: hero-kakao-link-preview}}
