@@ -11,7 +11,7 @@ publishAt: 2026-08-23 18:00
 
 Website quotes do not look the way they used to. I have been on the receiving end of those quotes, and these days I write them too, so I see the change from inside. Here is what is useful to know from both sides.
 
-## Prices really did drop
+## Website build prices really did drop
 
 This is not a bubble deflating. It is real, and the reason is simple. **Building screens takes less time now.**
 
@@ -34,7 +34,7 @@ How many times someone looks at a design and says **"that is not it"**. AI does 
 
 So most of the variance in a modern quote comes from **the deciding, not the building.**
 
-## What I look at before quoting
+## What I look at before quoting a website
 
 Whether to take a job, and what number to put on it, comes down to four things.
 
@@ -54,7 +54,7 @@ This is the most common source of delay by a wide margin. The shell takes two da
 
 If it is not, both sides get hurt. The client thinks a change is obviously included. The builder thinks it is extra. Both are being sincere.
 
-## How the number gets set
+## How I price a website build
 
 I split it like this.
 
@@ -70,7 +70,7 @@ And I write **a revision count** into the quote. Something like "three rounds in
 
 **A quote with a revision count is better for the client too.** With that number in place I carry less risk, so the total comes down.
 
-## For clients: how to pay less
+## How to get a cheaper website quote
 
 Better than negotiating the number down. **Reduce how many rounds it will take.**
 
@@ -86,7 +86,7 @@ Payments. Anywhere card details pass through, one mistake ends a business. Same 
 
 These did not get cheaper and should not. It is **not a question of whether someone can build it, but who is liable when it breaks.** A quote where these lines look unusually cheap may be one where nobody is carrying that liability.
 
-## So now I bundle training into the quote
+## So now I bundle AI training into the quote
 
 This is where the way I actually work changed.
 
