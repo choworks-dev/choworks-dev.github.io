@@ -271,8 +271,7 @@ ${dims ? `<meta property="og:image:width" content="${dims.w}">
 <link rel="canonical" href="${site.url}${canonical}">
 ${noIndex ? `<meta name="robots" content="noindex, nofollow">
 ` : ""}
-${site.naverVerification ? `<meta name="naver-site-verification" content="${esc(site.naverVerification)}">
-` : ""}<meta name="author" content="${esc(authorName(lang))}">
+${naverTags(site.naverVerification)}<meta name="author" content="${esc(authorName(lang))}">
 <meta property="og:type" content="${ogType || "website"}">
 <meta property="og:site_name" content="${esc(site.brand)}">
 <meta property="og:locale" content="${isEn ? "en_US" : "ko_KR"}">
@@ -391,6 +390,16 @@ const authorBio = (lang) => (lang === "en" ? site.authorBioEn : site.authorBioKo
 /* 다른 언어판이 있다는 것을 눈에 보이게 알립니다. 자동 이동을 없앤 자리를 채우는 장치입니다.
    문구는 읽는 사람이 아는 언어로 씁니다. 한국어 화면에는 영어로, 영어 화면에는 한국어로.
    그래야 자기가 못 읽는 화면에 떨어진 사람이 이 줄만은 알아봅니다. */
+/* 네이버 소유확인 태그. 값을 여러 개 둘 수 있습니다.
+   네이버는 http://example.com 과 https://example.com 을 다른 사이트로 세고,
+   사이트마다 확인 값이 따로 나옵니다. 프로토콜을 옮기는 동안에는 둘 다 걸려 있어야
+   리포트가 끊기지 않습니다. 문자열 하나만 적어도 그대로 동작합니다. */
+function naverTags(v) {
+  const list = (Array.isArray(v) ? v : [v]).filter(Boolean);
+  return list.map((c) => `<meta name="naver-site-verification" content="${esc(c)}">
+`).join("");
+}
+
 function langNotice(lang) {
   const isEn = lang === "en";
   return `<p class="lang-notice">
