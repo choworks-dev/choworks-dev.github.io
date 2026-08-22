@@ -1,10 +1,8 @@
 ---
 title: Website Quotes in the AI Era, From Both Sides
-date: 2026-08-23
+date: 2026-08-22
 description: Building got cheaper. Deciding did not. Here is why I now bundle training into every quote, so the owner can maintain the site without me.
 tags: [website migration, outsourcing, quoting, AI training, solo business]
-draft: true
-publishAt: 2026-08-23 18:00
 ---
 
 {{svg: hero-before-outsourcing-your-website-en}}

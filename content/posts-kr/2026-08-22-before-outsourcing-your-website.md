@@ -1,10 +1,8 @@
 ---
 title: AI 시대에 홈페이지 외주 견적 받기 전에 볼 것
-date: 2026-08-23
+date: 2026-08-22
 description: 만드는 값은 내려갔지만 정하는 값은 그대로입니다. 요즘 제가 만들고 나서 고치는 법까지 묶어 제안하는 이유를 적었습니다.
 tags: [홈페이지 마이그레이션, 외주, 견적, AI 교육, 1인 사업자]
-draft: true
-publishAt: 2026-08-23 18:00
 ---
 
 {{svg: hero-before-outsourcing-your-website}}
