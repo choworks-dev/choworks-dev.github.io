@@ -21,10 +21,9 @@ Less time means a lower price. So if today's quote looks different from the one 
 
 This is the part that matters.
 
-```
-Dropped        the time to build
-Did not drop   the time to decide
-```
+**Dropped** ➡️ the time to build
+
+**Did not drop** ➡️ the time to decide
 
 How many times someone looks at a design and says **"that is not it"**. AI does not shrink that. What you want lives inside the person asking, not the person building, and asking does not extract it.
 
@@ -137,12 +136,12 @@ So I do not sell automation and training separately. **Building and handing over
 
 AI did lower the price. But **not evenly.**
 
-```
-Building        down a lot
-Deciding        unchanged.  the revision count is this number
-Maintaining     handed to the owner.  this is the biggest change
-Liability       unchanged.  and it should stay that way
-```
+| Kind of cost | What happened | Note |
+|---|---|---|
+| Building | Down a lot | A design pass went from days to hours |
+| Deciding | Unchanged | **The revision count is this number** |
+| Maintaining | Handed to the owner | This is the biggest change |
+| Liability | Unchanged | And it should stay that way |
 
 The third line is the point. **Maintenance did not disappear. It became transferable.** Transferring it requires teaching, and teaching takes a few hours.
 
