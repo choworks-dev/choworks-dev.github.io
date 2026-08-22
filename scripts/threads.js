@@ -189,30 +189,35 @@ function queueOf(batches) {
 
 /* --replan 이 쓰는 순서.
 
-   2026-08-22 에 규칙을 바꿨습니다. 그전에는 배치들이 서로 섞여서 흘렀습니다.
-   wix 1편, 견적 1편, wix 2편 하는 식이라 한 글의 이야기가 며칠에 걸쳐 끊겼습니다.
-   이제는 블로그 글이 나온 순서대로, 한 배치를 끝내고 다음 배치로 넘어갑니다.
+   큐는 줄 하나입니다. 블로그 글이 나온 순서대로, 한 배치 안에서는 적힌 순서대로.
+   그 줄을 요일별 편수(PER_DOW)에 맞춰 앞에서부터 흘려보냅니다. 그게 전부입니다.
 
-   일상 편은 주말로 보냅니다. "업무 세 편마다 일상 한 편" 규칙은 같은 날 없앴습니다.
-   그 규칙이 업무 편의 순서를 깨는 유일한 이유였습니다.
-   주말은 원래 일상 편의 자리이기도 해서, 순서를 안 깨면서 일상 편이 갈 곳이 거기입니다.
+   ── 여기서 두 번 잘못 만들었습니다 (2026-08-22) ──
 
-   블로그 날짜를 모르는 배치(source 가 없거나 글을 못 찾은 경우)는 파일 이름 순으로 뒤에 붙입니다. */
+   한 번은 배치를 서로 섞어 흘렸습니다. wix 1편, 견적 1편, wix 2편 하는 식이라
+   한 글의 이야기가 며칠에 걸쳐 끊겼습니다.
+
+   고친다고 이번엔 반대로 갔습니다. 주말을 일상 편 자리로 예약하고, 평일 세 자리에
+   배치 하나를 통째로 넣었습니다. 배치가 3편이고 평일이 3편이라 딱 맞아떨어져서
+   월요일은 A배치, 화요일은 B배치처럼 날짜와 배치가 일대일로 붙었습니다.
+   이건 순서를 지킨 게 아니라 날짜에 배치를 매핑한 것입니다.
+
+   맞는 것은 이렇습니다. 자리를 예약하지 않습니다. 배치 경계를 날짜 경계에 맞추지 않습니다.
+   한 배치가 금요일 2편, 토요일 1편으로 갈려도 됩니다. 순서만 지키면 됩니다.
+   주말에도 블로그에서 뽑은 편이 나갑니다. 주말은 편수가 적은 날이지 성격이 다른 날이 아닙니다.
+
+   일상 편은 2026-08-22 에 그만뒀습니다. 파일 앞에 _ 가 붙어 있어 여기까지 오지 않습니다.
+
+   블로그 날짜를 모르는 배치(source 가 없거나 글을 못 찾은 경우)는 맨 뒤로 보냅니다. */
 function replanOrder(batches, postsBySlug) {
-  const work = [];
-  const life = [];
+  const all = [];
   batches.forEach((b) => {
     const src = b.source && postsBySlug ? postsBySlug.get(b.source) : null;
     const blogAt = src && src.date ? src.date : "9999-12-31";
-    b.posts.forEach((p) => {
-      const item = { ...p, file: b.file, source: b.source, blogAt };
-      (p.kind === "life" ? life : work).push(item);
-    });
+    b.posts.forEach((p) => all.push({ ...p, file: b.file, source: b.source, blogAt }));
   });
-  const byBlog = (a, z) => a.blogAt.localeCompare(z.blogAt) || a.file.localeCompare(z.file) || a.n - z.n;
-  work.sort(byBlog);
-  life.sort((a, z) => a.sortKey - z.sortKey || a.file.localeCompare(z.file) || a.n - z.n);
-  return { work, life };
+  return all.sort((a, z) =>
+    a.blogAt.localeCompare(z.blogAt) || a.file.localeCompare(z.file) || a.n - z.n);
 }
 
 /* 한 편 검사. 블로그의 SEO 검사와 달리 빌드를 멈추지 않습니다.
@@ -669,29 +674,13 @@ function writeText(dir, id, part, text) {
    발행한 편은 지나간 기록이라 그대로 둡니다. */
 function replan(dir, startDate, ramp, notBefore, postsBySlug) {
   const batches = loadThreads(dir);
-  const { work, life } = replanOrder(batches, postsBySlug);
-  const todoWork = work.filter((p) => p.status !== "posted");
-  const todoLife = life.filter((p) => p.status !== "posted");
-  if (!todoWork.length && !todoLife.length) return { moved: 0, warn: [], first: "", last: "" };
+  const todo = replanOrder(batches, postsBySlug).filter((p) => p.status !== "posted");
+  if (!todo.length) return { moved: 0, warn: [], first: "", last: "" };
 
-  /* 자리를 먼저 다 만들고, 평일 자리에는 업무를 주말 자리에는 일상을 넣습니다.
-     일상이 모자라면 그 주말 자리에 업무가 들어가고, 업무가 먼저 끝나면 남은 자리를 일상이 씁니다.
-     자리를 비워 두지는 않습니다. 큐가 있는데 안 나가는 날이 생기면 그게 더 손해입니다. */
-  const total = todoWork.length + todoLife.length;
-  const { when, warn } = planSchedule(Array(total).fill("work"), startDate, ramp, notBefore);
-
-  const at = new Map();
-  const restWork = todoWork.slice();
-  const restLife = todoLife.slice();
-  when.forEach((slot) => {
-    const dow = new Date(`${slot.split(" ")[0]}T00:00:00Z`).getUTCDay();
-    const weekend = dow === SAT || dow === SUN;
-    const take = weekend
-      ? (restLife.length ? restLife : restWork)
-      : (restWork.length ? restWork : restLife);
-    const p = take.shift();
-    if (p) at.set(p.id, slot);
-  });
+  /* 자리를 만들고 줄 순서대로 앞에서부터 채웁니다. 그게 전부입니다.
+     어떤 자리에 어떤 성격을 넣을지 고르지 않습니다. 고르는 순간 순서가 깨집니다. */
+  const { when, warn } = planSchedule(Array(todo.length).fill("work"), startDate, ramp, notBefore);
+  const at = new Map(todo.map((p, i) => [p.id, when[i]]));
 
   const files = fs.readdirSync(dir).filter((f) => f.endsWith(".md") && !f.startsWith("_"));
   let moved = 0;
