@@ -412,31 +412,32 @@ function langNotice(lang) {
    글을 끝까지 읽은 사람이 갈 곳을 한 자리 만들어 둡니다. 목록으로 돌아가 제목을 다시 고르게 하면
    대부분 그냥 닫습니다. 다음 글 제목이 눈앞에 보이면 한 편 더 읽습니다.
 
-   보여주는 것은 한 편뿐입니다. 기본은 "다음 글"(더 최근에 쓴 글)이고,
-   가장 최근 글에는 다음이 없으므로 "이전 글"(바로 앞에 쓴 글)을 대신 보여줍니다.
+   있는 쪽을 다 보여줍니다. 한 편만 보여주던 때는 최신 글에서 이전 글로 한 번 내려가면
+   그 글에는 왔던 곳으로 돌아가는 "다음 글" 하나뿐이라 거기서 길이 막혔습니다.
+   두 편을 이어 읽은 사람이 제일 더 읽을 마음이 있는 사람인데, 하필 그 자리에서 막혔습니다.
+
    목록은 최신순이라 배열에서 하나 앞(i-1)이 더 최근, 하나 뒤(i+1)가 더 예전입니다. */
-function neighborOf(posts, i) {
-  const newer = posts[i - 1];
-  if (newer) return { dir: "next", post: newer };
-  const older = posts[i + 1];
-  if (older) return { dir: "prev", post: older };
-  return null; // 글이 한 편뿐이면 이동할 곳이 없습니다
+function neighborsOf(posts, i) {
+  return { next: posts[i - 1] || null, prev: posts[i + 1] || null };
 }
 
 function postNav(lang, nav) {
-  if (!nav) return "";
+  if (!nav || (!nav.next && !nav.prev)) return ""; // 글이 한 편뿐이면 이동할 곳이 없습니다
   const t = T[lang];
-  const isNext = nav.dir === "next";
   const base = lang === "en" ? "/en/posts/" : "/posts/";
   /* rel="next"/"prev" 는 크롤러가 글의 순서를 이해하는 데 씁니다.
      라벨 끝의 콜론이 "이 다음에 오는 것이 제목이다"를 말해 줍니다.
      화살표를 같이 쓰면 콜론과 역할이 겹치고 "다음 글: →" 처럼 읽히므로 두지 않습니다.
-     방향은 다음/이전 이라는 낱말이 이미 말하고 있습니다. */
+     방향은 다음/이전 이라는 낱말이 이미 말하고 있습니다.
+
+     더 최근 글을 위에 둡니다. 방금 한 편을 읽은 사람은 대개 앞으로 나아갑니다. */
+  const link = (post, rel, label) => (post ? `  <a class="post-nav-link" href="${base}${post.slug}/" rel="${rel}">
+    <span class="post-nav-label">${label}:</span>
+    <span class="post-nav-title">${esc(post.title)}</span>
+  </a>` : "");
+  const links = [link(nav.next, "next", t.next_post), link(nav.prev, "prev", t.prev_post)].filter(Boolean);
   return `<nav class="post-nav">
-  <a class="post-nav-link" href="${base}${nav.post.slug}/" rel="${isNext ? "next" : "prev"}">
-    <span class="post-nav-label">${isNext ? t.next_post : t.prev_post}:</span>
-    <span class="post-nav-title">${esc(nav.post.title)}</span>
-  </a>
+${links.join("\n")}
 </nav>`;
 }
 
@@ -689,11 +690,11 @@ const latestEn = enPosts[0] && enPosts[0].date;
 
 write("index.html", buildHome("ko", koPosts)); urls.push({ loc: "/", lastmod: latestKo });
 write("about/index.html", buildAbout("ko")); urls.push({ loc: "/about/" });
-koPosts.forEach((p, i) => { write(`posts/${p.slug}/index.html`, buildPost("ko", p, enSlugs.has(p.slug), neighborOf(koPosts, i))); urls.push({ loc: `/posts/${p.slug}/`, lastmod: p.date }); });
+koPosts.forEach((p, i) => { write(`posts/${p.slug}/index.html`, buildPost("ko", p, enSlugs.has(p.slug), neighborsOf(koPosts, i))); urls.push({ loc: `/posts/${p.slug}/`, lastmod: p.date }); });
 
 write("en/index.html", buildHome("en", enPosts)); urls.push({ loc: "/en/", lastmod: latestEn });
 write("en/about/index.html", buildAbout("en")); urls.push({ loc: "/en/about/" });
-enPosts.forEach((p, i) => { write(`en/posts/${p.slug}/index.html`, buildPost("en", p, koSlugs.has(p.slug), neighborOf(enPosts, i))); urls.push({ loc: `/en/posts/${p.slug}/`, lastmod: p.date }); });
+enPosts.forEach((p, i) => { write(`en/posts/${p.slug}/index.html`, buildPost("en", p, koSlugs.has(p.slug), neighborsOf(enPosts, i))); urls.push({ loc: `/en/posts/${p.slug}/`, lastmod: p.date }); });
 
 write("feed.xml", buildFeed(koPosts));
 write("sitemap.xml", buildSitemap(urls));
