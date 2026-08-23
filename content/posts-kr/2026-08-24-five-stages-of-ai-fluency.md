@@ -57,7 +57,7 @@ AI와 주고받으며 정리한 지침, 반복해서 알려준 우리 회사 사
 
 <figure>
   <img src="/assets/images/tmux-parallel-ai-agent-sessions.jpg" alt="tmux 화면을 세 칸으로 나눠 클로드 코드 세션을 동시에 여러 개 돌리고 있는 작업 화면" width="2048" height="1120" loading="lazy">
-  <figcaption>4단계의 실제 작업 화면입니다. tmux 를 세 칸으로 나눠 칸마다 다른 일을 시켜뒀고, 모니터가 둘이라 이 화면이 하나 더 있습니다.</figcaption>
+  <figcaption>4단계의 실제 작업 화면입니다. tmux 를 세 칸으로 나눠 칸마다 다른 일을 시켜뒀고, 모니터가 둘이라 총 6개의 클로드 세션을 동시에 운용중입니다.</figcaption>
 </figure>
 
 ## 5단계. AI 화면을 더 이상 보고 있지 않게 되는 단계

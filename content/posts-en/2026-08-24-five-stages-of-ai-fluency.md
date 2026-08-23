@@ -57,7 +57,7 @@ And then explaining things in words starts to feel like a chore. Your sentences 
 
 <figure>
   <img src="/assets/images/tmux-parallel-ai-agent-sessions.jpg" alt="A tmux window split into three panes, each running a separate Claude Code session" width="2048" height="1120" loading="lazy">
-  <figcaption>Stage 4 as it actually looks. tmux split three ways, a different job in each pane, and a second monitor with one more screen just like it.</figcaption>
+  <figcaption>Stage 4 as it actually looks. tmux split three ways with a different job in each pane, and with two monitors that is six Claude sessions running at once.</figcaption>
 </figure>
 
 ## Stage 5. Not watching the agent at all
