@@ -267,7 +267,6 @@ main.wrap {
   background: var(--card-hover);
   border-color: var(--accent-2);
   border-color: color-mix(in srgb, var(--accent-2) 45%, var(--border));
-  transform: translateY(-2px);
   box-shadow: var(--shadow);
 }
 
@@ -754,7 +753,6 @@ main.wrap {
 .post-mark svg { display: block; width: 100%; height: auto; }
 .post-item:hover .post-mark {
   border-color: color-mix(in srgb, var(--accent-2) 45%, var(--border));
-  transform: scale(1.03);
 }
 .post-item-text { display: block; }
 
@@ -815,6 +813,47 @@ main.wrap {
   }
 }
 
+
+/* ---------- 목록 확대 (맥 도크) ----------
+   마우스를 올린 카드가 튀어오르듯 커지고, 위아래 한 칸이 조금 따라 커집니다.
+   나머지는 살짝 줄고 흐려집니다. 커지는 것만으로는 도크로 안 읽힙니다.
+   주변이 물러나 줘야 하나가 앞으로 나온 것으로 보입니다.
+
+   자바스크립트를 쓰지 않습니다. 도크는 원래 커서와의 거리로 배율을 계산하는데,
+   그러려면 마우스가 움직일 때마다 카드 수만큼 다시 계산해야 합니다.
+   글 목록에서는 올린 것, 그 옆 한 칸, 나머지 셋으로 나누는 것으로 충분히 같아 보입니다.
+
+   튀어오르는 느낌은 cubic-bezier 의 두 번째 값을 1 보다 크게 줘서 만듭니다.
+   1.56 이면 목표 크기를 살짝 지나쳤다가 돌아옵니다. 그게 "확 커졌다" 입니다.
+
+   hover 가 있는 기기에서만 켭니다. 폰에서는 탭이 hover 로 남아서 카드 하나가
+   커진 채로 굳습니다. :has 를 모르는 브라우저는 이 규칙을 통째로 버리고,
+   그때는 예전처럼 배경색만 바뀝니다. 안 커지는 것이 고장이 아닙니다. */
+@media (hover: hover) and (pointer: fine) {
+  .post-item {
+    transform-origin: center;
+    transition: background .15s ease, border-color .15s ease, box-shadow .15s ease,
+                opacity .2s ease, transform .26s cubic-bezier(.34, 1.56, .64, 1);
+  }
+  /* 커진 카드가 옆 카드에 가리지 않게 위로 올립니다. */
+  .postlist li:hover { position: relative; z-index: 2; }
+  .postlist li:hover .post-item { transform: scale(1.04); }
+
+  /* 하나에 올라가 있는 동안 나머지는 물러납니다. */
+  .postlist:has(li:hover) li:not(:hover) .post-item {
+    transform: scale(.985);
+    opacity: .78;
+  }
+
+  /* 위아래 한 칸만 조금 따라옵니다.
+     위 규칙보다 뒤에 오고 더 구체적이어야 이깁니다. 앞에 .postlist:has(li:hover) 를
+     한 번 더 붙인 것이 그 때문입니다. 빼면 이웃도 같이 줄어듭니다. */
+  .postlist:has(li:hover) li:hover + li .post-item,
+  .postlist:has(li:hover) li:has(+ li:hover) .post-item {
+    transform: scale(1.012);
+    opacity: .94;
+  }
+}
 
 /* ---------- 접근성/인쇄 ---------- */
 @media (prefers-reduced-motion: reduce) {
