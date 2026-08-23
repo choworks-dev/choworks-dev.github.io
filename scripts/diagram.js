@@ -82,8 +82,53 @@ function expandDiagrams(md) {
     const narrow = read(`${name}-narrow`);
     const parts = [prepare(wide, "dg-wide")];
     if (narrow) parts.push(prepare(narrow, "dg-narrow"));
-    return `<figure class="diagram${narrow ? " has-narrow" : ""}">\n${parts.join("\n")}\n</figure>`;
+    return `<figure class="diagram${narrow ? " has-narrow" : ""}${/^hero-/.test(name) ? " is-hero" : ""}">\n${parts.join("\n")}\n</figure>`;
   });
 }
 
-module.exports = { expandDiagrams, stripStandalone, prepare, flatten };
+/* ------------------------------------------------------------
+   목록에 쓰는 표지
+
+   글마다 다른 그림을 열두 장이나 만들어 놓고 목록에서는 한 장도 안 쓰고 있었습니다.
+   홈에 들어오면 회색 상자가 똑같이 반복되는데, 밋밋해 보이는 원인이 모션이 아니라
+   여기였습니다. 있는 것을 안 쓰고 있었던 것입니다.
+
+   두 가지로 씁니다.
+
+       banner  최신 글 한 편. 표지를 그대로 크게 얹습니다
+       mark    나머지 글. 세로판에서 가운데만 잘라낸 작은 조각입니다
+
+   mark 를 세로판에서 잘라내는 이유는, 가로판(900x300)을 100px 로 줄이면 무엇이
+   그려졌는지 안 보이기 때문입니다. 세로판은 폰에서 읽히라고 만든 것이라 같은 그림이
+   좁은 자리에 이미 맞춰져 있습니다. 위의 칩과 아래의 캡션만 viewBox 로 잘라냅니다.
+   그림을 새로 만들지 않고 있는 파일을 다르게 보는 것뿐이라 고칠 곳이 늘지 않습니다.
+   ------------------------------------------------------------ */
+const heroName = (slug, lang) => `hero-${slug}${lang === "en" ? "-en" : ""}`;
+
+/* 칩(y 22~46)과 캡션(y 272~) 을 뺀 나머지. 좌우도 12씩 들어가 테두리 선을 피합니다. */
+const MARK_BOX = "12 50 336 218";
+
+function heroMark(slug, lang) {
+  const svg = read(`${heroName(slug, lang)}-narrow`);
+  if (!svg) return "";
+  const out = flatten(stripStandalone(svg)).replace(/^<svg\b([^>]*)>/, (m, attrs) => {
+    /* 목록에서는 제목이 이미 무엇에 관한 글인지 말합니다.
+       그림에 붙은 설명까지 읽히면 화면 낭독기에서 같은 말이 두 번 나옵니다. */
+    const kept = attrs
+      .replace(/\s(width|height|class|role|aria-label|aria-labelledby)="[^"]*"/g, "")
+      .replace(/\sviewBox="[^"]*"/, ` viewBox="${MARK_BOX}"`);
+    return `<svg${kept} aria-hidden="true" focusable="false">`;
+  });
+  return `<div class="post-mark">${out}</div>`;
+}
+
+function heroBanner(slug, lang) {
+  const wide = read(heroName(slug, lang));
+  if (!wide) return "";
+  const narrow = read(`${heroName(slug, lang)}-narrow`);
+  const parts = [prepare(wide, "dg-wide")];
+  if (narrow) parts.push(prepare(narrow, "dg-narrow"));
+  return `<div class="post-banner${narrow ? " has-narrow" : ""}" aria-hidden="true">${parts.join("")}</div>`;
+}
+
+module.exports = { expandDiagrams, stripStandalone, prepare, flatten, heroMark, heroBanner };

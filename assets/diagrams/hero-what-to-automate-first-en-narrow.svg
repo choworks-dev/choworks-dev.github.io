@@ -35,7 +35,7 @@
   <g clip-path="url(#hero-steps-n-clip)">
     <rect x="0" y="0" width="360" height="320" fill="url(#hero-steps-n-panel)"/>
     <rect x="0" y="0" width="360" height="320" fill="url(#hero-steps-n-dots)"/>
-    <ellipse cx="110" cy="230" rx="190" ry="150" fill="url(#hero-steps-n-glow)"/>
+    <ellipse class="hero-glow" cx="110" cy="230" rx="190" ry="150" fill="url(#hero-steps-n-glow)"/>
   </g>
   <rect x="0.75" y="0.75" width="358.5" height="318.5" rx="14" fill="none" stroke="var(--border,#232b38)" stroke-width="1.5"/>
   <g opacity="0.44"><rect x="226" y="124" width="96" height="34" rx="6" fill="var(--card,#161c26)" stroke="var(--border,#232b38)" stroke-width="1.4"/><circle cx="244" cy="141" r="3.4" fill="var(--muted,#9aa7bd)"/><rect x="258" y="139" width="44" height="3.6" rx="1.8" fill="var(--muted,#9aa7bd)" opacity="0.5"/></g><g opacity="0.54"><rect x="164" y="164" width="96" height="34" rx="6" fill="var(--card,#161c26)" stroke="var(--border,#232b38)" stroke-width="1.4"/><circle cx="182" cy="181" r="3.4" fill="var(--muted,#9aa7bd)"/><rect x="196" y="179" width="44" height="3.6" rx="1.8" fill="var(--muted,#9aa7bd)" opacity="0.5"/></g><g opacity="0.64"><rect x="102" y="204" width="96" height="34" rx="6" fill="var(--card,#161c26)" stroke="var(--border,#232b38)" stroke-width="1.4"/><circle cx="120" cy="221" r="3.4" fill="var(--muted,#9aa7bd)"/><rect x="134" y="219" width="44" height="3.6" rx="1.8" fill="var(--muted,#9aa7bd)" opacity="0.5"/></g><g opacity="1"><rect x="40" y="244" width="96" height="34" rx="6" fill="var(--card,#161c26)" stroke="var(--accent,#6ee7b7)" stroke-width="2"/><circle cx="58" cy="261" r="3.4" fill="var(--accent,#6ee7b7)"/><rect x="72" y="259" width="44" height="3.6" rx="1.8" fill="var(--accent,#6ee7b7)" opacity="0.8"/></g>

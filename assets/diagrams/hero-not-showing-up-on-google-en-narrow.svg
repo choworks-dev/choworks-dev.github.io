@@ -35,7 +35,7 @@
   <g clip-path="url(#hero-notfound-n-clip)">
     <rect x="0" y="0" width="360" height="320" fill="url(#hero-notfound-n-panel)"/>
     <rect x="0" y="0" width="360" height="320" fill="url(#hero-notfound-n-dots)"/>
-    <ellipse cx="180" cy="180" rx="190" ry="150" fill="url(#hero-notfound-n-glow)"/>
+    <ellipse class="hero-glow" cx="180" cy="180" rx="190" ry="150" fill="url(#hero-notfound-n-glow)"/>
   </g>
   <rect x="0.75" y="0.75" width="358.5" height="318.5" rx="14" fill="none" stroke="var(--border,#232b38)" stroke-width="1.5"/>
   <g transform="translate(26,30) scale(0.62)"><circle cx="56" cy="56" r="42" fill="var(--card,#161c26)" stroke="var(--muted,#9aa7bd)" stroke-width="2.4"/><circle cx="56" cy="56" r="33" fill="none" stroke="var(--muted,#9aa7bd)" stroke-width="1.3" opacity="0.4"/><path d="M86,86 L120,120" fill="none" stroke="var(--muted,#9aa7bd)" stroke-width="4" stroke-linecap="round"/></g><circle cx="48" cy="176" r="5" fill="var(--accent,#6ee7b7)"/><rect x="64" y="173.5" width="200" height="3.6" rx="1.8" fill="var(--muted,#9aa7bd)" opacity="0.55"/><circle cx="48" cy="202" r="5" fill="var(--accent,#6ee7b7)"/><rect x="64" y="199.5" width="156" height="3.6" rx="1.8" fill="var(--muted,#9aa7bd)" opacity="0.55"/><circle cx="48" cy="228" r="5" fill="none" stroke="var(--muted,#9aa7bd)" stroke-width="1.5" opacity="0.55"/><rect x="64" y="225.5" width="226" height="3.6" rx="1.8" fill="var(--muted,#9aa7bd)" opacity="0.25"/><circle cx="48" cy="254" r="5" fill="var(--accent,#6ee7b7)"/><rect x="64" y="251.5" width="178" height="3.6" rx="1.8" fill="var(--muted,#9aa7bd)" opacity="0.55"/><circle cx="48" cy="280" r="5" fill="var(--accent,#6ee7b7)"/><rect x="64" y="277.5" width="140" height="3.6" rx="1.8" fill="var(--muted,#9aa7bd)" opacity="0.55"/>

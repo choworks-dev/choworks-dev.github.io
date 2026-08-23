@@ -732,6 +732,90 @@ main.wrap {
   .cta .btn { flex: 1 1 auto; }
 }
 
+/* ---------- 목록의 표지 ----------
+   글마다 다른 그림을 열두 장 만들어 놓고 목록에서는 한 장도 안 쓰고 있었습니다.
+   회색 상자가 똑같이 반복되던 이유가 이것이라 여기에 붙입니다.
+
+   맨 앞 한 편만 크게 얹습니다. 전부 얹으면 스크롤이 열 배가 되어 목록이 아니게 되고,
+   전부 작게 달면 무엇이 최신인지가 안 보입니다. 목록에는 위계가 있어야 합니다. */
+.postlist li.has-art:not(.feature) .post-item {
+  display: grid;
+  grid-template-columns: 112px 1fr;
+  gap: 20px;
+  align-items: center;
+}
+.post-mark {
+  display: block;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  transition: border-color .15s ease, transform .2s ease;
+}
+.post-mark svg { display: block; width: 100%; height: auto; }
+.post-item:hover .post-mark {
+  border-color: color-mix(in srgb, var(--accent-2) 45%, var(--border));
+  transform: scale(1.03);
+}
+.post-item-text { display: block; }
+
+/* 최신 글 한 편. 표지를 그대로 얹고 글은 그 아래에 둡니다.
+   테두리 안쪽에 그림이 꽉 차야 해서 카드의 안여백을 0 으로 두고 글 쪽에만 다시 줍니다. */
+.postlist li.feature .post-item { padding: 0; overflow: hidden; }
+.post-banner { display: block; }
+.post-banner svg { display: block; width: 100%; height: auto; }
+.post-banner .dg-narrow { display: none; }
+.postlist li.feature .post-item-text { padding: 20px 22px 22px; }
+.postlist li.feature h2 { font-size: 1.5rem; }
+.postlist li.feature p { color: var(--text); opacity: .82; }
+
+@media (max-width: 560px) {
+  .postlist li.has-art:not(.feature) .post-item { grid-template-columns: 84px 1fr; gap: 14px; }
+  .post-banner.has-narrow .dg-wide { display: none; }
+  .post-banner.has-narrow .dg-narrow { display: block; }
+  .postlist li.feature h2 { font-size: 1.3rem; }
+  .postlist li.feature .post-item-text { padding: 16px 18px 18px; }
+}
+
+/* ---------- 모션 ----------
+   움직임은 글을 읽는 데 방해가 되면 안 되므로 두 군데에만 겁니다.
+   표지가 처음 뜰 때 한 번, 그리고 목록이 화면에 들어올 때 한 번.
+
+   목록 쪽은 CSS 스크롤 구동 애니메이션이라 자바스크립트가 한 줄도 안 듭니다.
+   지원하지 않는 브라우저에서는 @supports 가 통째로 빠져서 그냥 안 움직입니다.
+   움직이지 않는 것이 고장이 아니라 기본값입니다.
+
+   맨 아래 prefers-reduced-motion 블록이 이 전부를 다시 끕니다. */
+@keyframes hero-in {
+  from { opacity: 0; transform: translateY(10px) scale(.986); }
+  to { opacity: 1; transform: none; }
+}
+.diagram.is-hero svg { animation: hero-in .8s cubic-bezier(.2, .7, .2, 1) both; }
+
+/* 빛무리는 그림보다 조금 늦게 차오릅니다. 한 번만 하고 멈춥니다.
+
+   처음에는 계속 숨 쉬게 했다가 뺐습니다. 끝나지 않는 애니메이션은 폰에서 배터리를
+   계속 먹고, 헤드리스 크롬으로 화면을 찍는 도구들이 그 애니메이션을 기다리다 멈춥니다.
+   실제로 화면 캡처가 2분 동안 안 끝나고 죽었습니다. 움직임 하나 넣자고 치를 값이 아닙니다. */
+@keyframes glow-rise {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.diagram.is-hero .hero-glow,
+.post-banner .hero-glow { animation: glow-rise 1.4s ease-out .3s both; }
+
+@keyframes rise-in {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: none; }
+}
+@supports (animation-timeline: view()) {
+  .postlist li {
+    animation: rise-in linear both;
+    animation-timeline: view();
+    animation-range: entry 0% entry 55%;
+  }
+}
+
+
 /* ---------- 접근성/인쇄 ---------- */
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }

@@ -14,6 +14,7 @@ const { read, fmtDate, loadPosts, published, ogCardPath } = require("./posts");
 
 const ROOT = path.join(__dirname, "..");
 const CONTENT = path.join(ROOT, "content");
+const { heroMark, heroBanner } = require("./diagram");
 const ASSETS = path.join(ROOT, "assets"); // 커밋되는 정적 원본(css 등) → site/assets/ 로 복사
 const OUT = path.join(ROOT, "site");
 const site = JSON.parse(fs.readFileSync(path.join(CONTENT, "site.json"), "utf8"));
@@ -525,16 +526,29 @@ function postJsonLd(post, lang, canonical) {
   };
 }
 
+/* 목록 한 줄에 표지를 같이 냅니다.
+
+   맨 앞 한 편만 표지를 크게 얹고 나머지는 작은 조각으로 답니다.
+   전부 크게 얹으면 스크롤이 열 배로 늘어나서 목록이 목록이 아니게 되고,
+   전부 작게 달면 무엇이 최신인지가 안 보입니다. 목록에는 위계가 있어야 합니다.
+
+   그림이 없는 글은 조각도 배너도 빈 문자열로 돌아옵니다. 그때는 예전처럼 글자만 나갑니다. */
 function postListItems(posts, lang) {
   const base = lang === "en" ? "/en/posts/" : "/posts/";
   return posts
-    .map((p) => {
+    .map((p, i) => {
       const tags = (p.tags || []).map((x) => `<span class="tag">${esc(x)}</span>`).join("");
-      return `<li><a class="post-item" href="${base}${p.slug}/">
-      <time datetime="${p.date}">${fmtDate(p.date, lang)}</time>
-      <h2>${esc(p.title)}</h2>
-      <p>${esc(p.description || "")}</p>
-      ${tags ? `<div class="tags">${tags}</div>` : ""}
+      const feature = i === 0;
+      const art = feature ? heroBanner(p.slug, lang) : heroMark(p.slug, lang);
+      const cls = [feature ? "feature" : "", art ? "has-art" : ""].filter(Boolean).join(" ");
+      return `<li${cls ? ` class="${cls}"` : ""}><a class="post-item" href="${base}${p.slug}/">
+      ${art}
+      <div class="post-item-text">
+        <time datetime="${p.date}">${fmtDate(p.date, lang)}</time>
+        <h2>${esc(p.title)}</h2>
+        <p>${esc(p.description || "")}</p>
+        ${tags ? `<div class="tags">${tags}</div>` : ""}
+      </div>
     </a></li>`;
     })
     .join("\n");

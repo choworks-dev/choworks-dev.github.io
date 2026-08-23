@@ -172,7 +172,7 @@ function chrome(spec, box, lang) {
   <g clip-path="url(#${P}clip)">
     <rect x="0" y="0" width="${w}" height="${h}" fill="url(#${P}panel)"/>
     <rect x="0" y="0" width="${w}" height="${h}" fill="url(#${P}dots)"/>
-    <ellipse cx="${g[0]}" cy="${g[1]}" rx="${g[2]}" ry="${g[3]}" fill="url(#${P}glow)"/>
+    <ellipse class="hero-glow" cx="${g[0]}" cy="${g[1]}" rx="${g[2]}" ry="${g[3]}" fill="url(#${P}glow)"/>
   </g>
   <rect x="0.75" y="0.75" width="${w - 1.5}" height="${h - 1.5}" rx="14" fill="none" stroke="${B}" stroke-width="1.5"/>
   ${spec.motif(box, P)}
