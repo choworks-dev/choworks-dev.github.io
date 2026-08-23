@@ -458,6 +458,32 @@ MOTIF.steps = (box) => {
   return s;
 };
 
+/* 화면이 늘어나다가 마지막에 사라집니다.
+
+   묻는 화면 하나에서 시작해 파일이 나오고, 터미널로 옮겨 가고, 칸이 여럿으로 갈립니다.
+   그리고 마지막 한 대는 점선입니다. 켜 두고 안 보는 화면이고, 대신 옆에 보고 한 장이 놓입니다.
+   앞의 넷은 화면이 늘어나는 방향이고 다섯째만 반대 방향이라는 것이 이 글의 요지입니다. */
+MOTIF.fluency = (box) => {
+  const w = box.mode === "w";
+  const op = [0.5, 0.65, 0.8, 1, 0.4];
+  let s = "";
+  if (w) {
+    /* 다섯 대를 한 줄로. 148 짜리 다섯에 사이 20 이면 820 이라 좌우 40 씩 남습니다. */
+    [40, 208, 376, 544, 712].forEach((x, i) => {
+      s += `<g opacity="${op[i]}">${put(x, 96, 1, screen(i))}</g>`;
+    });
+    return s + report(704, 212, 164, 30);
+  }
+  /* 폰에서는 다섯을 한 줄로 두면 한 대가 60px 이 되어 안에 든 것이 안 보입니다.
+     위에 셋 아래에 둘로 접습니다. 아래 두 줄짜리 캡션이 y 272 부터라 여기까지가 한계입니다. */
+  const put5 = [[20, 74, 0], [136, 74, 1], [252, 74, 2], [81, 152, 3], [190, 152, 4]];
+  put5.forEach(([x, y, i]) => {
+    s += `<g opacity="${op[i]}">${put(x, y, 0.6, screen(i))}</g>`;
+  });
+  /* 점선은 다섯째 화면 아래에서 내려옵니다. 가운데에 두면 넷째에서 나온 것처럼 보입니다. */
+  return s + report(90, 228, 180, 28, 234);
+};
+
 /* 기록 더미. 아래가 오래된 것이라 흐리고, 값표는 맨 위 한 장에만 붙습니다.
    쌓인 것 전부에 값이 붙은 게 아니라 지금 붙기 시작했다는 뜻입니다.
    이 표지는 사용자가 보고 통과시킨 것이라 모양을 바꾸지 않습니다. */
@@ -545,6 +571,53 @@ function linkCard(o = {}) {
   if (!o.filled) s += line("M14,14 L186,88 M186,14 L14,88", { stroke: M, sw: 1.2, op: 0.18 });
   return s + bar(16, 104, o.filled ? 140 : 96, { op: o.filled ? 0.75 : 0.35 }) +
     bar(16, 120, o.filled ? 104 : 62, { op: o.filled ? 0.5 : 0.25 });
+}
+
+/* 화면 한 대. 148x108
+
+   위쪽 줄과 점 세 개가 있어야 종이가 아니라 화면으로 읽힙니다.
+   안에 든 것이 단계입니다. 물음 · 파일 · 프롬프트 · 여러 칸 · 비어 있음.
+   마지막 한 대는 테두리를 점선으로 둡니다. 꺼진 화면이 아니라 켜 두고 안 보는 화면입니다. */
+function screen(kind) {
+  const off = kind === 4;
+  let s = `<rect x="0" y="0" width="148" height="108" rx="6" fill="${C}" stroke="${M}" stroke-width="1.6"` +
+    (off ? ` stroke-dasharray="5 6" opacity="0.9"` : ` opacity="0.75"`) + `/>`;
+  s += line("M0,20 H148", { op: off ? 0.25 : 0.4, sw: 1.2 });
+  s += [12, 22, 32].map((x) => dot(x, 10, 2.4, { op: off ? 0.25 : 0.5 })).join("");
+
+  if (kind === 0) {
+    /* 묻고 답하는 자리. 결과가 대화창 밖으로 안 나갑니다 */
+    s += card(14, 32, 66, 20, { rx: 6 }) + bar(23, 40, 44, { op: 0.5 }) +
+      card(68, 62, 66, 20, { rx: 6 }) + bar(77, 70, 44, { op: 0.5 });
+  } else if (kind === 1) {
+    /* 파일이 나오기 시작합니다 */
+    s += page(36, 34, { op: 0.5 }) + page(78, 34);
+  } else if (kind === 2) {
+    /* 터미널. 꺾쇠 하나면 충분합니다. 글자를 넣으면 언어마다 그림을 다시 그려야 합니다 */
+    s += line("M18,44 L27,52 L18,60", { op: 0.8, sw: 2 }) + bar(34, 50, 52, { op: 0.6 }) +
+      `<rect x="92" y="45" width="9" height="13" rx="1.5" fill="${M}" opacity="0.55"/>` +
+      bar(18, 72, 96, { op: 0.3 }) + bar(18, 82, 68, { op: 0.25 }) + bar(18, 92, 84, { op: 0.2 });
+  } else if (kind === 3) {
+    /* 한 화면이 여러 칸으로 갈립니다 */
+    for (let r = 0; r < 2; r++) {
+      for (let c = 0; c < 3; c++) {
+        const x = 12 + c * 42, y = 28 + r * 38;
+        s += card(x, y, 38, 32, { rx: 4 }) + bar(x + 7, y + 10, 20, { op: 0.45 }) + bar(x + 7, y + 18, 13, { op: 0.3 });
+      }
+    }
+  }
+  /* kind 4 는 비워 둡니다. 비어 있는 것이 이 그림에서 유일하게 앞으로 나아간 자리입니다 */
+  return s;
+}
+
+/* 보고 한 장. 화면을 안 보는 대신 이것만 옵니다. 표지에서 또렷한 것은 여기뿐입니다. */
+function report(x, y, w, h, tip) {
+  const tx = tip === undefined ? x + w / 2 : tip;
+  return line(`M${n(tx)},${n(y - 10)} V${n(y - 1)}`, { stroke: A, dash: "2 6", sw: 1.6, op: 0.8 }) +
+    card(x, y, w, h, { accent: true }) +
+    dot(x + 18, y + h / 2, 3.3, { fill: A }) +
+    bar(x + 32, y + h / 2 - 5.6, (w - 52) * 0.72, { fill: A, op: 0.75 }) +
+    bar(x + 32, y + h / 2 + 2.4, (w - 52) * 0.5, { fill: A, op: 0.75 });
 }
 
 /* ------------------------------------------------------------
@@ -717,6 +790,21 @@ const SPECS = [
       title: "Steps, with only the first one lit",
       desc: "Blocks arranged as a staircase with only the bottom-left one in full color. Where to begin matters before what to automate.",
       caption: ["Before what to remove", "comes where to start"],
+    },
+  },
+  {
+    key: "fluency", slug: "five-stages-of-ai-fluency", motif: MOTIF.fluency,
+    chip: "Where Am I",
+    glow: { w: [450, 150, 340, 150], n: [180, 150, 190, 150] },
+    ko: {
+      title: "화면이 늘어나다가 사라진다",
+      desc: "화면 다섯 대가 나란히 있습니다. 뒤로 갈수록 안에 든 것이 늘어나다가 마지막 한 대만 점선으로 비어 있고, 그 아래에 보고 한 장이 놓여 있습니다.",
+      caption: ["묻는 화면에서 시작해", "보지 않는 자리에서 끝난다"],
+    },
+    en: {
+      title: "The screens multiply, then disappear",
+      desc: "Five screens in a row. Each holds more than the one before it until the last, which is dashed and empty, with a single report card sitting below it.",
+      caption: ["It starts at a screen you ask", "and ends where you stop looking"],
     },
   },
   {

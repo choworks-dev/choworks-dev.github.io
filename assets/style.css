@@ -443,6 +443,24 @@ main.wrap {
 }
 
 .prose img { border-radius: 12px; }
+/* 본문 그림. 표지와 달리 설명하는 그림이라 캡션이 붙습니다.
+   캡션은 그림보다 작고 흐리게 둡니다. 같은 크기면 어디까지가 설명인지 구별이 안 됩니다. */
+.prose figure {
+  margin: 1.75rem 0;
+}
+.prose figure img {
+  display: block;
+  width: 100%;
+  border: 1px solid var(--border);
+}
+.prose figcaption {
+  margin-top: .6rem;
+  font-size: .86rem;
+  line-height: 1.6;
+  color: var(--muted);
+  text-align: center;
+}
+
 
 .prose table {
   width: 100%;
