@@ -19,6 +19,11 @@ Almost everyone starts here. At this stage AI sits next to the search box. A que
 
 The mark of stage 1 is that nothing leaves the chat window. Even a great answer leaves you with nothing but a transcript.
 
+<figure>
+  <img src="/assets/images/claude-desktop-first-screen.png" alt="The first screen of the Claude desktop app, with a box at the bottom for asking anything" width="1513" height="964" loading="lazy">
+  <figcaption>The screen you meet after installing the app. You start by typing anything into the box at the bottom. The numbers above are mine as of today, which is a long way from stage 1.</figcaption>
+</figure>
+
 ## Stage 2. Making something with AI
 
 One day the thinking changes. I should build something with this.

@@ -787,7 +787,15 @@ main.wrap {
   from { opacity: 0; transform: translateY(10px) scale(.986); }
   to { opacity: 1; transform: none; }
 }
-.diagram.is-hero svg { animation: hero-in .8s cubic-bezier(.2, .7, .2, 1) both; }
+/* 채우기 방식이 both 가 아니라 backwards 여야 합니다.
+
+   both 로 두면 애니메이션이 끝난 뒤에도 마지막 칸의 transform: none 이 계속 붙어 있습니다.
+   CSS 에서 애니메이션이 쓴 값은 보통 규칙보다 세기 때문에, 그 뒤로는 :hover 에 적은
+   확대가 아무리 구체적이어도 안 먹습니다. 마우스를 올려도 표지만 가만히 있던 이유가 이것입니다.
+
+   backwards 면 시작 전까지만 첫 칸을 붙들고 있다가 끝나면 손을 뗍니다. 마지막 칸의 값이
+   원래 상태와 같아서 화면은 똑같고, 대신 그 뒤의 :hover 가 살아납니다. */
+.diagram.is-hero svg { animation: hero-in .8s cubic-bezier(.2, .7, .2, 1) backwards; }
 
 /* 빛무리는 그림보다 조금 늦게 차오릅니다. 한 번만 하고 멈춥니다.
 
@@ -799,7 +807,7 @@ main.wrap {
   to { opacity: 1; }
 }
 .diagram.is-hero .hero-glow,
-.post-banner .hero-glow { animation: glow-rise 1.4s ease-out .3s both; }
+.post-banner .hero-glow { animation: glow-rise 1.4s ease-out .3s backwards; }
 
 @keyframes rise-in {
   from { opacity: 0; transform: translateY(16px); }
@@ -837,21 +845,49 @@ main.wrap {
   }
   /* 커진 카드가 옆 카드에 가리지 않게 위로 올립니다. */
   .postlist li:hover { position: relative; z-index: 2; }
-  .postlist li:hover .post-item { transform: scale(1.04); }
+  .postlist li:hover .post-item { transform: scale(1.08); }
 
-  /* 하나에 올라가 있는 동안 나머지는 물러납니다. */
-  .postlist:has(li:hover) li:not(:hover) .post-item {
-    transform: scale(.985);
-    opacity: .78;
+  /* 옆 카드는 커지지 않습니다. 자리만 비켜 줍니다.
+
+     처음에는 이웃도 조금 키웠는데, 그러면 내 카드가 커진 건지 옆 카드가 커진 건지
+     눈이 헷갈립니다. 커지는 것은 하나여야 하고 나머지는 그 하나가 들어설 자리를
+     내주기만 해야 합니다.
+
+     위에 있는 것은 위로, 아래 있는 것은 아래로 통째로 밀립니다. 바로 옆 한 칸만
+     밀면 그 칸과 다음 칸 사이가 대신 좁아져서 목록이 한쪽으로 눌린 것처럼 보입니다. */
+  .postlist:has(li:hover) li:has(~ li:hover) .post-item { transform: translateY(-6px); }
+  .postlist:has(li:hover) li:hover ~ li .post-item { transform: translateY(6px); }
+
+  /* 맨 앞 큰 카드는 키가 커서 같은 4% 라도 훨씬 많이 벌어집니다. 그만큼 더 밉니다.
+     이 카드는 목록의 맨 위라 아래쪽만 밀어내면 됩니다. */
+  .postlist:has(li.feature:hover) li:not(:hover) .post-item { transform: translateY(18px); }
+}
+
+/* ---------- 본문 그림도 마우스에 반응합니다 ----------
+   목록 카드와 같은 곡선을 씁니다. 사이트 안에서 움직임이 두 가지면 두 사람이 만든 것처럼
+   보이기 때문에, 튀어오르는 느낌을 내는 cubic-bezier 값을 그대로 가져다 씁니다.
+
+   배율은 카드보다 훨씬 작습니다. 그림은 이미 본문 폭을 꽉 채우고 있어서 조금만 키워도
+   양옆 여백을 먹습니다. 2% 면 본문 폭에서 좌우로 7px 씩인데 그 정도는 여백 안에 들어갑니다.
+
+   자르지 않습니다. 액자 안에서 그림만 확대하는 방식이 흔하지만 그러려면 상자를 하나 더
+   씌워야 하고, 그 상자를 만드는 자리가 마크다운이라 글 쓸 때마다 챙길 것이 늘어납니다.
+   통째로 조금 커지는 쪽이 글 쓰는 사람에게 아무 부담도 안 줍니다. */
+@media (hover: hover) and (pointer: fine) {
+  .prose figure img,
+  .diagram svg {
+    transition: transform .26s cubic-bezier(.34, 1.56, .64, 1),
+                box-shadow .2s ease, border-color .2s ease;
   }
-
-  /* 위아래 한 칸만 조금 따라옵니다.
-     위 규칙보다 뒤에 오고 더 구체적이어야 이깁니다. 앞에 .postlist:has(li:hover) 를
-     한 번 더 붙인 것이 그 때문입니다. 빼면 이웃도 같이 줄어듭니다. */
-  .postlist:has(li:hover) li:hover + li .post-item,
-  .postlist:has(li:hover) li:has(+ li:hover) .post-item {
-    transform: scale(1.012);
-    opacity: .94;
+  .prose figure:hover img {
+    transform: scale(1.02);
+    box-shadow: var(--shadow);
+    border-color: color-mix(in srgb, var(--accent-2) 45%, var(--border));
+  }
+  /* 그림 쪽은 그림자를 안 씁니다. SVG 는 네모난 요소 안에 둥근 판을 그린 것이라
+     box-shadow 를 걸면 모서리가 각진 그림자가 판 밖으로 비어져 나옵니다. */
+  .diagram:hover svg {
+    transform: scale(1.02);
   }
 }
 
