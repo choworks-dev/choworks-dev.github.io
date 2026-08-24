@@ -1,18 +1,18 @@
 {
-  "updated": "2026-08-23T19:46:25.616Z",
+  "updated": "2026-08-24T20:01:24.748Z",
   "source": "google-search-console",
   "site": "sc-domain:choworks.dev",
   "caveat": "서치 콘솔은 집계가 이틀쯤 늦습니다. 어제까지의 값입니다.",
   "range": {
-    "from": "2026-05-25",
-    "to": "2026-08-22",
+    "from": "2026-05-26",
+    "to": "2026-08-23",
     "days": 90
   },
   "totals": {
     "clicks": 0,
-    "impressions": 14,
+    "impressions": 17,
     "ctr": 0,
-    "position": 42.8
+    "position": 47.2
   },
   "byDate": [
     {
@@ -74,6 +74,11 @@
       "date": "2026-08-21",
       "clicks": 0,
       "impressions": 7
+    },
+    {
+      "date": "2026-08-22",
+      "clicks": 0,
+      "impressions": 3
     }
   ],
   "byQuery": [
@@ -117,16 +122,16 @@
     {
       "key": "https://choworks.dev/en/posts/google-apps-script-quote-automation/",
       "clicks": 0,
-      "impressions": 2,
+      "impressions": 4,
       "ctr": 0,
-      "position": 61.5
+      "position": 67.8
     },
     {
       "key": "https://choworks.dev/en/posts/socratic-method-in-the-ai-era/",
       "clicks": 0,
-      "impressions": 8,
+      "impressions": 9,
       "ctr": 0,
-      "position": 48.9
+      "position": 49.7
     },
     {
       "key": "https://choworks.dev/en/posts/why-ai-transform/",
@@ -201,6 +206,13 @@
       "position": 8
     },
     {
+      "key": "phl",
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 62
+    },
+    {
       "key": "rou",
       "clicks": 0,
       "impressions": 3,
@@ -210,25 +222,25 @@
     {
       "key": "tha",
       "clicks": 0,
-      "impressions": 1,
+      "impressions": 2,
       "ctr": 0,
-      "position": 69
+      "position": 77.5
     },
     {
       "key": "tur",
       "clicks": 0,
-      "impressions": 1,
+      "impressions": 2,
       "ctr": 0,
-      "position": 93
+      "position": 74.5
     }
   ],
   "byDevice": [
     {
       "key": "DESKTOP",
       "clicks": 0,
-      "impressions": 13,
+      "impressions": 16,
       "ctr": 0,
-      "position": 46
+      "position": 50.1
     },
     {
       "key": "MOBILE",
@@ -243,7 +255,7 @@
       "url": "https://choworks.dev/",
       "verdict": "PASS",
       "state": "제출되고 색인이 생성되었습니다.",
-      "lastCrawl": "2026-08-22",
+      "lastCrawl": "2026-08-24",
       "robots": "ALLOWED",
       "canonical": "https://choworks.dev/"
     },
@@ -258,7 +270,7 @@
     {
       "url": "https://choworks.dev/posts/five-stages-of-ai-fluency/",
       "verdict": "NEUTRAL",
-      "state": "Google에는 아직 알려지지 않은 URL입니다.",
+      "state": "발견됨 - 현재 색인이 생성되지 않음",
       "lastCrawl": "",
       "robots": "ROBOTS_TXT_STATE_UNSPECIFIED",
       "canonical": ""
@@ -274,7 +286,7 @@
     {
       "url": "https://choworks.dev/posts/record-everything/",
       "verdict": "NEUTRAL",
-      "state": "발견됨 - 현재 색인이 생성되지 않음",
+      "state": "Google에는 아직 알려지지 않은 URL입니다.",
       "lastCrawl": "",
       "robots": "ROBOTS_TXT_STATE_UNSPECIFIED",
       "canonical": ""
@@ -314,7 +326,7 @@
     {
       "url": "https://choworks.dev/posts/google-apps-script-quote-automation/",
       "verdict": "NEUTRAL",
-      "state": "Google에는 아직 알려지지 않은 URL입니다.",
+      "state": "발견됨 - 현재 색인이 생성되지 않음",
       "lastCrawl": "",
       "robots": "ROBOTS_TXT_STATE_UNSPECIFIED",
       "canonical": ""
