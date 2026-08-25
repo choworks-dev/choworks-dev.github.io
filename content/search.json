@@ -1,18 +1,18 @@
 {
-  "updated": "2026-08-24T20:01:24.748Z",
+  "updated": "2026-08-25T20:00:20.246Z",
   "source": "google-search-console",
   "site": "sc-domain:choworks.dev",
   "caveat": "서치 콘솔은 집계가 이틀쯤 늦습니다. 어제까지의 값입니다.",
   "range": {
-    "from": "2026-05-26",
-    "to": "2026-08-23",
+    "from": "2026-05-27",
+    "to": "2026-08-24",
     "days": 90
   },
   "totals": {
     "clicks": 0,
-    "impressions": 17,
+    "impressions": 18,
     "ctr": 0,
-    "position": 47.2
+    "position": 48.2
   },
   "byDate": [
     {
@@ -79,6 +79,11 @@
       "date": "2026-08-22",
       "clicks": 0,
       "impressions": 3
+    },
+    {
+      "date": "2026-08-23",
+      "clicks": 0,
+      "impressions": 1
     }
   ],
   "byQuery": [
@@ -129,9 +134,9 @@
     {
       "key": "https://choworks.dev/en/posts/socratic-method-in-the-ai-era/",
       "clicks": 0,
-      "impressions": 9,
+      "impressions": 10,
       "ctr": 0,
-      "position": 49.7
+      "position": 51.1
     },
     {
       "key": "https://choworks.dev/en/posts/why-ai-transform/",
@@ -166,9 +171,9 @@
     {
       "key": "idn",
       "clicks": 0,
-      "impressions": 1,
+      "impressions": 2,
       "ctr": 0,
-      "position": 74
+      "position": 69
     },
     {
       "key": "ind",
@@ -238,9 +243,9 @@
     {
       "key": "DESKTOP",
       "clicks": 0,
-      "impressions": 16,
+      "impressions": 17,
       "ctr": 0,
-      "position": 50.1
+      "position": 50.9
     },
     {
       "key": "MOBILE",
@@ -366,7 +371,7 @@
     {
       "url": "https://choworks.dev/en/posts/five-stages-of-ai-fluency/",
       "verdict": "NEUTRAL",
-      "state": "Google에는 아직 알려지지 않은 URL입니다.",
+      "state": "발견됨 - 현재 색인이 생성되지 않음",
       "lastCrawl": "",
       "robots": "ROBOTS_TXT_STATE_UNSPECIFIED",
       "canonical": ""
