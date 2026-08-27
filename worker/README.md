@@ -42,18 +42,27 @@
 
 ## 준비
 
+클라우드플레어 자격은 이 머신의 공용 자리에 있습니다. `wrangler login` 은 쓰지 않습니다 —
+브라우저 승인 창이 3분 만에 닫혀서 번번이 실패합니다.
+
 ```bash
-npx wrangler login
+export CLOUDFLARE_API_TOKEN=$(grep '^CF_API_TOKEN=' ~/.config/cloudflare/choworks.env | cut -d= -f2-)
+npx wrangler deploy
+npx wrangler tail choworks-threads
+```
+
+처음 한 번만 필요한 것:
+
+```bash
 npx wrangler kv namespace create STATE     # 결과 id 를 wrangler.toml 에 넣습니다
-npx wrangler secret put GITHUB_TOKEN       # contents:read
+npx wrangler secret put GITHUB_TOKEN       # 저장소 원고 읽기(2단계부터는 쓰기도)
 npx wrangler secret put TELEGRAM_TOKEN
 npx wrangler secret put TELEGRAM_CHAT_ID
-npx wrangler deploy
 ```
 
 ## 확인
 
 ```bash
 npx wrangler tail                # 매분 판단을 그대로 봅니다
-curl https://choworks-threads.<계정>.workers.dev/   # 지금 무엇을 할지 한 줄로
+curl https://choworks-threads.codechains.workers.dev/   # 지금 무엇을 할지 한 줄로
 ```

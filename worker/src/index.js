@@ -108,7 +108,17 @@ export default {
       await run(env, event.scheduledTime || Date.now());
     } catch (err) {
       console.error("실패:", err && err.stack || err);
-      try { await send(env, `[모의] 쓰레드 워커 실패\n${String(err).slice(0, 500)}`); } catch (_) {}
+      /* 매분 도는 일이라 실패도 매분 납니다. 그대로 보내면 한 시간에 60통입니다.
+         실제로 그렇게 보내 놓고서야 알았습니다(2026-08-28). 같은 실패는 한 시간에
+         한 번만 알립니다. 알리지 않는 것과 쉬지 않고 알리는 것 둘 다 못 쓰는 알림입니다. */
+      const kind = String(err).slice(0, 60);
+      try {
+        const last = env.STATE ? await env.STATE.get("err:last") : null;
+        if (last !== kind) {
+          await send(env, `[모의] 쓰레드 워커 실패\n${String(err).slice(0, 500)}`);
+          if (env.STATE) await env.STATE.put("err:last", kind, { expirationTtl: 3600 });
+        }
+      } catch (_) {}
     }
   },
 

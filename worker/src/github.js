@@ -34,13 +34,23 @@ async function headSha(env) {
   return b.commit && b.commit.sha;
 }
 
-async function fetchAll(env) {
-  const list = await api(env, `/contents/${env.THREADS_DIR}?ref=${env.BRANCH}`);
+/* 반드시 커밋 SHA 로 고정해 받습니다.
+   목록이 주는 download_url 은 raw.githubusercontent.com 의 브랜치 주소인데,
+   거기는 CDN 캐시가 몇 분 걸려 있습니다. 방금 푸시한 내용을 SHA 는 새것으로 보면서
+   본문은 옛것을 받는 일이 실제로 났습니다(2026-08-28, 큐를 다시 짜 푸시한 직후
+   워커가 계속 옛 날짜를 봤다). 브랜치가 아니라 그 커밋을 가리키면 내용이 불변이라
+   캐시가 있어도 틀릴 수가 없습니다.
+
+   본문도 raw 가 아니라 Contents API 에서 직접 받습니다. 비공개 저장소가 되면
+   download_url 은 따로 토큰이 붙은 임시 주소라 다루기 번거롭습니다. */
+async function fetchAll(env, sha) {
+  const list = await api(env, `/contents/${env.THREADS_DIR}?ref=${sha}`);
   const files = list
     .filter((f) => f.type === "file" && f.name.endsWith(".md") && !f.name.startsWith("_"))
     .sort((a, b) => a.name.localeCompare(b.name));
   return Promise.all(files.map(async (f) => {
-    const res = await fetch(f.download_url, { headers: headers(env) });
+    const url = `${API}/repos/${env.REPO}/contents/${f.path}?ref=${sha}`;
+    const res = await fetch(url, { headers: { ...headers(env), Accept: "application/vnd.github.raw" } });
     if (!res.ok) throw new Error(`원고 못 읽음 ${f.name}: ${res.status}`);
     return { file: f.name, raw: await res.text() };
   }));
@@ -49,7 +59,7 @@ async function fetchAll(env) {
 /* 원고 파일을 [{file, raw}] 로 돌려줍니다. 두 번째 값은 캐시를 썼는지 여부입니다. */
 export async function loadThreadFiles(env) {
   const sha = await headSha(env);
-  if (!env.STATE) return [await fetchAll(env), false];
+  if (!env.STATE) return [await fetchAll(env, sha), false];
 
   const cachedSha = await env.STATE.get("threads:sha");
   if (cachedSha === sha) {
@@ -57,7 +67,7 @@ export async function loadThreadFiles(env) {
     if (raw) return [JSON.parse(raw), true];
   }
 
-  const files = await fetchAll(env);
+  const files = await fetchAll(env, sha);
   await env.STATE.put("threads:files", JSON.stringify(files));
   await env.STATE.put("threads:sha", sha);
   return [files, false];
