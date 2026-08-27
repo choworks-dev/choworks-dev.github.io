@@ -1,0 +1,24 @@
+name = "choworks-threads"
+main = "src/index.js"
+compatibility_date = "2026-08-27"   # UTC 기준. 미래 날짜를 쓰면 배포가 거부된다
+
+# 매분 깨어납니다. 액션은 10분마다였고 그마저 몇십 분씩 밀려서, 미리 잡힌 회차가
+# 최대 120분을 자면서 정시를 맞춰야 했습니다. 여기서는 기다릴 이유가 없습니다.
+[triggers]
+crons = ["* * * * *"]
+
+[vars]
+REPO = "choworks-dev/choworks-dev.github.io"
+BRANCH = "main"
+THREADS_DIR = "content/threads"
+
+# 시크릿은 파일에 적지 않습니다.  wrangler secret put <이름>
+#   GITHUB_TOKEN       비공개 저장소 원고를 읽을 권한 (contents:read)
+#   TELEGRAM_TOKEN
+#   TELEGRAM_CHAT_ID
+
+# 1단계 전용. 같은 편을 매분 다시 보내지 않도록 "보냈다" 만 적어 둡니다.
+# 2단계에서 저장소에 ~ 표시를 남기게 되면 필요 없어집니다.
+[[kv_namespaces]]
+binding = "STATE"
+id = "44f259619bee4fbb99cc459eda7f4031"
