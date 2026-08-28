@@ -1,18 +1,18 @@
 {
-  "updated": "2026-08-25T20:00:20.246Z",
+  "updated": "2026-08-28T02:13:09.202Z",
   "source": "google-search-console",
   "site": "sc-domain:choworks.dev",
   "caveat": "서치 콘솔은 집계가 이틀쯤 늦습니다. 어제까지의 값입니다.",
   "range": {
-    "from": "2026-05-27",
-    "to": "2026-08-24",
+    "from": "2026-05-30",
+    "to": "2026-08-27",
     "days": 90
   },
   "totals": {
-    "clicks": 0,
-    "impressions": 18,
-    "ctr": 0,
-    "position": 48.2
+    "clicks": 1,
+    "impressions": 24,
+    "ctr": 4.17,
+    "position": 39.9
   },
   "byDate": [
     {
@@ -84,6 +84,16 @@
       "date": "2026-08-23",
       "clicks": 0,
       "impressions": 1
+    },
+    {
+      "date": "2026-08-24",
+      "clicks": 0,
+      "impressions": 2
+    },
+    {
+      "date": "2026-08-25",
+      "clicks": 1,
+      "impressions": 4
     }
   ],
   "byQuery": [
@@ -103,6 +113,13 @@
     }
   ],
   "byPage": [
+    {
+      "key": "https://choworks.dev/posts/github-actions-cron-delay/",
+      "clicks": 1,
+      "impressions": 1,
+      "ctr": 100,
+      "position": 8
+    },
     {
       "key": "https://choworks.dev/",
       "clicks": 0,
@@ -127,16 +144,23 @@
     {
       "key": "https://choworks.dev/en/posts/google-apps-script-quote-automation/",
       "clicks": 0,
-      "impressions": 4,
+      "impressions": 5,
       "ctr": 0,
-      "position": 67.8
+      "position": 65.8
+    },
+    {
+      "key": "https://choworks.dev/en/posts/record-everything/",
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 5
     },
     {
       "key": "https://choworks.dev/en/posts/socratic-method-in-the-ai-era/",
       "clicks": 0,
-      "impressions": 10,
+      "impressions": 13,
       "ctr": 0,
-      "position": 51.1
+      "position": 40.8
     },
     {
       "key": "https://choworks.dev/en/posts/why-ai-transform/",
@@ -155,11 +179,25 @@
   ],
   "byCountry": [
     {
+      "key": "kor",
+      "clicks": 1,
+      "impressions": 3,
+      "ctr": 33.33,
+      "position": 30
+    },
+    {
       "key": "aus",
       "clicks": 0,
       "impressions": 1,
       "ctr": 0,
       "position": 6
+    },
+    {
+      "key": "deu",
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 5
     },
     {
       "key": "dza",
@@ -178,16 +216,9 @@
     {
       "key": "ind",
       "clicks": 0,
-      "impressions": 1,
+      "impressions": 3,
       "ctr": 0,
-      "position": 67
-    },
-    {
-      "key": "kor",
-      "clicks": 0,
-      "impressions": 2,
-      "ctr": 0,
-      "position": 41
+      "position": 26.3
     },
     {
       "key": "mar",
@@ -211,11 +242,18 @@
       "position": 8
     },
     {
-      "key": "phl",
+      "key": "nor",
       "clicks": 0,
       "impressions": 1,
       "ctr": 0,
-      "position": 62
+      "position": 8
+    },
+    {
+      "key": "phl",
+      "clicks": 0,
+      "impressions": 2,
+      "ctr": 0,
+      "position": 60
     },
     {
       "key": "rou",
@@ -242,17 +280,17 @@
   "byDevice": [
     {
       "key": "DESKTOP",
-      "clicks": 0,
-      "impressions": 17,
-      "ctr": 0,
-      "position": 50.9
+      "clicks": 1,
+      "impressions": 20,
+      "ctr": 5,
+      "position": 46.9
     },
     {
       "key": "MOBILE",
       "clicks": 0,
-      "impressions": 1,
+      "impressions": 4,
       "ctr": 0,
-      "position": 1
+      "position": 5.3
     }
   ],
   "index": [
@@ -274,11 +312,11 @@
     },
     {
       "url": "https://choworks.dev/posts/five-stages-of-ai-fluency/",
-      "verdict": "NEUTRAL",
-      "state": "발견됨 - 현재 색인이 생성되지 않음",
-      "lastCrawl": "",
-      "robots": "ROBOTS_TXT_STATE_UNSPECIFIED",
-      "canonical": ""
+      "verdict": "PASS",
+      "state": "제출되고 색인이 생성되었습니다.",
+      "lastCrawl": "2026-08-26",
+      "robots": "ALLOWED",
+      "canonical": "https://choworks.dev/posts/five-stages-of-ai-fluency/"
     },
     {
       "url": "https://choworks.dev/posts/before-outsourcing-your-website/",
@@ -291,7 +329,7 @@
     {
       "url": "https://choworks.dev/posts/record-everything/",
       "verdict": "NEUTRAL",
-      "state": "Google에는 아직 알려지지 않은 URL입니다.",
+      "state": "발견됨 - 현재 색인이 생성되지 않음",
       "lastCrawl": "",
       "robots": "ROBOTS_TXT_STATE_UNSPECIFIED",
       "canonical": ""
@@ -316,7 +354,7 @@
       "url": "https://choworks.dev/posts/ai-transformation-starts-with-me/",
       "verdict": "PASS",
       "state": "제출되고 색인이 생성되었습니다.",
-      "lastCrawl": "2026-08-14",
+      "lastCrawl": "2026-08-26",
       "robots": "ALLOWED",
       "canonical": "https://choworks.dev/posts/ai-transformation-starts-with-me/"
     },
@@ -348,7 +386,7 @@
       "url": "https://choworks.dev/posts/why-ai-transform/",
       "verdict": "PASS",
       "state": "제출되고 색인이 생성되었습니다.",
-      "lastCrawl": "2026-08-12",
+      "lastCrawl": "2026-08-27",
       "robots": "ALLOWED",
       "canonical": "https://choworks.dev/posts/why-ai-transform/"
     },
@@ -370,11 +408,11 @@
     },
     {
       "url": "https://choworks.dev/en/posts/five-stages-of-ai-fluency/",
-      "verdict": "NEUTRAL",
-      "state": "발견됨 - 현재 색인이 생성되지 않음",
-      "lastCrawl": "",
-      "robots": "ROBOTS_TXT_STATE_UNSPECIFIED",
-      "canonical": ""
+      "verdict": "PASS",
+      "state": "제출되고 색인이 생성되었습니다.",
+      "lastCrawl": "2026-08-26",
+      "robots": "ALLOWED",
+      "canonical": "https://choworks.dev/en/posts/five-stages-of-ai-fluency/"
     },
     {
       "url": "https://choworks.dev/en/posts/before-outsourcing-your-website/",
@@ -451,7 +489,7 @@
   ],
   "indexSummary": {
     "total": 24,
-    "indexed": 17,
-    "notIndexed": 7
+    "indexed": 19,
+    "notIndexed": 5
   }
 }
