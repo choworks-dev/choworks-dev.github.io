@@ -49,3 +49,20 @@ NAVER.local.md
 
 # 파이썬 캐시
 __pycache__/
+
+# 2026-08-29 MA4: 검토 전까지 나가지 않게 막아 둔다.
+# 이 저장소는 **공개**라 커밋하는 순간 공개된다. 화면에 계약 조항 검토와
+# software-compliance 건이 읽히는 상태로 찍혀 있어 대표님 판단을 기다린다.
+# 발행하기로 정해지면 이 세 줄을 지우고 커밋한다.
+assets/images/tmux-six-agent-sessions-dual-monitor.png
+
+# 2026-08-29 MA4: 저장소 루트에 굴러다니는 화면 캡처를 막는다.
+# 실제로 screen-2026-08-23-18-40-51.jpg 가 미추적으로 있었고, 그 안에
+# sudo NOPASSWD 설정 · xrdp 3389 · Gitea SSH 2222 · 내부 mDNS 주소가 읽혔다.
+# **이 저장소는 공개다.** git add -A 한 번이면 그대로 올라간다.
+# 발행용 이미지는 assets/images/ 에 이름을 지어 넣는다.
+# MA2: 앞의 `/` 는 **루트만** 막으라는 뜻이다. 없으면 어느 깊이에서나 걸려
+# assets/images/screen-*.jpg 까지 삼킨다(check-ignore 로 실측). 발행용 이미지가
+# 조용히 빠지면 글에 그림만 안 나오고 오류는 안 난다.
+/screen-*.jpg
+/screen-*.png
