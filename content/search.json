@@ -1,11 +1,11 @@
 {
-  "updated": "2026-08-28T22:00:57.194Z",
+  "updated": "2026-08-29T19:07:41.921Z",
   "source": "google-search-console",
   "site": "sc-domain:choworks.dev",
   "caveat": "서치 콘솔은 집계가 이틀쯤 늦습니다. 어제까지의 값입니다.",
   "range": {
-    "from": "2026-05-30",
-    "to": "2026-08-27",
+    "from": "2026-05-31",
+    "to": "2026-08-28",
     "days": 90
   },
   "totals": {
@@ -420,7 +420,7 @@
       "url": "https://choworks.dev/en/",
       "verdict": "PASS",
       "state": "제출되고 색인이 생성되었습니다.",
-      "lastCrawl": "2026-08-18",
+      "lastCrawl": "2026-08-28",
       "robots": "ALLOWED",
       "canonical": "https://choworks.dev/en/"
     },
@@ -499,10 +499,10 @@
     {
       "url": "https://choworks.dev/en/posts/wix-to-cloudflare/",
       "verdict": "NEUTRAL",
-      "state": "발견됨 - 현재 색인이 생성되지 않음",
-      "lastCrawl": "",
-      "robots": "ROBOTS_TXT_STATE_UNSPECIFIED",
-      "canonical": ""
+      "state": "크롤링됨 - 현재 색인이 생성되지 않음",
+      "lastCrawl": "2026-08-29",
+      "robots": "ALLOWED",
+      "canonical": "https://choworks.dev/en/posts/wix-to-cloudflare/"
     },
     {
       "url": "https://choworks.dev/en/posts/why-ai-transform/",
