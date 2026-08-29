@@ -15,6 +15,12 @@ REPO = "choworks-dev/choworks-dev.github.io"
 BRANCH = "main"
 THREADS_DIR = "content/threads"
 
+# "1" 이면 저장소에 아무것도 쓰지 않고 텔레그램에 [모의] 를 붙여 보냅니다.
+# 액션과 워커가 동시에 살아 있는 동안은 반드시 "1" 이어야 합니다 —
+# 둘 다 진짜로 보내면 같은 편 알림이 두 번 가고 표시를 서로 덮습니다.
+# 액션의 schedule 을 뗀 뒤에 "0" 으로 바꿉니다.
+DRY_RUN = "1"
+
 # 시크릿은 파일에 적지 않습니다.  wrangler secret put <이름>
 #   GITHUB_TOKEN       비공개 저장소 원고를 읽을 권한 (contents:read)
 #   TELEGRAM_TOKEN

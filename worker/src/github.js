@@ -72,3 +72,49 @@ export async function loadThreadFiles(env) {
   await env.STATE.put("threads:sha", sha);
   return [files, false];
 }
+
+/* ── 저장소에 쓰기 (2단계) ────────────────────────────────────────────────
+   표시(~ @)를 남기려면 파일을 되써야 합니다. Contents API 는 그 파일의 blob sha 를
+   함께 줘야 받아 줍니다. 그 sha 가 지금 것과 다르면 409 가 나는데, 그건 그 사이에
+   누가 같은 파일을 고쳤다는 뜻입니다. 덮어쓰지 않고 그대로 실패시킵니다 —
+   원고를 잃는 것보다 표시를 한 회차 늦게 남기는 편이 낫습니다. */
+
+/* 파일 하나를 내용과 blob sha 로 받아옵니다. */
+export async function getFile(env, path, ref) {
+  const res = await fetch(`${API}/repos/${env.REPO}/contents/${path}?ref=${ref}`, { headers: headers(env) });
+  if (!res.ok) throw new Error(`파일 못 읽음 ${path}: ${res.status}`);
+  const j = await res.json();
+  // base64 를 UTF-8 문자열로. atob 는 바이트만 주므로 한글이 깨진다.
+  const bin = Uint8Array.from(atob(j.content.replace(/\n/g, "")), (c) => c.charCodeAt(0));
+  return { text: new TextDecoder().decode(bin), sha: j.sha };
+}
+
+export async function putFile(env, path, text, sha, message) {
+  const bytes = new TextEncoder().encode(text);
+  let bin = "";
+  bytes.forEach((b) => { bin += String.fromCharCode(b); });
+  const res = await fetch(`${API}/repos/${env.REPO}/contents/${path}`, {
+    method: "PUT",
+    headers: { ...headers(env), "Content-Type": "application/json" },
+    body: JSON.stringify({
+      message,
+      content: btoa(bin),
+      sha,
+      branch: env.BRANCH,
+      committer: { name: "choworks-threads", email: "choworks.dev@gmail.com" },
+    }),
+  });
+  if (!res.ok) throw new Error(`파일 못 씀 ${path}: ${res.status} ${(await res.text()).slice(0, 200)}`);
+  return res.json();
+}
+
+/* 이 저장소의 원고 파일 이름 목록만. 표시를 남길 파일을 찾을 때 씁니다. */
+export async function listThreadNames(env, sha) {
+  const list = await api(env, `/contents/${env.THREADS_DIR}?ref=${sha}`);
+  return list
+    .filter((f) => f.type === "file" && f.name.endsWith(".md") && !f.name.startsWith("_"))
+    .map((f) => f.path)
+    .sort();
+}
+
+export { headSha };

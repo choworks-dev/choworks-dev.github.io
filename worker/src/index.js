@@ -19,8 +19,10 @@
      · 하루 상한(DAILY_CAP)을 넘기면 보내지 않는다
    ============================================================ */
 import { parseBatch, queueOf, KIND, LIMIT, DAILY_CAP } from "./queue.js";
-import { loadThreadFiles } from "./github.js";
-import { send } from "./telegram.js";
+import { loadThreadFiles, headSha, listThreadNames, getFile, putFile } from "./github.js";
+import { send, getUpdates } from "./telegram.js";
+import { matchConfirms } from "./confirm.js";
+import { applyMark, markPostedPatch, markRemindedPatch } from "./mark.js";
 
 /* 깃허브 액션은 UTC 로 돌고 예약 시각은 한국 시각이라, 섞으면 아홉 시간이 어긋납니다.
    비교는 언제나 epoch 으로 하고, 한국 시각은 찍거나 "오늘" 을 가를 때만 씁니다.
@@ -68,34 +70,111 @@ function decide(queue, now) {
   return { action: "send", post, why: `${post.id} 을 지금 보냅니다` };
 }
 
-function messageFor(post) {
-  const head = `[모의] ${post.id} · ${post.at} · ${KIND[post.kind] || post.kind} · ${post.len}자`;
-  const body = post.parts.map((p) => (post.parts.length > 1 ? `(${p.n}) ${p.text}` : p.text)).join("\n\n");
-  return `${head}\n\n${body}`;
+/* 안내문. 원본(scripts/threads-remind.js 의 send)과 같은 문구를 씁니다.
+   문구가 다르면 답장이 달린 원래 메시지로 편을 찾는 규칙이 어긋납니다. */
+function headFor(post, lateMin, dry) {
+  const many = post.parts.length > 1;
+  const late = lateMin < 1 ? null
+    : lateMin < 120 ? `예약 시각이 ${Math.round(lateMin)}분 지났습니다.`
+      : `예약 시각이 ${Math.round(lateMin / 60)}시간 지났습니다. 지금 올려도 되는 시간인지 보세요.`;
+  return [
+    `${dry ? "[모의] " : ""}지금 올릴 차례입니다.  ${post.id}`,
+    `예약 ${post.at} · ${KIND[post.kind] || post.kind} · ${post.len}자${many ? ` · 본문 + 답글 ${post.parts.length - 1}개` : ""}`,
+    late,
+    "",
+    many
+      ? `아래 ${post.parts.length}개 메시지를 순서대로 복사해 올리세요. 첫 통이 본문, 나머지가 답글입니다.`
+      : "아래 메시지를 복사해서 쓰레드에 올리세요.",
+    `올린 뒤 이 메시지에 reply 로 아무 말이나 보내면 ${post.id} 에 발행 표시를 남깁니다.`,
+  ].filter((l) => l !== null).join("\n");
+}
+
+/* 그 번호가 든 파일을 찾아 === 줄에 표시를 남깁니다.
+   파일을 한 번에 하나씩 열어 봅니다. 원고가 15편 남짓이라 부담이 없고,
+   무엇보다 표시를 남길 때는 그 파일의 지금 내용과 blob sha 가 있어야 합니다. */
+async function markInRepo(env, sha, id, patch, message) {
+  const paths = await listThreadNames(env, sha);
+  for (const path of paths) {
+    const f = await getFile(env, path, sha);
+    const out = applyMark(f.text, id, patch);
+    if (!out) continue;
+    if (out === f.text) return path; // 이미 같은 표시가 있습니다
+    await putFile(env, path, out, f.sha, message);
+    return path;
+  }
+  throw new Error(`${id} 를 찾지 못했습니다. 표시를 못 남기면 같은 편이 또 나갑니다.`);
+}
+
+/* 답장을 읽어 발행 표시를 남깁니다.
+   알릴 편이 없는 회차에도 돌아야 합니다 — 여기서 표시가 남아야 그날 편수가 맞습니다. */
+async function confirmPosted(env, queue, sha, dry) {
+  const pending = queue.filter((p) => p.status !== "posted" && p.remindedAt && p.id);
+  if (!pending.length) return [];
+
+  let msgs = [];
+  try {
+    msgs = await getUpdates(env);
+  } catch (e) {
+    // 확인을 못 받는 것은 알림을 못 보내는 것보다 가볍습니다. 여기서 회차를 죽이지 않습니다.
+    console.warn(`답장을 읽지 못했습니다: ${e.message}`);
+    return [];
+  }
+
+  const { hits, left } = matchConfirms(pending, msgs);
+  for (const h of hits) {
+    const when = kstStamp(h.at);
+    if (dry) { console.log(`[모의] 발행 표시했을 것: ${h.id} (${when})`); continue; }
+    await markInRepo(env, sha, h.id, markPostedPatch(when), `${h.id} 발행 표시 (쓰레드 워커)`);
+    console.log(`올렸다고 확인했습니다: ${h.id} (${when.replace("T", " ")}) · 답장 "${h.text.slice(0, 20)}"`);
+  }
+  if (left.length) console.log(`아직 확인 안 된 편 ${left.length}개: ${left.map((p) => p.id).join(", ")}`);
+  return hits;
 }
 
 async function run(env, now) {
+  const dry = env.DRY_RUN === "1";
+  const sha = await headSha(env);
   const [files, cached] = await loadThreadFiles(env);
-  const queue = queueOf(files.map((f) => parseBatch(f.file, f.raw)));
-  const d = decide(queue, now);
+  let queue = queueOf(files.map((f) => parseBatch(f.file, f.raw)));
 
-  const line = `${kstStamp(now)} KST · 큐 ${queue.length}편${cached ? "(캐시)" : "(새로 읽음)"} · ${d.action} · ${d.why}`;
+  /* 확인부터 받습니다. 알릴 편이 없는 회차에도 답장은 처리되어야 하고,
+     여기서 표시가 남아야 아래에서 세는 그날 편수가 맞습니다. */
+  const done = await confirmPosted(env, queue, sha, dry);
+  if (done.length && !dry) {
+    // 표시를 남겼으니 다시 읽습니다. 커밋이 생겨 SHA 가 바뀌므로 캐시는 저절로 무효가 됩니다.
+    const [f2] = await loadThreadFiles(env);
+    queue = queueOf(f2.map((f) => parseBatch(f.file, f.raw)));
+  }
+
+  const d = decide(queue, now);
+  const line = `${kstStamp(now)} KST · 큐 ${queue.length}편${cached ? "(캐시)" : "(새로 읽음)"}`
+    + `${done.length ? ` · 발행확인 ${done.length}편` : ""} · ${d.action} · ${d.why}`;
   console.log(line);
 
   if (d.action !== "send") return line;
 
-  /* 1단계에서는 저장소에 표시를 남기지 않습니다. 그래서 같은 편이 매분 다시 걸립니다.
-     KV 에 한 번 보냈다고 적어 두어 같은 편을 두 번 보내지 않습니다.
-     (2단계에서 저장소에 ~ 표시를 남기게 되면 이 자리는 사라집니다) */
-  const seen = env.STATE ? await env.STATE.get(`dry:${d.post.id}`) : null;
-  if (seen) {
-    console.log(`${d.post.id} 은 모의 알림이 이미 나갔습니다(${seen}). 다시 보내지 않습니다.`);
+  const lateMin = (now - Number(new Date(`${d.post.date}T${d.post.time}:00+09:00`))) / 60000;
+
+  if (dry) {
+    /* 1단계에서는 저장소에 표시를 남기지 않아 같은 편이 매분 다시 걸립니다.
+       KV 에 보냈다고 적어 두어 두 번 보내지 않습니다. */
+    const seen = env.STATE ? await env.STATE.get(`dry:${d.post.id}`) : null;
+    if (seen) { console.log(`${d.post.id} 모의 알림은 이미 나갔습니다(${seen}).`); return line; }
+    await send(env, headFor(d.post, lateMin, true));
+    for (const part of d.post.parts) await send(env, part.text);
+    if (env.STATE) await env.STATE.put(`dry:${d.post.id}`, kstStamp(now), { expirationTtl: 60 * 60 * 24 * 30 });
+    console.log(`${d.post.id} 모의 알림 보냈습니다`);
     return line;
   }
 
-  const sent = await send(env, messageFor(d.post));
-  if (env.STATE) await env.STATE.put(`dry:${d.post.id}`, kstStamp(now), { expirationTtl: 60 * 60 * 24 * 30 });
-  console.log(sent ? `${d.post.id} 모의 알림 보냈습니다` : `텔레그램 값이 없어 보내지 않았습니다`);
+  const sent = await send(env, headFor(d.post, lateMin, false));
+  if (!sent) { console.log("텔레그램 값이 없어 보내지 않았습니다."); return line; }
+  for (const part of d.post.parts) await send(env, part.text);
+
+  /* 표시는 보낸 뒤에 남깁니다. 먼저 남기고 보내다 실패하면 그 편은 영영 알림 없이 지나갑니다. */
+  const when = kstStamp(now);
+  const file = await markInRepo(env, sha, d.post.id, markRemindedPatch(when), `${d.post.id} 알림 표시 (쓰레드 워커)`);
+  console.log(`보냈습니다. ${d.post.id} · ${when.replace("T", " ")} · ${file}`);
   return line;
 }
 
