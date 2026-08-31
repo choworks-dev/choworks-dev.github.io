@@ -1,18 +1,18 @@
 {
-  "updated": "2026-08-30T19:07:41.317Z",
+  "updated": "2026-08-31T19:07:53.892Z",
   "source": "google-search-console",
   "site": "sc-domain:choworks.dev",
   "caveat": "서치 콘솔은 집계가 이틀쯤 늦습니다. 어제까지의 값입니다.",
   "range": {
-    "from": "2026-06-01",
-    "to": "2026-08-29",
+    "from": "2026-06-02",
+    "to": "2026-08-30",
     "days": 90
   },
   "totals": {
     "clicks": 1,
-    "impressions": 36,
-    "ctr": 2.78,
-    "position": 40
+    "impressions": 39,
+    "ctr": 2.56,
+    "position": 42.3
   },
   "byDate": [
     {
@@ -109,6 +109,11 @@
       "date": "2026-08-28",
       "clicks": 0,
       "impressions": 2
+    },
+    {
+      "date": "2026-08-29",
+      "clicks": 0,
+      "impressions": 3
     }
   ],
   "byQuery": [
@@ -125,6 +130,13 @@
       "impressions": 1,
       "ctr": 0,
       "position": 75
+    },
+    {
+      "key": "quotes automation",
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 84
     },
     {
       "key": "소크라테스 문답법",
@@ -180,9 +192,9 @@
     {
       "key": "https://choworks.dev/en/posts/google-apps-script-quote-automation/",
       "clicks": 0,
-      "impressions": 7,
+      "impressions": 9,
       "ctr": 0,
-      "position": 68.1
+      "position": 67.1
     },
     {
       "key": "https://choworks.dev/en/posts/record-everything/",
@@ -194,9 +206,9 @@
     {
       "key": "https://choworks.dev/en/posts/socratic-method-in-the-ai-era/",
       "clicks": 0,
-      "impressions": 18,
+      "impressions": 19,
       "ctr": 0,
-      "position": 44.5
+      "position": 46.4
     },
     {
       "key": "https://choworks.dev/en/posts/why-ai-transform/",
@@ -264,6 +276,13 @@
       "position": 62.5
     },
     {
+      "key": "mex",
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 80
+    },
+    {
       "key": "mys",
       "clicks": 0,
       "impressions": 1,
@@ -311,22 +330,15 @@
       "impressions": 2,
       "ctr": 0,
       "position": 74.5
-    },
-    {
-      "key": "usa",
-      "clicks": 0,
-      "impressions": 2,
-      "ctr": 0,
-      "position": 38.5
     }
   ],
   "byDevice": [
     {
       "key": "DESKTOP",
       "clicks": 1,
-      "impressions": 31,
-      "ctr": 3.23,
-      "position": 45.7
+      "impressions": 34,
+      "ctr": 2.94,
+      "position": 47.8
     },
     {
       "key": "MOBILE",
@@ -341,7 +353,7 @@
       "url": "https://choworks.dev/",
       "verdict": "PASS",
       "state": "제출되고 색인이 생성되었습니다.",
-      "lastCrawl": "2026-08-30",
+      "lastCrawl": "2026-08-31",
       "robots": "ALLOWED",
       "canonical": "https://choworks.dev/"
     },
@@ -349,7 +361,7 @@
       "url": "https://choworks.dev/about/",
       "verdict": "PASS",
       "state": "제출되고 색인이 생성되었습니다.",
-      "lastCrawl": "2026-08-21",
+      "lastCrawl": "2026-08-31",
       "robots": "ALLOWED",
       "canonical": "https://choworks.dev/about/"
     },
@@ -397,25 +409,25 @@
       "url": "https://choworks.dev/posts/ai-transformation-starts-with-me/",
       "verdict": "PASS",
       "state": "제출되고 색인이 생성되었습니다.",
-      "lastCrawl": "2026-08-26",
+      "lastCrawl": "2026-08-30",
       "robots": "ALLOWED",
       "canonical": "https://choworks.dev/posts/ai-transformation-starts-with-me/"
     },
     {
       "url": "https://choworks.dev/posts/google-apps-script-to-n8n/",
-      "verdict": "NEUTRAL",
-      "state": "크롤링됨 - 현재 색인이 생성되지 않음",
-      "lastCrawl": "2026-08-11",
+      "verdict": "PASS",
+      "state": "제출되고 색인이 생성되었습니다.",
+      "lastCrawl": "2026-08-31",
       "robots": "ALLOWED",
       "canonical": "https://choworks.dev/posts/google-apps-script-to-n8n/"
     },
     {
       "url": "https://choworks.dev/posts/google-apps-script-quote-automation/",
-      "verdict": "NEUTRAL",
-      "state": "발견됨 - 현재 색인이 생성되지 않음",
-      "lastCrawl": "",
-      "robots": "ROBOTS_TXT_STATE_UNSPECIFIED",
-      "canonical": ""
+      "verdict": "PASS",
+      "state": "제출되고 색인이 생성되었습니다.",
+      "lastCrawl": "2026-08-31",
+      "robots": "ALLOWED",
+      "canonical": "https://choworks.dev/posts/google-apps-script-quote-automation/"
     },
     {
       "url": "https://choworks.dev/posts/wix-to-cloudflare/",
@@ -429,7 +441,7 @@
       "url": "https://choworks.dev/posts/why-ai-transform/",
       "verdict": "PASS",
       "state": "제출되고 색인이 생성되었습니다.",
-      "lastCrawl": "2026-08-27",
+      "lastCrawl": "2026-08-30",
       "robots": "ALLOWED",
       "canonical": "https://choworks.dev/posts/why-ai-transform/"
     },
@@ -437,7 +449,7 @@
       "url": "https://choworks.dev/en/",
       "verdict": "PASS",
       "state": "제출되고 색인이 생성되었습니다.",
-      "lastCrawl": "2026-08-28",
+      "lastCrawl": "2026-08-31",
       "robots": "ALLOWED",
       "canonical": "https://choworks.dev/en/"
     },
@@ -445,7 +457,7 @@
       "url": "https://choworks.dev/en/about/",
       "verdict": "PASS",
       "state": "제출되고 색인이 생성되었습니다.",
-      "lastCrawl": "2026-08-30",
+      "lastCrawl": "2026-08-31",
       "robots": "ALLOWED",
       "canonical": "https://choworks.dev/en/about/"
     },
@@ -501,7 +513,7 @@
       "url": "https://choworks.dev/en/posts/google-apps-script-to-n8n/",
       "verdict": "PASS",
       "state": "제출되고 색인이 생성되었습니다.",
-      "lastCrawl": "2026-08-30",
+      "lastCrawl": "2026-08-31",
       "robots": "ALLOWED",
       "canonical": "https://choworks.dev/en/posts/google-apps-script-to-n8n/"
     },
@@ -509,7 +521,7 @@
       "url": "https://choworks.dev/en/posts/google-apps-script-quote-automation/",
       "verdict": "PASS",
       "state": "제출되고 색인이 생성되었습니다.",
-      "lastCrawl": "2026-08-28",
+      "lastCrawl": "2026-08-31",
       "robots": "ALLOWED",
       "canonical": "https://choworks.dev/en/posts/google-apps-script-quote-automation/"
     },
@@ -517,7 +529,7 @@
       "url": "https://choworks.dev/en/posts/wix-to-cloudflare/",
       "verdict": "PASS",
       "state": "제출되고 색인이 생성되었습니다.",
-      "lastCrawl": "2026-08-30",
+      "lastCrawl": "2026-08-31",
       "robots": "ALLOWED",
       "canonical": "https://choworks.dev/en/posts/wix-to-cloudflare/"
     },
@@ -525,14 +537,14 @@
       "url": "https://choworks.dev/en/posts/why-ai-transform/",
       "verdict": "PASS",
       "state": "제출되고 색인이 생성되었습니다.",
-      "lastCrawl": "2026-08-30",
+      "lastCrawl": "2026-08-31",
       "robots": "ALLOWED",
       "canonical": "https://choworks.dev/en/posts/why-ai-transform/"
     }
   ],
   "indexSummary": {
     "total": 24,
-    "indexed": 21,
-    "notIndexed": 3
+    "indexed": 23,
+    "notIndexed": 1
   }
 }
