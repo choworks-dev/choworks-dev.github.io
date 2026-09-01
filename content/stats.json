@@ -1,32 +1,77 @@
 {
-  "updated": "2026-08-31T19:07:14.827Z",
+  "updated": "2026-09-01T19:12:11.645Z",
   "source": "cloudflare-web-analytics",
   "caveat": "무료 플랜은 표본 추정이라 10 단위로 반올림됩니다. 우리 방문도 섞여 있습니다.",
   "range": {
-    "from": "2026-06-02",
-    "to": "2026-08-31",
+    "from": "2026-06-03",
+    "to": "2026-09-01",
     "days": 90
   },
   "totals": {
     "views": 200,
-    "visits": 100
+    "visits": 130
   },
   "byDay": [
     {
+      "date": "2026-08-15",
+      "views": 30,
+      "visits": 30
+    },
+    {
+      "date": "2026-08-16",
+      "views": 10,
+      "visits": 10
+    },
+    {
+      "date": "2026-08-17",
+      "views": 30,
+      "visits": 10
+    },
+    {
+      "date": "2026-08-18",
+      "views": 20,
+      "visits": 10
+    },
+    {
       "date": "2026-08-19",
-      "views": 100,
+      "views": 20,
+      "visits": 10
+    },
+    {
+      "date": "2026-08-20",
+      "views": 10,
+      "visits": 10
+    },
+    {
+      "date": "2026-08-21",
+      "views": 10,
+      "visits": 0
+    },
+    {
+      "date": "2026-08-22",
+      "views": 10,
       "visits": 0
     },
     {
       "date": "2026-08-23",
-      "views": 100,
-      "visits": 100
+      "views": 30,
+      "visits": 20
+    },
+    {
+      "date": "2026-08-31",
+      "views": 10,
+      "visits": 10
+    },
+    {
+      "date": "2026-09-01",
+      "views": 20,
+      "visits": 20
     }
   ],
   "byPath": [
     {
       "path": "/",
-      "views": 110
+      "views": 130
     },
     {
       "path": "/en/",
@@ -56,7 +101,7 @@
   "byReferrer": [
     {
       "host": "",
-      "views": 110
+      "views": 130
     },
     {
       "host": "choworks.dev",
@@ -70,7 +115,7 @@
     },
     {
       "country": "US",
-      "views": 70
+      "views": 90
     },
     {
       "country": "ES",
@@ -80,11 +125,11 @@
   "byDevice": [
     {
       "device": "desktop",
-      "views": 170
+      "views": 180
     },
     {
       "device": "mobile",
-      "views": 10
+      "views": 20
     }
   ]
 }

@@ -1,11 +1,11 @@
 {
-  "updated": "2026-08-31T19:07:53.892Z",
+  "updated": "2026-09-01T19:12:51.686Z",
   "source": "google-search-console",
   "site": "sc-domain:choworks.dev",
   "caveat": "서치 콘솔은 집계가 이틀쯤 늦습니다. 어제까지의 값입니다.",
   "range": {
-    "from": "2026-06-02",
-    "to": "2026-08-30",
+    "from": "2026-06-03",
+    "to": "2026-08-31",
     "days": 90
   },
   "totals": {
@@ -384,7 +384,7 @@
     {
       "url": "https://choworks.dev/posts/record-everything/",
       "verdict": "NEUTRAL",
-      "state": "발견됨 - 현재 색인이 생성되지 않음",
+      "state": "Google에는 아직 알려지지 않은 URL입니다.",
       "lastCrawl": "",
       "robots": "ROBOTS_TXT_STATE_UNSPECIFIED",
       "canonical": ""
@@ -409,7 +409,7 @@
       "url": "https://choworks.dev/posts/ai-transformation-starts-with-me/",
       "verdict": "PASS",
       "state": "제출되고 색인이 생성되었습니다.",
-      "lastCrawl": "2026-08-30",
+      "lastCrawl": "2026-09-01",
       "robots": "ALLOWED",
       "canonical": "https://choworks.dev/posts/ai-transformation-starts-with-me/"
     },
@@ -441,7 +441,7 @@
       "url": "https://choworks.dev/posts/why-ai-transform/",
       "verdict": "PASS",
       "state": "제출되고 색인이 생성되었습니다.",
-      "lastCrawl": "2026-08-30",
+      "lastCrawl": "2026-09-01",
       "robots": "ALLOWED",
       "canonical": "https://choworks.dev/posts/why-ai-transform/"
     },
