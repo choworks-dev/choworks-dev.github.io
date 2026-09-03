@@ -1,15 +1,15 @@
 {
-  "updated": "2026-09-02T19:12:17.711Z",
+  "updated": "2026-09-03T19:11:36.364Z",
   "source": "cloudflare-web-analytics",
   "caveat": "무료 플랜은 표본 추정이라 10 단위로 반올림됩니다. 우리 방문도 섞여 있습니다.",
   "range": {
-    "from": "2026-06-04",
-    "to": "2026-09-02",
+    "from": "2026-06-05",
+    "to": "2026-09-03",
     "days": 90
   },
   "totals": {
-    "views": 200,
-    "visits": 130
+    "views": 320,
+    "visits": 200
   },
   "byDay": [
     {
@@ -66,9 +66,18 @@
       "date": "2026-09-01",
       "views": 20,
       "visits": 20
+    },
+    {
+      "date": "2026-09-03",
+      "views": 120,
+      "visits": 70
     }
   ],
   "byPath": [
+    {
+      "path": "/posts/socratic-method-in-the-ai-era/",
+      "views": 130
+    },
     {
       "path": "/",
       "views": 130
@@ -76,10 +85,6 @@
     {
       "path": "/en/",
       "views": 20
-    },
-    {
-      "path": "/posts/socratic-method-in-the-ai-era/",
-      "views": 10
     },
     {
       "path": "/en/posts/five-stages-of-ai-fluency/",
@@ -101,17 +106,17 @@
   "byReferrer": [
     {
       "host": "",
-      "views": 130
+      "views": 200
     },
     {
       "host": "choworks.dev",
-      "views": 70
+      "views": 120
     }
   ],
   "byCountry": [
     {
       "country": "KR",
-      "views": 100
+      "views": 220
     },
     {
       "country": "US",
@@ -125,7 +130,7 @@
   "byDevice": [
     {
       "device": "desktop",
-      "views": 180
+      "views": 300
     },
     {
       "device": "mobile",

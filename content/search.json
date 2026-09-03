@@ -1,18 +1,18 @@
 {
-  "updated": "2026-09-02T19:13:03.685Z",
+  "updated": "2026-09-03T19:12:16.166Z",
   "source": "google-search-console",
   "site": "sc-domain:choworks.dev",
   "caveat": "서치 콘솔은 집계가 이틀쯤 늦습니다. 어제까지의 값입니다.",
   "range": {
-    "from": "2026-06-04",
-    "to": "2026-09-01",
+    "from": "2026-06-05",
+    "to": "2026-09-02",
     "days": 90
   },
   "totals": {
     "clicks": 2,
-    "impressions": 59,
-    "ctr": 3.39,
-    "position": 41.2
+    "impressions": 63,
+    "ctr": 3.17,
+    "position": 39
   },
   "byDate": [
     {
@@ -124,6 +124,11 @@
       "date": "2026-08-31",
       "clicks": 1,
       "impressions": 12
+    },
+    {
+      "date": "2026-09-01",
+      "clicks": 0,
+      "impressions": 4
     }
   ],
   "byQuery": [
@@ -168,6 +173,13 @@
       "impressions": 1,
       "ctr": 0,
       "position": 70
+    },
+    {
+      "key": "소크라테스의 문답법",
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 10
     }
   ],
   "byPage": [
@@ -181,9 +193,9 @@
     {
       "key": "https://choworks.dev/posts/socratic-method-in-the-ai-era/",
       "clicks": 1,
-      "impressions": 8,
-      "ctr": 12.5,
-      "position": 25.6
+      "impressions": 12,
+      "ctr": 8.33,
+      "position": 19.2
     },
     {
       "key": "https://choworks.dev/",
@@ -267,9 +279,9 @@
     {
       "key": "kor",
       "clicks": 2,
-      "impressions": 13,
-      "ctr": 15.38,
-      "position": 18.2
+      "impressions": 17,
+      "ctr": 11.76,
+      "position": 15.4
     },
     {
       "key": "aus",
@@ -374,16 +386,23 @@
     {
       "key": "DESKTOP",
       "clicks": 2,
-      "impressions": 53,
-      "ctr": 3.77,
-      "position": 45.2
+      "impressions": 54,
+      "ctr": 3.7,
+      "position": 44.5
     },
     {
       "key": "MOBILE",
       "clicks": 0,
-      "impressions": 6,
+      "impressions": 8,
       "ctr": 0,
-      "position": 5.5
+      "position": 5.4
+    },
+    {
+      "key": "TABLET",
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 10
     }
   ],
   "index": [
@@ -422,7 +441,7 @@
     {
       "url": "https://choworks.dev/posts/record-everything/",
       "verdict": "NEUTRAL",
-      "state": "Google에는 아직 알려지지 않은 URL입니다.",
+      "state": "발견됨 - 현재 색인이 생성되지 않음",
       "lastCrawl": "",
       "robots": "ROBOTS_TXT_STATE_UNSPECIFIED",
       "canonical": ""
@@ -431,7 +450,7 @@
       "url": "https://choworks.dev/posts/github-actions-cron-delay/",
       "verdict": "PASS",
       "state": "제출되고 색인이 생성되었습니다.",
-      "lastCrawl": "2026-08-20",
+      "lastCrawl": "2026-08-21",
       "robots": "ALLOWED",
       "canonical": "https://choworks.dev/posts/github-actions-cron-delay/"
     },
