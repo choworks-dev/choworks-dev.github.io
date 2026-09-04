@@ -1,18 +1,18 @@
 {
-  "updated": "2026-09-03T19:12:16.166Z",
+  "updated": "2026-09-04T19:11:24.365Z",
   "source": "google-search-console",
   "site": "sc-domain:choworks.dev",
   "caveat": "서치 콘솔은 집계가 이틀쯤 늦습니다. 어제까지의 값입니다.",
   "range": {
-    "from": "2026-06-05",
-    "to": "2026-09-02",
+    "from": "2026-06-06",
+    "to": "2026-09-03",
     "days": 90
   },
   "totals": {
-    "clicks": 2,
-    "impressions": 63,
-    "ctr": 3.17,
-    "position": 39
+    "clicks": 4,
+    "impressions": 72,
+    "ctr": 5.56,
+    "position": 35.4
   },
   "byDate": [
     {
@@ -129,6 +129,11 @@
       "date": "2026-09-01",
       "clicks": 0,
       "impressions": 4
+    },
+    {
+      "date": "2026-09-02",
+      "clicks": 2,
+      "impressions": 9
     }
   ],
   "byQuery": [
@@ -154,11 +159,25 @@
       "position": 82.3
     },
     {
+      "key": "socratic 뜻",
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 9
+    },
+    {
       "key": "문답법 뜻",
       "clicks": 0,
       "impressions": 1,
       "ctr": 0,
       "position": 15
+    },
+    {
+      "key": "소크라테스 대화법",
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 38
     },
     {
       "key": "소크라테스 문답법",
@@ -184,18 +203,18 @@
   ],
   "byPage": [
     {
-      "key": "https://choworks.dev/posts/github-actions-cron-delay/",
-      "clicks": 1,
-      "impressions": 3,
-      "ctr": 33.33,
-      "position": 6
+      "key": "https://choworks.dev/posts/socratic-method-in-the-ai-era/",
+      "clicks": 3,
+      "impressions": 17,
+      "ctr": 17.65,
+      "position": 17.3
     },
     {
-      "key": "https://choworks.dev/posts/socratic-method-in-the-ai-era/",
+      "key": "https://choworks.dev/posts/github-actions-cron-delay/",
       "clicks": 1,
-      "impressions": 12,
-      "ctr": 8.33,
-      "position": 19.2
+      "impressions": 4,
+      "ctr": 25,
+      "position": 6
     },
     {
       "key": "https://choworks.dev/",
@@ -268,9 +287,23 @@
       "position": 29.7
     },
     {
+      "key": "https://choworks.dev/en/posts/wix-to-cloudflare/",
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 7
+    },
+    {
       "key": "https://choworks.dev/posts/ai-transformation-starts-with-me/",
       "clicks": 0,
       "impressions": 1,
+      "ctr": 0,
+      "position": 10
+    },
+    {
+      "key": "https://choworks.dev/posts/wix-to-cloudflare/",
+      "clicks": 0,
+      "impressions": 2,
       "ctr": 0,
       "position": 10
     }
@@ -278,10 +311,10 @@
   "byCountry": [
     {
       "key": "kor",
-      "clicks": 2,
-      "impressions": 17,
-      "ctr": 11.76,
-      "position": 15.4
+      "clicks": 4,
+      "impressions": 25,
+      "ctr": 16,
+      "position": 14.1
     },
     {
       "key": "aus",
@@ -310,6 +343,13 @@
       "impressions": 1,
       "ctr": 0,
       "position": 60
+    },
+    {
+      "key": "gbr",
+      "clicks": 0,
+      "impressions": 1,
+      "ctr": 0,
+      "position": 7
     },
     {
       "key": "idn",
@@ -373,22 +413,15 @@
       "impressions": 7,
       "ctr": 0,
       "position": 2.4
-    },
-    {
-      "key": "tha",
-      "clicks": 0,
-      "impressions": 2,
-      "ctr": 0,
-      "position": 77.5
     }
   ],
   "byDevice": [
     {
       "key": "DESKTOP",
-      "clicks": 2,
-      "impressions": 54,
-      "ctr": 3.7,
-      "position": 44.5
+      "clicks": 4,
+      "impressions": 63,
+      "ctr": 6.35,
+      "position": 39.7
     },
     {
       "key": "MOBILE",
@@ -418,7 +451,7 @@
       "url": "https://choworks.dev/about/",
       "verdict": "PASS",
       "state": "제출되고 색인이 생성되었습니다.",
-      "lastCrawl": "2026-08-31",
+      "lastCrawl": "2026-09-03",
       "robots": "ALLOWED",
       "canonical": "https://choworks.dev/about/"
     },
@@ -441,7 +474,7 @@
     {
       "url": "https://choworks.dev/posts/record-everything/",
       "verdict": "NEUTRAL",
-      "state": "발견됨 - 현재 색인이 생성되지 않음",
+      "state": "Google에는 아직 알려지지 않은 URL입니다.",
       "lastCrawl": "",
       "robots": "ROBOTS_TXT_STATE_UNSPECIFIED",
       "canonical": ""
@@ -498,7 +531,7 @@
       "url": "https://choworks.dev/posts/why-ai-transform/",
       "verdict": "PASS",
       "state": "제출되고 색인이 생성되었습니다.",
-      "lastCrawl": "2026-09-01",
+      "lastCrawl": "2026-09-04",
       "robots": "ALLOWED",
       "canonical": "https://choworks.dev/posts/why-ai-transform/"
     },
