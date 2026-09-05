@@ -4,7 +4,7 @@
 여기 적힌 것은 그날 이 머신에서 **직접 재 본 것**이다. 재지 못한 것은 그렇게 적었다.
 
     저장소   git@github.com:choworks-dev/choworks-dev.github.io   **공개**
-    폴더     ~/GitHub/choworks-dev/choworks-dev.github.io
+    폴더     ~/GitHub.github.io
     사이트   https://choworks.dev   (GitHub Pages · Cloudflare 는 DNS 만)
     담당     MA4 오준서 (macmini-2018)
     코드     CD  (coworks 이슈 접두사)
